@@ -12,6 +12,8 @@ import {
 import Home from "./pages/home.jsx";
 import Profile from "./pages/profile.jsx";
 import AiChat from "./pages/AiChat.jsx";
+import About from "./pages/About.jsx";
+import Settings from "./pages/Settings.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +21,8 @@ const router = createBrowserRouter(
       <Route path="" element={<Home />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/ai-chat" element={<AiChat />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/settings" element={<Settings />} />
     </Route>
   )
 );
