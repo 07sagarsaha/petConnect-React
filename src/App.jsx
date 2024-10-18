@@ -1,9 +1,13 @@
-import { useState } from "react";
+import SideNav from "./components/SideNav";
+import { Outlet } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <div className="flex text-3xl justify-center">hallo</div>;
+  return (
+    <div className="flex flex-row">
+      <SideNav />
+      <Outlet />
+    </div>
+  );
 }
 
 export default App;
