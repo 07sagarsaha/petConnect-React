@@ -14,6 +14,8 @@ import Profile from "./pages/profile.jsx";
 import AiChat from "./pages/AiChat.jsx";
 import About from "./pages/About.jsx";
 import Settings from "./pages/Settings.jsx";
+import Register from "./pages/auth/signup.jsx";
+import Landing from "./pages/landing/landing.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +25,8 @@ const router = createBrowserRouter(
       <Route path="/ai-chat" element={<AiChat />} />
       <Route path="/about" element={<About />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/landing" element={<Landing />} />
     </Route>
   )
 );
