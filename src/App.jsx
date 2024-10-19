@@ -1,11 +1,16 @@
 import SideNav from "./components/SideNav";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "./context/authContext/authContext";
 
 function App() {
+  const { userLoggedIn } = useAuth();
   return (
-    <div className="flex flex-row">
-      <SideNav />
-      <Outlet />
+    <div>
+      {!userLoggedIn && <Navigate to={"/"} replace={true} />}
+      <div className="flex flex-row">
+        <SideNav />
+        <Outlet />
+      </div>
     </div>
   );
 }

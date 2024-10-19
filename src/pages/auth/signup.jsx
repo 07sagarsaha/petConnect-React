@@ -1,74 +1,89 @@
-import React from "react";
-import Header from "../../components/heaer for auth/header";
+import React, { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext/authContext";
+import Header from "../../components/auth/header";
+import InputFild from "../../components/auth/InputFild";
+import Button from "../../context/authContext/button";
+import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
 
 const Register = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* header */}
-      <Header />
+  const { userLoggedIn } = useAuth();
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMassage, setErrorMessage] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
 
-      {/* register */}
-      <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-gray-200 flex-grow">
-        <div className="md:w-1/2 p-4">
-          <h1 className="text-4xl font-bold mb-4">Register</h1>
-          <form className="space-y-4">
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              id="userName"
-              placeholder="Enter Your Name"
-              required
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (!isRegistering) {
+      setIsRegistering(true);
+      await doCreateUserWithEmailAndPassword(email, password);
+    }
+  };
+
+  return (
+    <>
+      {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-gray-200 flex-grow">
+          <div className="md:w-1/2 p-4">
+            <h1 className="text-4xl font-bold mb-4">Register</h1>
+            <form className="space-y-4" onSubmit={onSubmit}>
+              <InputFild
+                type="text"
+                id="name"
+                placeholder="Enter Your Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <InputFild
+                type="text"
+                id="username"
+                placeholder="Enter Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <InputFild
+                type="email"
+                id="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <InputFild
+                type="password"
+                id="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {errorMassage && <p className="text-red-500">{errorMassage}</p>}
+              <Button
+                type="submit"
+                isDisabled={false}
+                id="register"
+                title={isRegistering ? "Registering..." : "Register"}
+              />
+            </form>
+            <Link to="/login">
+              <button className="mt-4 text-gray-700 underline">
+                Already A User?
+              </button>
+            </Link>
+          </div>
+          <div className="w-1/2 p-4">
+            <img
+              src="Assets/landingPage.jpg"
+              alt="Landing Page"
+              className="w-full h-auto rounded-lg"
             />
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              id="handle"
-              placeholder="Set a Handle"
-              required
-            />
-            <input
-              type="email"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              id="email"
-              placeholder="Enter Your E-Mail"
-              required
-            />
-            <input
-              type="password"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              id="setPassword"
-              placeholder="Set a strong Password"
-              required
-            />
-            <input
-              type="password"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              id="confirmPassword"
-              placeholder="Confirm Your Password"
-              required
-            />
-            <input
-              type="submit"
-              className="bg-gradient-to-r from-orange-500 to-pink-500 text-white py-2 px-4 rounded-lg transform hover:scale-105 transition-transform duration-300"
-              id="submitRegister"
-              value="Register"
-            />
-          </form>
-          <a href="loginPage.html">
-            <button className="mt-4 text-gray-700 underline">
-              Already A User?
-            </button>
-          </a>
-        </div>
-        <div className="md:w-1/2 p-4">
-          <img
-            src="Assets/landingPage.jpg"
-            alt="Landing Page"
-            className="w-full h-auto rounded-lg"
-          />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
