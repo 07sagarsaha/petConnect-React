@@ -5,6 +5,7 @@ import Header from "../../components/auth/header";
 import InputFild from "../../components/auth/InputFild";
 import Button from "../../context/authContext/button";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
+import regimg from "../../assets/reg.jpg";
 
 const Register = () => {
   const { userLoggedIn } = useAuth();
@@ -76,7 +77,7 @@ const Register = () => {
           </div>
           <div className="w-1/2 p-4">
             <img
-              src="Assets/landingPage.jpg"
+              src={regimg}
               alt="Landing Page"
               className="w-full h-auto rounded-lg"
             />

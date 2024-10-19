@@ -1,18 +1,14 @@
 import React from "react";
+import logo from "../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 function Header() {
   return (
-    <div className="flex items-center justify-between p-4 bg-white shadow-md">
-      <img src="Assets/logo.png" alt="Logo" className="h-12" id="logoImg" />
-      <a href="landingPage.html" className="text-lg font-bold">
+    <div className="flex items-center justify-start p-4 bg-white shadow-md">
+      <img src={logo} alt="Logo" className="h-20" id="logoImg" />
+      <Link to="/" className="font-bold text-xl">
         Pet Connect
-      </a>
-      <img
-        src="Assets/profile pic.jpeg"
-        alt="Profile"
-        className="h-12 rounded-full"
-        id="profileImg"
-      />
+      </Link>
     </div>
   );
 }

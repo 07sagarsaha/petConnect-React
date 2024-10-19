@@ -8,6 +8,8 @@ import {
   doSignInWithEmailAndPassword,
 } from "../../firebase/auth";
 
+import regimg from "../../assets/login.jpg";
+
 import { Navigate, Link } from "react-router-dom";
 
 function Login() {
@@ -49,7 +51,7 @@ function Login() {
         <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-gray-200 flex-grow">
           <div className="md:w-1/2 p-4">
             <img
-              src="Assets/landingPage.jpg"
+              src={regimg}
               alt="Landing Page"
               className="w-full h-auto rounded-lg animation-navigate duration-1000"
             />

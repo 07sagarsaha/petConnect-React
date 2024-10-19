@@ -1,7 +1,8 @@
 import React from "react";
 import { Navigate, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/authContext/authContext";
-
+import landingimg from "../../assets/landingPage.jpeg";
+import Header from "../../components/auth/header";
 const Landing = () => {
   const { userLoggedIn } = useAuth();
   return (
@@ -9,18 +10,7 @@ const Landing = () => {
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
       <div className="min-h-screen  flex flex-col">
         {/* header */}
-        <header className="flex items-center justify-between p-4 bg-white shadow-md">
-          <img src="Assets/logo.png" alt="Logo" className="h-12" id="logoImg" />
-          <a href="#default" className="text-lg font-bold">
-            Pet Connect
-          </a>
-          <img
-            src="Assets/profile pic.jpeg"
-            alt="Profile"
-            className="h-12 rounded-full"
-            id="profileImg"
-          />
-        </header>
+        <Header />
         {/* landingPage */}
         <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-gray-200 flex-grow">
           <div className="md:w-1/2 p-4">
@@ -39,7 +29,7 @@ const Landing = () => {
           </div>
           <div className="md:w-1/2 p-4">
             <img
-              src="Assets/landingPage.jpg"
+              src={landingimg}
               alt="Landing Page"
               className="w-full h-auto rounded-lg"
             />
