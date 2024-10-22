@@ -19,7 +19,7 @@ function SideNav() {
     });
   };
   return (
-    <div className="w-1/5 h-screen bg-slate-400  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b from-purple-500 to-pink-500 max-w-[250px] min-w-[200px]">
+    <div className="w-1/5 h-screen sticky bg-slate-400  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b from-purple-500 to-pink-500 max-w-[250px] min-w-[200px]">
       <div className="flex flex-col gap-9">
         <Nav title="Home" icon={home} to="/in/home" />
         <Nav title="Profile" icon={user} to="/in/profile" />
