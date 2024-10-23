@@ -2,6 +2,8 @@ import SideNav from "./components/SideNav";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./context/authContext/authContext";
 
+import "../src/App.css"
+
 function App() {
   const { userLoggedIn } = useAuth();
   return (

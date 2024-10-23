@@ -5,7 +5,7 @@ function Home() {
   const name = "Something";
   return (
     <>
-    <Button></Button>
+    <Button/>
     </>
   );
 }

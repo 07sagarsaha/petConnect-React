@@ -12,9 +12,14 @@ export default {
           '0%':{transform: 'scale(0%)'},
           '100%':{transform: 'scale(100%)'}
         },
+        postAnim2:{
+          '0%':{transform: 'translateX(-1000%)', opacity: '0'},
+          '100%':{transform: 'translateX(0%)', opacity: '1'}
+        },
       },
       animation:{
         'postButtonAnim1':'postAnim 1s ease',
+        'postButtonAnim2':'postAnim2 1s ease',
       },
     },
   },

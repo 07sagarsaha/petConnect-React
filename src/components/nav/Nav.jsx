@@ -9,7 +9,7 @@ function Nav({ title, icon, to }) {
         className={({ isActive }) =>
           isActive
             ? "text-white px-5 py-3 border-solid  border-white rounded-2xl shadow-xl"
-            : ""
+            : "text-white"
         }
       >
         <div className="flex flex-row gap-4  items-center">
