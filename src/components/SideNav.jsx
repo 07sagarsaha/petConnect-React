@@ -19,8 +19,8 @@ function SideNav() {
     });
   };
   return (
-    <div className="w-1/5 h-screen sticky bg-slate-400  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b from-purple-500 to-pink-500 max-w-[250px] min-w-[200px]">
-      <div className="flex flex-col gap-9">
+    <div className="w-1/5 h-screen sticky bg-slate-400  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b from-purple-400 to-pink-400 max-w-[250px] min-w-[200px]">
+      <div className="flex flex-col gap-12">
         <Nav title="Home" icon={home} to="/in/home" />
         <Nav title="Profile" icon={user} to="/in/profile" />
         <Nav title="Ai Chat" icon={ai} to="/in/ai-chat" />
@@ -28,7 +28,7 @@ function SideNav() {
         <Nav title="Settings" icon={setings} to="/in/settings" />
       </div>
       <div
-        className="flex flex-row gap-4 hover:scale-105 transition-transform duration-300"
+        className="flex flex-row gap-4 text-white hover:scale-105 transition-transform duration-300"
         style={{ display: showLogout ? "flex" : "none" }}
       >
         <img src={logout} className="w-8 h-8" alt="logout" />
