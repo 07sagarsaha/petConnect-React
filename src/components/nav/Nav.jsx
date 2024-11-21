@@ -12,7 +12,7 @@ function Nav({ title, icon, to }) {
             : "text-white"
         }
       >
-        <div className="flex flex-row gap-4  items-center">
+        <div className="flex flex-row  gap-4  items-center">
           <img src={icon} alt="Home" className="w-8 h-8" />
           <p>{title}</p>
         </div>
