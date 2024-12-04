@@ -9,8 +9,8 @@ export default {
       },
       keyframes:{
         postAnim:{
-          '0%':{transform: 'scale(0%)'},
-          '100%':{transform: 'scale(100%)'}
+          '0%':{transform: 'scale(0%)', opacity: '0'},
+          '100%':{transform: 'scale(100%)', opacity: '1'}
         },
         postAnim2:{
           '0%':{transform: 'translateX(-1000%)', opacity: '0'},

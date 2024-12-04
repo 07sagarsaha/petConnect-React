@@ -1,11 +1,11 @@
 import React from "react";
 import Button from "../components/UI/PostButton";
+import { IoMdAddCircleOutline } from "react-icons/io";
 
 function Home() {
-  const name = "Something";
   return (
     <>
-    <Button/>
+    <Button buttonName={"New Post"} icon={<IoMdAddCircleOutline className="size-7 mr-2"/>} submitName={"Post"}/>
     </>
   );
 }
