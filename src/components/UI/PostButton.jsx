@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../firebase/firebase';
@@ -8,27 +8,55 @@ const Button = ({buttonName, icon, submitName}) => {
   const [isClicked, setIsClicked] = useState(false);
   const [title, setTitle] = useState(''); 
   const [content, setContent] = useState('');
+  const [user, setUser] = useState(null);
+  const auth = getAuth();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log(user);
+      setUser(user);
+    });
+    return () => unsubscribe;
+  }, []);
 
   function handleClickEvent(){
     setIsClicked(!isClicked);
+    if(isClicked){
+      setTitle("");
+      setContent("");
+    }
   }
 
-  const handleSubmit = (e) => { 
-    e.preventDefault(); 
-    addDoc(collection(db, 'posts'), {
-      title,
-      content,
-      createdAt: serverTimestamp(),
-    })
-    .then(() => {
-      setTitle('');
-      setContent('');
-    })
-    .catch((error) => {
-      console.error('Error adding post: ', error);
-    });
-    setIsClicked(!isClicked);
-    };
+  const handleSubmit = async (e) => { 
+    e.preventDefault();
+    if(!title.trim()){
+      alert("Set a title before posting!");
+      return;
+    }
+    const user = auth.currentUser;
+    try {
+      if(user){
+        const postRef = collection(db, 'posts'); 
+        await addDoc(postRef, {
+          title,
+          content,
+          createdAt: serverTimestamp(),
+          userId: user.uid,
+          author: user.email
+        })
+        .then(() => { 
+          // Clear the form fields after successful submission 
+          setTitle(''); 
+          setContent(''); 
+          setIsClicked(!isClicked);
+        });
+      } else {
+        console.error('User is not logged in.');
+      }
+    }
+
+    catch(error){console.error('Error adding post: ', error);}  
+  };
 
   return (
     <>
@@ -36,8 +64,8 @@ const Button = ({buttonName, icon, submitName}) => {
       {isClicked ? "" : icon}
       {buttonName}
       <button className={`text-3xl absolute top-0 right-0 p-4 rounded-lg hover:text-red-600 animate-postButtonAnim2 transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleClickEvent}>{isClicked && 'x'}</button>
-      <input type='text' placeholder={`What's on your mind?`} className={`h-max w-[50rem] outline-none text-xl rounded-lg p-4 text-black top-20 items-center animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setTitle(e.target.value)}></input>
-      <textarea placeholder={`Describe some more...`} className={`h-44 w-[50rem] outline-none text-xl rounded-lg p-4 text-gray-600 top-40 items-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setContent(e.target.value)}></textarea>
+      <input type='text' placeholder={`What's on your mind?`} value={title} className={`h-max w-[50rem] outline-none text-xl rounded-lg p-4 text-black top-20 items-center animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setTitle(e.target.value)}></input>
+      <textarea placeholder={`Describe some more...`} value={content} className={`h-44 w-[50rem] outline-none text-xl rounded-lg p-4 text-gray-600 top-40 items-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setContent(e.target.value)}></textarea>
       <button type='submit' className={`bg-white absolute bottom-0 right-0 text-black p-4 m-8 animate-postButtonAnim1 shadow-Uni hover:shadow-lg rounded-lg transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleSubmit}>{submitName}</button>
     </div>
     </>
