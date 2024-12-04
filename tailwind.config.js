@@ -6,6 +6,7 @@ export default {
       boxShadow:{
         'Uni':'0 0 15px 5px rgba(128, 128, 128, 0.485)',
         'UniCol':'0 4px 15px 0 pink, 0 0 25px 0 purple',
+        'skew':'5px 5px 15px 5px rgba(128, 128, 128, 0.485), -5px 5px 15px 0 rgb(255, 255, 255)',
       },
       keyframes:{
         postAnim:{

@@ -3,7 +3,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../firebase/firebase';
 
-const Button = ({buttonName, icon, submitName}) => {
+const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
 
   const [isClicked, setIsClicked] = useState(false);
   const [title, setTitle] = useState(''); 
