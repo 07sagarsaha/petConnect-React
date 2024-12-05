@@ -3,16 +3,16 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection } from "firebase/firestore";
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+// Your web app's Firebase configuration using environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyCAkwUSmrB8mO6K_SzDde1_Zjy1pKzKvSs",
-  authDomain: "pet-connect-01.firebaseapp.com",
-  projectId: "pet-connect-01",
-  storageBucket: "pet-connect-01.appspot.com",
-  messagingSenderId: "107924468638",
-  appId: "1:107924468638:web:c7158a902b81f086ae5c8f",
-  measurementId: "G-ENKG0FJETY",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
