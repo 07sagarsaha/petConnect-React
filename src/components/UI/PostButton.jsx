@@ -69,8 +69,19 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
       <button className={`text-3xl absolute top-0 right-0 p-4 rounded-lg hover:text-red-600 animate-postButtonAnim2 transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleClickEvent}>{isClicked && 'x'}</button>
       <input type='text' placeholder={`What's on your mind?`} value={title} className={`h-max w-[50rem] outline-none text-xl rounded-lg p-4 text-black top-20 items-center animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setTitle(e.target.value)}></input>
       <textarea placeholder={`Describe some more...`} value={content} className={`h-44 w-[50rem] outline-none text-xl rounded-lg p-4 text-gray-600 top-40 items-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setContent(e.target.value)}></textarea>
-      <label htmlFor='sevScale' className={`h-20 w-[35rem] outline-none text-xl rounded-lg p-2 text-gray-600 top-80 mt-12 bg-white self-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`}>Severity Scale: {sevVal}</label>
-      <input type="range" min={1} max={5} value={sevVal} id='sevScale' className={`h-9 w-[30rem] outline-none text-xl rounded-lg p-2 text-gray-600 top-80 bg-white mt-20 self-start animate-postButtonAnim1 absolute ${!isClicked && `hidden`}`} onChange={(e) => setSevVal(e.target.value)}></input>
+      <label htmlFor='sevScale' className={`h-20 w-[35rem] outline-none text-xl rounded-lg p-2 text-gray-600 top-80 mt-12 bg-white self-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`}> Severity Scale:{' '}
+            {sevVal === 1
+              ? '😃 (very good)'
+              : sevVal === 2
+              ? '🙂 (good)'
+              : sevVal === 3
+              ? '😐 (neutral)'
+              : sevVal === 4
+              ? '😨 (not good)'
+              : '😭 (contact vet)'
+              }
+              </label>
+      <input type="range" min={1} max={5} value={sevVal} id='sevScale' className={`h-9 w-[30rem] outline-none text-xl rounded-lg p-2 text-gray-600 top-80 bg-white mt-20 self-start animate-postButtonAnim1 absolute ${!isClicked && `hidden`}`} onChange={(e) => setSevVal(parseInt(e.target.value))}></input>
       <button type='submit' className={`bg-white absolute bottom-0 right-0 text-black p-4 m-8 animate-postButtonAnim1 shadow-Uni hover:shadow-lg rounded-lg transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleSubmit}>{submitName}</button>
     </div>
     </>
