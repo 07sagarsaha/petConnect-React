@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/authContext/authContext";
-import landingimg from "../../assets/landingPage.jpeg";
+import landingimg from "../../assets/landingPage.jpg";
 import Header from "../../components/auth/header";
 const Landing = () => {
   const { userLoggedIn } = useAuth();
