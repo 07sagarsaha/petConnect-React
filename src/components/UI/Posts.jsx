@@ -36,6 +36,8 @@ const Posts = () => {
         <p className='text-xl text-gray-500'>{post.userHandle} posted:</p>
         <h1 className='text-3xl py-4'>{post.title}</h1>
         <h2 className='text-xl'>{post.content}</h2>
+        <h2 className='text-xl py-4'>Severity Index: {post.sevVal}</h2>
+        <input type="range" min={1} max={5} value={post.sevVal} onChange={null}></input>
         <p className='text-sm text-gray-500 absolute top-0 right-0 p-4'>{post.createdAt ? format(new Date(post.createdAt.seconds * 1000), 'PPp') : 'Date unavailable'}</p>
     </div>
     ))}
