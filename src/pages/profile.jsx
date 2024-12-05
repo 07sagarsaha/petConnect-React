@@ -42,10 +42,10 @@ function Profile() {
 
   return (
     <>
-      <div className="m-5 ml-[19px] bg-white rounded-lg shadow-lg p-5 w-full">
+      <div className="m-5 ml-[19px] bg-[#eeeeee] rounded-lg shadow-lg p-5 w-full">
         <div className="flex flex-col items-center justify-center text-center mb-[19px]">
           <div className="relative object-cover w-full h-[200px] mb-[20px]">
-            <img src={bg} className="w-full h-full object-cover" alt="Background" />
+            <img src={bg} className="w-full rounded-lg h-full object-cover" alt="Background" />
             <div className="absolute top-2 right-2">
               <label
                 className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"

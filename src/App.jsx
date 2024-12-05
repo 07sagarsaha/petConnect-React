@@ -9,7 +9,7 @@ function App() {
   return (
     <div>
       {!userLoggedIn && <Navigate to={"/"} replace={true} />}
-      <div className="flex flex-row ">
+      <div className="flex flex-row bg-[#e0e0e0]">
         <div className="fixed">
           <SideNav />
         </div>
