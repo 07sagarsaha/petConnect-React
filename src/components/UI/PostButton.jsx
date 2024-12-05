@@ -13,7 +13,6 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user);
       setUser(user);
     });
     return () => unsubscribe;
@@ -60,7 +59,7 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
 
   return (
     <>
-    <div id='submit' onClick={isClicked ? null : handleClickEvent} disabled={isClicked} className={`text-xl relative p-6 m-8 flex justify-center items shadow-xl h-max min-h-12 w-max min-w-20 rounded-2xl hover:bg-[#c183f8c4] bg-gradient-to-b from-[#c183f8c4] to-[#f173bac0] text-white hover:shadow-2xl border-4 transition-all ease-in-out animate-postButtonAnim1 duration-700 ${isClicked && `min-w-[55rem] min-h-[42rem] text-[210%]`}`}>
+    <div id='submit' onClick={isClicked ? null : handleClickEvent} disabled={isClicked} className={`text-xl relative z-10 p-6 m-8 flex justify-center items shadow-xl h-max min-h-12 w-max min-w-20 rounded-2xl hover:bg-[#c183f8c4] bg-gradient-to-b from-[#c183f8c4] to-[#f173bac0] text-white hover:shadow-2xl border-4 transition-all ease-in-out animate-postButtonAnim1 duration-700 ${isClicked && `min-w-[55rem] min-h-[42rem] text-[210%]`}`}>
       {isClicked ? "" : icon}
       {buttonName}
       <button className={`text-3xl absolute top-0 right-0 p-4 rounded-lg hover:text-red-600 animate-postButtonAnim2 transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleClickEvent}>{isClicked && 'x'}</button>

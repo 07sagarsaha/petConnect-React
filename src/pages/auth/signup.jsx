@@ -6,6 +6,10 @@ import InputFild from "../../components/auth/InputFild";
 import Button from "../../context/authContext/button";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
 import regimg from "../../assets/reg.jpg";
+import { auth, db } from "../../firebase/firebase";
+import { collection } from "firebase/firestore/lite";
+import { addDoc, doc, serverTimestamp, setDoc, Timestamp } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const Register = () => {
   const { userLoggedIn } = useAuth();
@@ -21,6 +25,25 @@ const Register = () => {
     if (!isRegistering) {
       setIsRegistering(true);
       await doCreateUserWithEmailAndPassword(email, password);
+    }
+    const user = auth.currentUser;
+    try{
+      if(user){
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(userRef, {
+          name: name,
+          email: email,
+          handle: username,
+          createdAt: serverTimestamp()
+        })
+      }
+      else{
+        alert("User not logged in!");
+        return;
+      }
+    }
+    catch(error){
+      console.error("Somnething went wrong:", error);
     }
   };
 

@@ -1,9 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../context/authContext/button";
+import { auth, db } from "../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 function Profile() {
   const [pfp, setPfp] = useState("/src/icons/pfp.png");
   const [bg, setBG] = useState("/src/Assets/background.jpg");
+  const [userData, setUserData] = useState();
+
+  useEffect(() => {
+    const fetchUser = async ()=>{
+      try{
+        const user = auth.currentUser;
+        if(user){
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if(userDoc.exists()){
+            setUserData(userDoc.data())
+          }
+        }
+      }
+      catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const bgPicChange = (e) => {
     const bgfile = e.target.files[0];
@@ -41,8 +62,8 @@ function Profile() {
             </div>
           </div>
           <img className="w-[150px] h-[150px] rounded-full" src={pfp} alt="Profile" />
-          <h1 className="text-center">Loading....</h1>
-          <h1 className="text-center">@useremail</h1>
+          <h1 className="text-center">{userData?.name || 'loading...'}</h1>
+          <h1 className="text-center">{userData?.handle || 'loading...'}</h1>
 
           <div className="flex justify-center mt-4">
             <label
@@ -68,7 +89,7 @@ function Profile() {
               <strong>Location:</strong> "User location"
             </p>
             <p className="mb-[10px]">
-              <strong>Email:</strong> "User email"
+              <strong>Email:</strong> {userData?.email}
             </p>
           </div>
           <div>

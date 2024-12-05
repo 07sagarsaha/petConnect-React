@@ -32,7 +32,7 @@ const Posts = () => {
   return (
     <>
     {post.map(post => (
-    <div key={post.id} className="text-xl relative p-6 m-8 flex-col justify-center items-center shadow-skew h-max min-h-12 w-max min-w-[60%] rounded-2xl">
+    <div key={post.id} className="text-xl relative p-6 m-8 flex-col justify-center items-center shadow-skew h-max min-h-12 w-auto min-w-64 rounded-2xl animate-postAnim3">
         <p className='text-xl text-gray-500'>{post.userHandle} posted:</p>
         <h1 className='text-3xl py-4'>{post.title}</h1>
         <h2 className='text-xl'>{post.content}</h2>
