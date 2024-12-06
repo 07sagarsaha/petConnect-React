@@ -39,11 +39,11 @@ const Posts = () => {
   return (
     <>
     {post.map(post => (
-    <div key={post.id} className="text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[60%] min-w-64 rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200">
-        <p className='text-xl text-gray-500'>{post.userHandle} posted:</p>
-        <h1 className='text-3xl py-4'>{post.title}</h1>
-        <h2 className='text-xl'>{post.content}</h2>
-        <h2 className='text-xl py-4'>Severity Index: {severityEmojis[post.sevVal]}</h2>
+    <div key={post.id} className="text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[75%] min-w-64 rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200">
+        <p className='text-lg text-gray-500'>{post.userHandle} posted:</p>
+        <h1 className='text-xl font-bold py-4'>{post.title}</h1>
+        <h2 className='text-lg font-semibold'>{post.content}</h2>
+        <h2 className='text-lg py-4'>Severity Index: {severityEmojis[post.sevVal]}</h2>
         <input type="range" min={1} max={5} value={post.sevVal} onChange={null} className='rounded-lg'></input>
         <p className='text-sm text-gray-500 absolute top-0 right-0 p-4'>{post.createdAt ? format(new Date(post.createdAt.seconds * 1000), 'PPp') : 'Date unavailable'}</p>
     </div>

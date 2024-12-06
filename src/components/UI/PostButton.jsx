@@ -81,7 +81,7 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
               : '😭 (contact vet)'
               }
               </label>
-      <input type="range" min={1} max={5} value={sevVal} id='sevScale' className={`h-9 w-[30rem] outline-none text-xl rounded-lg p-2 text-gray-600 top-80 bg-white mt-20 self-start animate-postButtonAnim1 absolute ${!isClicked && `hidden`}`} onChange={(e) => setSevVal(parseInt(e.target.value))}></input>
+      <input type="range" min={1} max={5} value={sevVal} id='sevScale' className={`h-9 w-[30rem] outline-none text-xl rounded-md  p-2 text-gray-600 top-80 bg-white mt-20 self-start animate-postButtonAnim1 absolute ${!isClicked && `hidden`}`} onChange={(e) => setSevVal(parseInt(e.target.value))}></input>
       <button type='submit' className={`bg-white absolute bottom-0 right-0 text-black p-4 m-8 animate-postButtonAnim1 shadow-Uni hover:shadow-lg rounded-lg transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleSubmit}>{submitName}</button>
     </div>
     </>
