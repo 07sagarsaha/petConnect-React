@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../firebase/firebase';
 
@@ -37,11 +37,15 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
     const user = auth.currentUser;
     try {
       if(user){
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userData = userDoc.exists() ? userDoc.data() : { handle: 'Unknown' };
+        console.log(userData.handle);
         const postRef = collection(db, 'posts'); 
         await addDoc(postRef, {
           title,
           content,
           sevVal,
+          handle: userData.handle,
           createdAt: serverTimestamp(),
           userId: user.uid,
           author: user.email
