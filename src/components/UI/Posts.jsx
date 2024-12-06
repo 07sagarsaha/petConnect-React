@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const Posts = ({keyVal, handle, title, content, sevVal, date}) => {
+const Posts = ({keyVal, handle, title, content, sevVal, date, width}) => {
     const severityEmojis = {
         1: '😃 (very good)', // Very happy
         2: '🙂 (good)', // Happy
@@ -10,7 +10,7 @@ const Posts = ({keyVal, handle, title, content, sevVal, date}) => {
     };
   return (
     <>
-    <div key={keyVal} className="text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[75%] min-w-64 rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200">
+    <div key={keyVal} className={`text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[${width}] max-w-[${width}] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}>
         <p className='text-lg text-gray-500'>{handle} posted:</p>
         <h1 className='text-xl font-bold py-4'>{title}</h1>
         <h2 className='text-lg font-semibold'>{content}</h2>

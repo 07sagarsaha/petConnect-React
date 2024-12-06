@@ -164,6 +164,7 @@ const user = auth.currentUser;
           content={post.content}
           sevVal={post.sevVal}
           date={post.createdAt ? format(post.createdAt.toDate(), 'PPP') : 'No date'}
+          width={"100%"}
         />
       ))}
       </div>
