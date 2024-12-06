@@ -1,31 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { db } from '../../firebase/firebase'
-import { collection, getDocs, orderBy, query, getDoc, doc, limit, onSnapshot } from 'firebase/firestore';
-import { format } from 'date-fns';
 
-const Posts = () => {
-    const [post, setPost] = useState([]);
-    useEffect(() => {
-        const q = query(
-            collection(db, 'posts'), 
-            orderBy('createdAt', 'desc')
-        );
-        
-        // Create real-time listener
-        const unsubscribe = onSnapshot(q, async (snapshot) => {
-            const postData = await Promise.all(snapshot.docs.map(async (postDoc) => {
-                const postData = postDoc.data();
-                return {
-                    id: postDoc.id,
-                    ...postData,
-                };
-            }));
-            setPost(postData);
-        });
-
-        // Cleanup subscription on unmount
-        return () => unsubscribe();
-    }, []);
+const Posts = ({keyVal, handle, title, content, sevVal, date}) => {
     const severityEmojis = {
         1: '😃 (very good)', // Very happy
         2: '🙂 (good)', // Happy
@@ -35,16 +10,14 @@ const Posts = () => {
     };
   return (
     <>
-    {post.map(post => (
-    <div key={post.id} className="text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[75%] min-w-64 rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200">
-        <p className='text-lg text-gray-500'>{post.handle} posted:</p>
-        <h1 className='text-xl font-bold py-4'>{post.title}</h1>
-        <h2 className='text-lg font-semibold'>{post.content}</h2>
-        {(post.sevVal) && <h2 className='text-lg py-4'>Severity Index: {severityEmojis[post.sevVal]}</h2>}
-        {(post.sevVal) && <input type="range" min={1} max={5} value={post.sevVal} onChange={null} className='rounded-lg'></input>}
-        <p className='text-sm text-gray-500 absolute top-0 right-0 p-4'>{post.createdAt ? format(new Date(post.createdAt.seconds * 1000), 'PPp') : 'Date unavailable'}</p>
+    <div key={keyVal} className="text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[75%] min-w-64 rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200">
+        <p className='text-lg text-gray-500'>{handle} posted:</p>
+        <h1 className='text-xl font-bold py-4'>{title}</h1>
+        <h2 className='text-lg font-semibold'>{content}</h2>
+        {(sevVal) && <h2 className='text-lg py-4'>Severity Index: {severityEmojis[sevVal]}</h2>}
+        {(sevVal) && <input type="range" min={1} max={5} value={sevVal} onChange={null} className='rounded-lg'></input>}
+        <p className='text-sm text-gray-500 absolute top-0 right-0 p-4'>{date}</p>
     </div>
-    ))}
     </>
   )
 }

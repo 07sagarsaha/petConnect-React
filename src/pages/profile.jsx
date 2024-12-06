@@ -1,17 +1,44 @@
 import React, { useEffect, useState } from "react";
 import Button from "../context/authContext/button";
 import { auth, db } from "../firebase/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import Posts from "../components/UI/Posts";
+import { format } from "date-fns";
 
 function Profile() {
   const [pfp, setPfp] = useState("/src/icons/pfp.png");
   const [bg, setBG] = useState("/src/Assets/background.jpg");
   const [userData, setUserData] = useState();
+  const [post, setPost] = useState([]);
+
+  useEffect(() => {
+    const q = query(
+        collection(db, 'posts'),
+        where('userId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+    );
+    
+    // Create real-time listener
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+        const postData = await Promise.all(snapshot.docs.map(async (postDoc) => {
+              const postData = postDoc.data();
+              return {
+                id: postDoc.id,
+                ...postData,
+            };
+        }));
+        setPost(postData);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+}, []);
+
+const user = auth.currentUser;
 
   useEffect(() => {
     const fetchUser = async ()=>{
       try{
-        const user = auth.currentUser;
         if(user){
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if(userDoc.exists()){
@@ -42,7 +69,7 @@ function Profile() {
 
   return (
     <>
-      <div className="m-5 ml-[19px] bg-[#eeeeee] rounded-lg shadow-lg p-5 w-full">
+      <div className="m-5 ml-[19px] bg-[#eeeeee] rounded-lg shadow-lg p-5 w-full relative z-10">
         <div className="flex flex-col items-center justify-center text-center mb-[19px]">
           <div className="relative object-cover w-full h-[200px] mb-[20px]">
             <img src={bg} className="w-full rounded-lg h-full object-cover" alt="Background" />
@@ -126,6 +153,19 @@ function Profile() {
             />
           </div>
         </div>
+      </div>
+      <div>
+        <h1 className="p-8 text-3xl">Your Posts:</h1>
+        {post.map((post) => (
+        <Posts
+          keyVal={post.id}
+          handle={post.handle}
+          title={post.title}
+          content={post.content}
+          sevVal={post.sevVal}
+          date={post.createdAt ? format(post.createdAt.toDate(), 'PPP') : 'No date'}
+        />
+      ))}
       </div>
     </>
   );
