@@ -8,7 +8,7 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
   const [isClicked, setIsClicked] = useState(false);
   const [title, setTitle] = useState(''); 
   const [content, setContent] = useState('');
-  const [sevVal, setSevVal] = useState(1);
+  const [sevVal, setSevVal] = useState(3);
   const [user, setUser] = useState(null);
   const auth = getAuth();
 
