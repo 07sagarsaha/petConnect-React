@@ -24,7 +24,7 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
     if(isClicked){
       setTitle("");
       setContent("");
-      setSevVal(1);
+      setSevVal(3);
     }
   }
 
@@ -54,7 +54,7 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
           // Clear the form fields after successful submission 
           setTitle(''); 
           setContent(''); 
-          setSevVal('');
+          setSevVal(3);
           setIsClicked(!isClicked);
         });
       } else {
