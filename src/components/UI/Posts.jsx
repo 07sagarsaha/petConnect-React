@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FaRegThumbsUp, FaThumbsUp } from 'react-icons/fa6';
+import { FaRegThumbsDown, FaRegThumbsUp, FaThumbsDown, FaThumbsUp } from 'react-icons/fa6';
 import { auth, db } from '../../firebase/firebase';
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 
@@ -17,6 +17,7 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dis
 
     const handleLike = async() => {
       if(!auth.currentUser) return;
+      if(isDisliked) return;
 
       const postRef = doc(db, 'posts', id);
       try{
@@ -33,6 +34,7 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dis
 
     const handleDisLike = async() => {
       if(!auth.currentUser) return;
+      if(isLiked) return;
 
       const postRef = doc(db, 'posts', id);
       try{
@@ -59,7 +61,7 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dis
         <div className='pt-2 flex-row justify-start'>
           {{likes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleLike}>{isLiked? <FaThumbsUp/> : <FaRegThumbsUp/>}</button>}
           <p>{{likes} && likes?.length || 0}</p>
-          {{dislikes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleDisLike}>{isDisliked? <FaThumbsUp/> : <FaRegThumbsUp/>}</button>}
+          {{dislikes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleDisLike}>{isDisliked? <FaThumbsDown/> : <FaRegThumbsDown/>}</button>}
           <p>{{dislikes} && dislikes?.length || 0}</p>
         </div>
     </div>
