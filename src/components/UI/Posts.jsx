@@ -3,7 +3,7 @@ import { FaRegThumbsUp, FaThumbsUp } from 'react-icons/fa6';
 import { auth, db } from '../../firebase/firebase';
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 
-const Posts = ({id, handle, title, content, sevVal, date, width, likes = []}) => {
+const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dislikes = []}) => {
     const severityEmojis = {
         1: '😃 (very good)', // Very happy
         2: '🙂 (good)', // Happy
@@ -13,6 +13,7 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = []}) =>
     };
 
     const isLiked = likes.includes(auth.currentUser?.uid);
+    const isDisliked = dislikes.includes(auth.currentUser?.uid);
 
     const handleLike = async() => {
       if(!auth.currentUser) return;
@@ -30,6 +31,22 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = []}) =>
       }
     }; 
 
+    const handleDisLike = async() => {
+      if(!auth.currentUser) return;
+
+      const postRef = doc(db, 'posts', id);
+      try{
+        await updateDoc(postRef, {
+          dislikes: isDisliked
+          ? arrayRemove(auth.currentUser.uid)
+          : arrayUnion(auth.currentUser.uid)
+        });
+      }
+      catch(error){
+        console.error("Error updating dislikes: ", error);
+      }
+    }; 
+
   return (
     <>
     <div key={id} className={`text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[${width}] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}>
@@ -42,6 +59,8 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = []}) =>
         <div className='pt-2 flex-row justify-start'>
           {{likes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleLike}>{isLiked? <FaThumbsUp/> : <FaRegThumbsUp/>}</button>}
           <p>{{likes} && likes?.length || 0}</p>
+          {{dislikes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleDisLike}>{isDisliked? <FaThumbsUp/> : <FaRegThumbsUp/>}</button>}
+          <p>{{dislikes} && dislikes?.length || 0}</p>
         </div>
     </div>
     </>

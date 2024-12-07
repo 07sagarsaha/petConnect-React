@@ -166,6 +166,7 @@ const user = auth.currentUser;
           date={post.createdAt ? format(post.createdAt.toDate(), 'PPP') : 'No date'}
           width={"100%"}
           likes={post.likes || []}
+          dislikes={post.dislikes || []}
         />
       ))}
       </div>

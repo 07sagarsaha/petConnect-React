@@ -47,6 +47,7 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
           sevVal,
           handle: userData.handle,
           likes: [],
+          dislikes: [],
           createdAt: serverTimestamp(),
           userId: user.uid,
           author: user.email
