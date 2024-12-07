@@ -34,13 +34,14 @@ function Home() {
     <Button buttonName={"New Post"} icon={<IoMdAddCircleOutline className="size-7 mr-2"/>} submitName={"Post"}/>
     {post.map((post) => (
         <Posts
-          keyVal={post.id}
+          id={post.id}
           handle={post.handle}
           title={post.title}
           content={post.content}
           sevVal={post.sevVal}
           date={post.createdAt ? format(post.createdAt.toDate(), 'PPP') : 'No date'}
           width={"75%"}
+          likes={post.likes || []}
         />
       ))}
     </>

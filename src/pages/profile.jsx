@@ -158,13 +158,14 @@ const user = auth.currentUser;
         <h1 className="p-8 text-3xl">Your Posts:</h1>
         {post.map((post) => (
         <Posts
-          keyVal={post.id}
+          id={post.id}
           handle={post.handle}
           title={post.title}
           content={post.content}
           sevVal={post.sevVal}
           date={post.createdAt ? format(post.createdAt.toDate(), 'PPP') : 'No date'}
           width={"100%"}
+          likes={post.likes || []}
         />
       ))}
       </div>
