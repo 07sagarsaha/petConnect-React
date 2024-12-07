@@ -68,10 +68,10 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
 
   return (
     <>
-    <div id='submit' onClick={isClicked ? null : handleClickEvent} disabled={isClicked} className={`text-xl relative z-10 p-6 m-8 flex justify-center items shadow-xl h-max min-h-12 w-max min-w-20 rounded-2xl hover:bg-[#c183f8c4] bg-gradient-to-b from-[#c183f8c4] to-[#f173bac0] text-white hover:shadow-2xl border-4 transition-all ease-in-out animate-postButtonAnim1 duration-700 ${isClicked && `min-w-[55rem] min-h-[42rem] text-[210%]`}`}>
+    <div id='submit' onClick={isClicked ? null : handleClickEvent} disabled={isClicked} className={`text-xl relative z-10 p-4 m-8 flex justify-center items shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-max min-w-20 rounded-2xl hover:bg-[#e0a2eb] bg-[#da80ea] text-white hover:shadow-[11px_11px_19px_#d0d0d0,-11px_-11px_19px_#f0f0f0] transition-all ease-in-out animate-postButtonAnim1 duration-700 ${isClicked && `min-w-[55rem] min-h-[42rem] text-[210%]`}`}>
       {isClicked ? "" : icon}
       {buttonName}
-      <button className={`text-3xl absolute top-0 right-0 p-4 rounded-lg hover:text-red-600 animate-postButtonAnim2 transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleClickEvent}>{isClicked && 'x'}</button>
+      <button className={`text-3xl absolute top-0 right-0 p-2 rounded-lg hover:text-red-600 animate-postButtonAnim2 transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleClickEvent}>{isClicked && 'x'}</button>
       <input type='text' placeholder={`What's on your mind?`} value={title} className={`h-max w-[50rem] outline-none text-xl rounded-lg p-4 text-black top-20 items-center animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setTitle(e.target.value)}></input>
       <textarea placeholder={`Describe some more...`} value={content} className={`h-44 w-[50rem] outline-none text-xl rounded-lg p-4 text-gray-600 top-40 items-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setContent(e.target.value)}></textarea>
       <label htmlFor='sevScale' className={`h-20 w-[35rem] outline-none text-xl rounded-lg p-2 text-gray-600 top-80 mt-12 bg-white self-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`}> Severity Scale:{' '}

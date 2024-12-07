@@ -32,7 +32,7 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = []}) =>
 
   return (
     <>
-    <div key={id} className={`text-xl relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[${width}] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}>
+    <div key={id} className={`text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[${width}] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}>
         <p className='text-lg text-gray-500'>{handle} posted:</p>
         <h1 className='text-xl font-bold py-4'>{title}</h1>
         <h2 className='text-lg font-semibold'>{content}</h2>

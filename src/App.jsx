@@ -9,11 +9,11 @@ function App() {
   return (
     <div>
       {!userLoggedIn && <Navigate to={"/"} replace={true} />}
-      <div className="flex flex-row bg-[#e0e0e0]">
+      <div className="flex flex-row justify-start">
         <div className="fixed">
           <SideNav />
         </div>
-        <div className="w-4/5 min-[calc(100vw - 200px)] max-[calc(100vw - 250px)] ml-[200px] mr-[40px]">
+        <div className=" min-[calc(100vw - 200px)] bg-[#e0e0e0] max-[calc(100vw - 250px)] ml-[200px] ">
           <Outlet />
         </div>
       </div>
