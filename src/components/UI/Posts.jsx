@@ -15,39 +15,49 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dis
     const isLiked = likes.includes(auth.currentUser?.uid);
     const isDisliked = dislikes.includes(auth.currentUser?.uid);
 
-    const handleLike = async() => {
-      if(!auth.currentUser) return;
-      if(isDisliked) return;
-
+    const handleLike = async () => {
+      if (!auth.currentUser) return;
+      
       const postRef = doc(db, 'posts', id);
-      try{
-        await updateDoc(postRef, {
-          likes: isLiked
-          ? arrayRemove(auth.currentUser.uid)
-          : arrayUnion(auth.currentUser.uid)
-        });
+      try {
+        if (isDisliked) {
+          // If post is disliked, remove dislike first
+          await updateDoc(postRef, {
+            dislikes: arrayRemove(auth.currentUser.uid),
+            likes: arrayUnion(auth.currentUser.uid)
+          });
+        } else {
+          // Toggle like state
+          await updateDoc(postRef, {
+            likes: isLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid)
+          });
+        }
+      } catch (error) {
+        console.error("Error updating like:", error);
       }
-      catch(error){
-        console.error("Error updating likes: ", error);
-      }
-    }; 
-
-    const handleDisLike = async() => {
-      if(!auth.currentUser) return;
-      if(isLiked) return;
-
+    };
+  
+    const handleDislike = async () => {
+      if (!auth.currentUser) return;
+      
       const postRef = doc(db, 'posts', id);
-      try{
-        await updateDoc(postRef, {
-          dislikes: isDisliked
-          ? arrayRemove(auth.currentUser.uid)
-          : arrayUnion(auth.currentUser.uid)
-        });
+      try {
+        if (isLiked) {
+          // If post is liked, remove like first
+          await updateDoc(postRef, {
+            likes: arrayRemove(auth.currentUser.uid),
+            dislikes: arrayUnion(auth.currentUser.uid)
+          });
+        } else {
+          // Toggle dislike state
+          await updateDoc(postRef, {
+            dislikes: isDisliked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid)
+          });
+        }
+      } catch (error) {
+        console.error("Error updating dislike:", error);
       }
-      catch(error){
-        console.error("Error updating dislikes: ", error);
-      }
-    }; 
+    };
 
   return (
     <>
@@ -61,7 +71,7 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dis
         <div className='pt-2 flex-row justify-start'>
           {{likes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleLike}>{isLiked? <FaThumbsUp/> : <FaRegThumbsUp/>}</button>}
           <p>{{likes} && likes?.length || 0}</p>
-          {{dislikes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleDisLike}>{isDisliked? <FaThumbsDown/> : <FaRegThumbsDown/>}</button>}
+          {{dislikes} && <button className='text-xl text-gray-500 rounded-full flex-row' onClick={handleDislike}>{isDisliked? <FaThumbsDown/> : <FaRegThumbsDown/>}</button>}
           <p>{{dislikes} && dislikes?.length || 0}</p>
         </div>
     </div>
