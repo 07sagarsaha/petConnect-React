@@ -20,7 +20,7 @@ function SideNav() {
   };
   return (
     <div className="w-1/5 h-screen sticky  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b bg-[#da80ea] max-w-[250px] min-w-[200px]">
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col text-left gap-12">
         <Nav title="Home" icon={home} to="/in/home" />
         <Nav title="Profile" icon={user} to="/in/profile" />
         <Nav title="Ai Chat" icon={ai} to="/in/ai-chat" />

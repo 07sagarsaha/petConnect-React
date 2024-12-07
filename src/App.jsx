@@ -7,14 +7,14 @@ import "../src/App.css"
 function App() {
   const { userLoggedIn } = useAuth();
   return (
-    <div>
+    <div className="bg-[#e0e0e0]">
       {!userLoggedIn && <Navigate to={"/"} replace={true} />}
       <div className="flex flex-row justify-start">
         <div className="fixed">
           <SideNav />
         </div>
-        <div className=" min-[calc(100vw - 200px)] bg-[#e0e0e0] max-[calc(100vw - 250px)] ml-[200px] ">
-          <Outlet />
+        <div className=" w-3/5 min-[calc(100vw - 200px)] bg-[#e0e0e0] max-[calc(100vw - 250px)] ml-[200px] ">
+        <Outlet />
         </div>
       </div>
     </div>

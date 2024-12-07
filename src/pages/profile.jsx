@@ -69,7 +69,7 @@ const user = auth.currentUser;
 
   return (
     <>
-      <div className="m-5 ml-[19px] bg-[#eeeeee] rounded-lg shadow-lg p-5 w-full relative z-10">
+      <div className="m-5 ml-[19px] bg-[#e0e0e0] rounded-lg shadow-lg w-full p-5 z-10">
         <div className="flex flex-col items-center justify-center text-center mb-[19px]">
           <div className="relative object-cover w-full h-[200px] mb-[20px]">
             <img src={bg} className="w-full rounded-lg h-full object-cover" alt="Background" />
