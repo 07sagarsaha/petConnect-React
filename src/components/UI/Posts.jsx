@@ -147,7 +147,7 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
         await addDoc(commentsRef, {
           content: newComment,
           userId: auth.currentUser.uid,
-          userHandle: auth.currentUser.displayName,
+          userHandle: handle,
           likes: [],
           dislikes: [],
           createdAt: serverTimestamp()
