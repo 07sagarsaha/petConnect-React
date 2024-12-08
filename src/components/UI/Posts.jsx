@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaRegThumbsDown, FaRegThumbsUp, FaThumbsDown, FaThumbsUp } from 'react-icons/fa6';
 import { auth, db } from '../../firebase/firebase';
-import { arrayRemove, arrayUnion, doc, updateDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, updateDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, getDoc } from 'firebase/firestore';
 import { IoMdClose } from 'react-icons/io';
 import { BiCommentDetail } from 'react-icons/bi';
 
@@ -141,13 +141,16 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
     const handleAddComment = async (e) => {
       e.preventDefault();
       if (!newComment.trim() || !auth.currentUser) return;
+
+      const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+      const userData = userDoc.exists() ? userDoc.data() : { handle: 'Unknown' };
   
       try {
         const commentsRef = collection(db, 'posts', id, 'comments');
         await addDoc(commentsRef, {
           content: newComment,
           userId: auth.currentUser.uid,
-          userHandle: handle,
+          userHandle: userData.handle,
           likes: [],
           dislikes: [],
           createdAt: serverTimestamp()
@@ -225,7 +228,7 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
                 </button>
             </form>
             <h3 className="text-lg font-bold my-2 mx-[5%]">Comments: {commentCount}</h3>
-            <div className="comments-section mt-4 max-h-[300px] mx-[5%] overflow-y-auto">
+            <div className="comments-section mt-4 max-h-[40%] mx-[5%] overflow-y-auto">
               <div className="space-y-2">
                 {comments.map((comment) => (
                   <div key={comment.id} className="bg-gray-50 p-3 rounded">
