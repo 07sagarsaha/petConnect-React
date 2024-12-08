@@ -198,16 +198,16 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
                   <span>{handle} posted on</span>
                   <span className="ml-2">{date}:</span>
                 </div>
-                <h2 className="text-2xl mt-3 font-bold">{title}</h2>
-                <p className='text-lg mt-2'>{content}</p>
+                <h2 className="text-2xl mt-3 font-bold overflow-x-auto max-w-[80%]">{title}</h2>
+                <p className='text-lg mt-2 overflow-x-auto max-w-[80%]'>{content}</p>
 
                 <div className="flex mt-4 items-center gap-4">
                   <button onClick={handleLike}>
-                    {isCommentLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
+                    {isLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
                   </button>
                   <span>{likes?.length || 0} likes</span>
                   <button onClick={handleDislike}>
-                    {isCommentDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
+                    {isDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
                   </button>
                   <span>{dislikes?.length || 0} dislikes</span>
                 </div>
