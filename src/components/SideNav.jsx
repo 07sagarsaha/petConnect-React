@@ -19,7 +19,7 @@ function SideNav() {
     });
   };
   return (
-    <div className="w-1/5 h-screen sticky  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b bg-[#da80ea] max-w-[250px] min-w-[200px]">
+    <div className="w-auto sm:p-4 p-[7px] h-[100vh] sticky  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b bg-[#da80ea] max-w-[250px] sm:min-w-[200px]">
       <div className="flex flex-col text-left gap-12">
         <Nav title="Home" icon={home} to="/in/home" />
         <Nav title="Profile" icon={user} to="/in/profile" />
@@ -32,7 +32,7 @@ function SideNav() {
         style={{ display: showLogout ? "flex" : "none" }}
       >
         <img src={logout} className="w-8 h-8" alt="logout" />
-        <button onClick={handleLogout}>Logout</button>
+        <button onClick={handleLogout} className="hidden sm:flex">Logout</button>
       </div>
     </div>
   );
