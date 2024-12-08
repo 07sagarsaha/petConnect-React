@@ -3,7 +3,7 @@ import { FaRegThumbsDown, FaRegThumbsUp, FaThumbsDown, FaThumbsUp } from 'react-
 import { auth, db } from '../../firebase/firebase';
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 
-const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dislikes = []}) => {
+const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes = []}) => {
     const severityEmojis = {
         1: '😃 (very good)', // Very happy
         2: '🙂 (good)', // Happy
@@ -61,7 +61,7 @@ const Posts = ({id, handle, title, content, sevVal, date, width, likes = [], dis
 
   return (
     <>
-    <div key={id} className={`text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[${width}] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}>
+    <div key={id} className={`text-xl bg-[#e0e0e0] relative p-6 m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-[100%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}>
     <p className='text-sm text-gray-500 absolute top-0 right-0 p-4'>{date}</p>
         <p className='text-[15px] text-gray-500'>{handle} posted:</p>
         <h1 className='text-[21px] font-bold py-4'>{title}</h1>
