@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaRegThumbsDown, FaRegThumbsUp, FaThumbsDown, FaThumbsUp } from 'react-icons/fa6';
 import { auth, db } from '../../firebase/firebase';
-import { arrayRemove, arrayUnion, doc, updateDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, getDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, updateDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, getDoc, runTransaction } from 'firebase/firestore';
 import { IoMdClose } from 'react-icons/io';
 import { BiCommentDetail } from 'react-icons/bi';
 
@@ -94,23 +94,51 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
       }
     };
 
-    const handleCommentLike = async (commentId) => {
-      if (!auth.currentUser || !id || !commentId) return; // Add extra validation
+    /*const handleCommentLike = async () => {
+      if (!auth.currentUser || !id || !comments.id) {
+          console.log('Missing required data');
+          return;
+      }
+  
+      const commentRef = doc(db, 'posts', String(id), 'comments', String(comments.id));
       
-      const commentRef = doc(db, 'posts', String(id), 'comments', String(commentId));
       try {
-        if (isCommentDisliked) {
-          await updateDoc(commentRef, {
-            dislikes: arrayRemove(auth.currentUser.uid),
-            likes: arrayUnion(auth.currentUser.uid)
+          // Use a transaction to prevent race conditions
+          await runTransaction(db, async (transaction) => {
+              const commentDoc = await transaction.get(commentRef);
+              
+              if (!commentDoc.exists()) {
+                  throw new Error('Comment does not exist!');
+              }
+  
+              const commentData = commentDoc.data();
+              const userId = auth.currentUser.uid;
+              const likes = commentData.likes || [];
+              const dislikes = commentData.dislikes || [];
+  
+              const newData = {};
+  
+              if (dislikes.includes(userId)) {
+                  // If disliked, remove dislike and add like
+                  newData.dislikes = dislikes.filter(id => id !== userId);
+                  newData.likes = [...likes, userId];
+              } else if (likes.includes(userId)) {
+                  // If already liked, remove like
+                  newData.likes = likes.filter(id => id !== userId);
+              } else {
+                  // If neither liked nor disliked, add like
+                  newData.likes = [...likes, userId];
+              }
+  
+              transaction.update(commentRef, newData);
           });
-        } else {
-          await updateDoc(commentRef, {
-            likes: isCommentLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid)
-          });
-        }
+  
+          // Update local state here if needed
+          
       } catch (error) {
-        console.error("Error updating comment like:", error);
+          console.error("Error updating comment like:", error);
+          // Add user feedback here
+          throw error; // Rethrow to handle in component
       }
     };
   
@@ -132,7 +160,7 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
       } catch (error) {
         console.error("Error updating comment dislike:", error);
       }
-    };
+    };*/
 
     const handlePost = () => {
       setIsPostClicked(!isPostClicked);
@@ -243,11 +271,11 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
                       <button onClick={handleCommentLike}>
                         {isCommentLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
                       </button>
-                      <span>{comments.likes?.length || 0} likes</span>
+                      <span>{comment.likes?.length || 0} likes</span>
                       <button onClick={handleCommentDislike}>
                         {isCommentDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
                       </button>
-                      <span>{comments.dislikes?.length || 0} dislikes</span>
+                      <span>{comment.dislikes?.length || 0} dislikes</span>
                     </div>*/}
                   </div>
                 ))}
