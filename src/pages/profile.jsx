@@ -6,7 +6,7 @@ import Posts from "../components/UI/Posts";
 import { format } from "date-fns";
 
 function Profile() {
-  const [pfp, setPfp] = useState("/src/icons/pfp.png");
+  const [profile, setProfile] = useState();
   const [bg, setBG] = useState("/src/Assets/background.jpg");
   const [userData, setUserData] = useState();
   const [post, setPost] = useState([]);
@@ -60,11 +60,8 @@ const user = auth.currentUser;
     }
   };
 
-  const handlePicChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPfp(URL.createObjectURL(file)); // Use setPfp to update profile pic
-    }
+  const handleProfileChange = () => {
+    setProfile(!profile);
   };
 
   return (
@@ -88,7 +85,7 @@ const user = auth.currentUser;
               </label>
             </div>
           </div>
-          <img className="w-[150px] h-[150px] rounded-full" src={pfp} alt="Profile" />
+          <img className="w-[150px] h-[150px] rounded-full" src={'/src/icons/pfp.png'} alt="Profile" />
           <h1 className="text-center">{userData?.name || 'loading...'}</h1>
           <h1 className="text-center">{userData?.handle || 'loading...'}</h1>
 
@@ -97,9 +94,8 @@ const user = auth.currentUser;
               className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"
               htmlFor="upload"
             >
-              <input
-                type="file"
-                onChange={handlePicChange}
+              <button
+                onChange={handleProfileChange}
                 id="upload"
                 className="hidden"
               />

@@ -19,8 +19,8 @@ function SideNav() {
     });
   };
   return (
-    <div className="w-auto sm:p-4 p-[7px] h-[100vh] sticky  flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b bg-[#da80ea] max-w-[250px] sm:min-w-[200px]">
-      <div className="flex flex-col text-left gap-12">
+    <div className="w-auto sm:p-4 p-[7px] h-screen fixed flex flex-col justify-evenly items-center rounded-r-xl bg-gradient-to-b bg-[#da80ea] sm:min-w-[200px]">
+      <div className="flex flex-col text-left gap-12 transition-all ease duration-200">
         <Nav title="Home" icon={home} to="/in/home" />
         <Nav title="Profile" icon={user} to="/in/profile" />
         <Nav title="Ai Chat" icon={ai} to="/in/ai-chat" />
