@@ -69,26 +69,32 @@ const Button = ({buttonName, icon, submitName, howMuchCurve}) => {
 
   return (
     <>
-    <div id='submit' onClick={isClicked ? null : handleClickEvent} disabled={isClicked} className={`text-xl relative z-10 p-4 m-8 flex justify-center items shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max min-h-12 w-max min-w-20 rounded-2xl hover:bg-[#da80ea] bg-[#e0e0e0] text-[#da80ea] hover:text-[#e0e0e0] hover:shadow-[11px_11px_19px_#d0d0d0,-11px_-11px_19px_#f0f0f0] transition-all ease-in-out animate-postButtonAnim1 duration-700 ${isClicked && `min-w-[55rem] min-h-[42rem] text-[210%]`}`}>
-      {isClicked ? "" : icon}
-      {buttonName}
-      <button className={`text-3xl absolute top-0 right-0 p-2 rounded-lg hover:text-red-600 animate-postButtonAnim2 transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleClickEvent}>{isClicked && 'x'}</button>
-      <input type='text' placeholder={`What's on your mind?`} value={title} className={`h-max w-[50rem] outline-none text-xl rounded-lg p-4 text-black top-20 items-center animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setTitle(e.target.value)}></input>
-      <textarea placeholder={`Describe some more...`} value={content} className={`h-44 w-[50rem] outline-none text-xl rounded-lg p-4 text-gray-600 top-40 items-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`} onChange={(e) => setContent(e.target.value)}></textarea>
-      <label htmlFor='sevScale' className={`h-20 w-[35rem] outline-none text-xl rounded-lg p-2 text-gray-600 top-80 mt-12 bg-white self-start animate-postButtonAnim1 absolute shadow-Uni ${!isClicked && `hidden`}`}> Severity Scale:{' '}
-            {sevVal === 1
-              ? '😃 (very good)'
-              : sevVal === 2
-              ? '🙂 (good)'
-              : sevVal === 3
-              ? '😐 (neutral)'
-              : sevVal === 4
-              ? '😨 (not good)'
-              : '😭 (contact vet)'
-              }
-              </label>
-      <input type="range" min={1} max={5} value={sevVal} id='sevScale' className={`h-9 w-[30rem] outline-none text-xl rounded-md  p-2 text-gray-600 top-80 bg-white mt-20 self-start animate-postButtonAnim1 absolute ${!isClicked && `hidden`}`} onChange={(e) => setSevVal(parseInt(e.target.value))}></input>
-      <button type='submit' className={`bg-white absolute bottom-0 right-0 text-black p-4 m-8 animate-postButtonAnim1 shadow-Uni hover:shadow-lg rounded-lg transition-all duration-500 ${!isClicked && `hidden`}`} onClick={handleSubmit}>{submitName}</button>
+    <div onClick={isClicked ? null : handleClickEvent} className={`relative flex text-[#da80ea] hover:text-[#e0e0e0] z-10 p-4 m-8 max-sm:m-4 max-sm:text-[24px] justify-center items-center transition-all shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] rounded-2xl w-52 h-16 ease-in-out animate-postButtonAnim1 duration-700 ${isClicked 
+              ? `bg-purple-300 text-[210%] text-white hover:text-white flex-col gap-4 w-[100%] h-[62vh] max-sm:w-[90%]` 
+              : `text-xl  max-sm:w-[90%] hover:bg-[#da80ea] bg-[#e0e0e0]  hover:shadow-[11px_11px_19px_#d0d0d0,-11px_-11px_19px_#f0f0f0]`}`}>
+      
+      <p className={`${isClicked ? `absolute top-4 self-center` : `relative ml-[-50px]`}`}>{buttonName}</p>
+      <div className={`ml-3 absolute top-0 right-0 px-4 py-[1.1rem] rounded-lg transition-all duration-500 ${isClicked && `rotate-45 text-white hover:text-red-600`}`} onClick={handleClickEvent}>{icon}</div>
+      {isClicked 
+            &&(<>
+            <input type='text' placeholder={`What's on your mind?`} value={title} className={`w-[95%] mt-[-25px] max-sm:max-w-[95%] outline-none text-xl rounded-lg p-4 text-black animate-postButtonAnim1 shadow-Uni`} onChange={(e) => setTitle(e.target.value)}></input>
+            <textarea placeholder={`Describe some more...`} value={content} className={`h-44 w-[95%] max-sm:max-w-[95%] outline-none text-xl rounded-lg p-4 text-gray-600 animate-postButtonAnim1 shadow-Uni`} onChange={(e) => setContent(e.target.value)}></textarea>
+            <div className={`w-[95%] mb-5 relative pl-4 flex-col justify-center items-start rounded-lg py-2 max-sm:max-w-[95%] text-gray-600 bg-white animate-postButtonAnim1 shadow-Uni transition-all duration-100`}>
+              <p htmlFor='sevScale' className='text-xl relative'> Severity Scale:{' '}
+                  {sevVal === 1
+                    ? '😃 (very good)'
+                    : sevVal === 2
+                    ? '🙂 (good)'
+                    : sevVal === 3
+                    ? '😐 (neutral)'
+                    : sevVal === 4
+                    ? '😨 (not good)'
+                    : '😭 (contact vet)'
+                    }
+                    </p>
+              <input type="range" min={1} max={5} value={sevVal} id='sevScale' className={`relative text-gray-600 animate-postButtonAnim1 w-56 max-sm:w-[10rem]`} onChange={(e) => setSevVal(parseInt(e.target.value))}/>
+            </div>
+            <button type='submit' className={`text-[24px] bg-white absolute bottom-0 right-0 text-black p-4 m-8 animate-postButtonAnim1 shadow-Uni hover:shadow-lg rounded-lg transition-all duration-500`} onClick={handleSubmit}>{submitName}</button></>)}
     </div>
     </>
   )

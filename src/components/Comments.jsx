@@ -3,7 +3,7 @@ import { FaRegThumbsDown, FaRegThumbsUp, FaThumbsDown, FaThumbsUp } from 'react-
 import { arrayRemove, arrayUnion, doc, updateDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, getDoc, runTransaction } from 'firebase/firestore';
 import { IoMdClose } from 'react-icons/io';
 import { BiCommentDetail } from 'react-icons/bi';
-import { auth, db } from '../src/firebase/firebase';
+import { auth, db } from '../firebase/firebase';
 
 const CommentDisplay = ({postID, handle, date, title, content, likes = [], dislikes = []}) => {
     const isLiked = likes?.includes(auth.currentUser?.uid);
