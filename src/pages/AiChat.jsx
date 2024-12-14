@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 
 const AiChat = () => {
-  const API_KEY = "AIzaSyBUt_rOkHDpGtiS2KFxOr05k4CiSsv_AzQ";
+  const API_KEY = import.meta.env.VITE_API_KEY2;
   const [question, setQuestion] = useState("");
   const [chatLog, setChatLog] = useState([]);
   async function getResponse() {
