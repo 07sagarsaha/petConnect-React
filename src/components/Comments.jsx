@@ -98,14 +98,14 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
 
     return (
         <><div className='h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#808080ab] transition-colors duration-200'>
-            <div className='h-4/5 w-5/6 absolute rounded-xl bg-[#e0e0e0] flex flex-col shadow-xl overflow-hidden'>
+            <div className='h-4/5 w-[90%] absolute rounded-xl bg-[#e0e0e0] flex flex-col shadow-xl overflow-hidden'>
 
                 {/*<h1 className='text-2xl flex mt-3 justify-center'>Post</h1>*/}
 
                 <div className="pt-6 pb-6 ml-[5%] rounded-lg max-w-screen-2xl w-full max-h-[90vh]">
-                    <div className="text-sm text-gray-600">
-                    <span>{handle} posted on</span>
-                    <span className="ml-2">{date}:</span>
+                    <div className="text-sm px-1 text-gray-600">
+                      <span>{handle} posted</span>
+                      <span className="ml-2">on {date}:</span>
                     </div>
                     <h2 className="text-xl mt-3 font-bold overflow-x-auto max-w-[80%]">{title}</h2>
                     <p className='text-[15px] mt-2 overflow-x-auto max-w-[95%]'>{content}</p>

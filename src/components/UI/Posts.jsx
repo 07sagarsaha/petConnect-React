@@ -176,7 +176,7 @@ const Posts = ({id, handle, title, content, sevVal, date, likes = [], dislikes =
 
   return (
     <>
-      <div key={id} className="text-lg sm:text-xl bg-[#e0e0e0] relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-fit sm:w-[100%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200">
+      <div key={id} className="text-lg sm:text-xl bg-[#e0e0e0] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-fit max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200">
       <p className='text-[18px] sm:top-0 max-sm:text-[15px] text-gray-500'>{handle} posted:</p>
         <p className='max-sm:text-sm text-[15px] text-gray-500 max-sm:relative absolute sm:right-0 top-0 sm:p-4'>{date}</p>
         <h1 className='text-[19px] sm:text-[21px] font-bold py-4'>{title}</h1>
