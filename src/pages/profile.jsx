@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Button from "../context/authContext/button";
 import { auth, db } from "../firebase/firebase";
-import { collection, doc, getDoc, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+  updateDoc,
+} from "firebase/firestore";
 import Posts from "../components/UI/Posts";
 import { format } from "date-fns";
 
@@ -10,46 +19,85 @@ function Profile() {
   const [bg, setBG] = useState("/src/Assets/background.jpg");
   const [userData, setUserData] = useState();
   const [post, setPost] = useState([]);
+  const [profilePic, setProfilePic] = useState("/src/icons/pfp.png");
+
+  const handleProfilePicUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "Pet-connect");
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/dagtbrme6/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await res.json();
+
+      if (data.secure_url) {
+        setProfilePic(data.secure_url);
+
+        // Update user profile in Firestore
+        if (user) {
+          const userRef = doc(db, "users", user.uid);
+          await updateDoc(userRef, {
+            profilePic: data.secure_url,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+    }
+  };
 
   useEffect(() => {
     const q = query(
-        collection(db, 'posts'),
-        where('userId', '==', user.uid),
-        orderBy('createdAt', 'desc')
+      collection(db, "posts"),
+      where("userId", "==", user.uid),
+      orderBy("createdAt", "desc")
     );
-    
+
     // Create real-time listener
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-        const postData = await Promise.all(snapshot.docs.map(async (postDoc) => {
-              const postData = postDoc.data();
-              return {
-                id: postDoc.id,
-                ...postData,
-            };
-        }));
-        setPost(postData);
+      const postData = await Promise.all(
+        snapshot.docs.map(async (postDoc) => {
+          const postData = postDoc.data();
+          return {
+            id: postDoc.id,
+            ...postData,
+          };
+        })
+      );
+      setPost(postData);
     });
 
     // Cleanup subscription on unmount
     return () => unsubscribe();
-}, []);
+  }, []);
 
-const user = auth.currentUser;
+  const user = auth.currentUser;
 
   useEffect(() => {
-    const fetchUser = async ()=>{
-      try{
-        if(user){
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if(userDoc.exists()){
-            setUserData(userDoc.data())
+    const fetchUser = async () => {
+      try {
+        if (user) {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUserData(userData);
+            setProfilePic(userData.profilePic || "/src/icons/pfp.png");
           }
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Error fetching profile:", error);
       }
     };
+
     fetchUser();
   }, []);
 
@@ -69,7 +117,11 @@ const user = auth.currentUser;
       <div className="m-5 ml-[19px] bg-[#e0e0e0] rounded-lg shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] w-full p-5 z-10">
         <div className="flex flex-col items-center justify-center text-center mb-[19px]">
           <div className="relative object-cover w-full h-[200px] mb-[20px]">
-            <img src={bg} className="w-full rounded-lg h-full object-cover" alt="Background" />
+            <img
+              src={bg}
+              className="w-full rounded-lg h-full object-cover"
+              alt="Background"
+            />
             <div className="absolute top-2 right-2">
               <label
                 className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"
@@ -85,21 +137,29 @@ const user = auth.currentUser;
               </label>
             </div>
           </div>
-          <img className="w-[150px] h-[150px] rounded-full" src={'/src/icons/pfp.png'} alt="Profile" />
-          <h1 className="text-center">{userData?.name || 'loading...'}</h1>
-          <h1 className="text-center">{userData?.handle || 'loading...'}</h1>
+          <img
+            className="w-[150px] h-[150px] rounded-full"
+            src={profilePic}
+            alt="Profile"
+          />
+          <h1 className="text-center">{userData?.name || "loading..."}</h1>
+          <h1 className="text-center">
+            {"@" + userData?.handle || "loading..."}
+          </h1>
 
           <div className="flex justify-center mt-4">
             <label
               className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"
-              htmlFor="upload"
+              htmlFor="profilePicUpload"
             >
-              <button
-                onChange={handleProfileChange}
-                id="upload"
+              <input
+                type="file"
+                id="profilePicUpload"
                 className="hidden"
+                accept="image/*"
+                onChange={handleProfilePicUpload}
               />
-              Edit profile
+              Upload Profile Picture
             </label>
           </div>
 
@@ -153,17 +213,21 @@ const user = auth.currentUser;
       <div>
         <h1 className="p-8 text-3xl">Your Posts:</h1>
         {post.map((post) => (
-        <Posts
-          id={post.id}
-          handle={post.handle}
-          title={post.title}
-          content={post.content}
-          sevVal={post.sevVal}
-          date={post.createdAt ? format(post.createdAt.toDate(), 'PPP') : 'No date'}
-          likes={post.likes || []}
-          dislikes={post.dislikes || []}
-        />
-      ))}
+          <Posts
+            id={post.id}
+            handle={post.handle}
+            title={post.title}
+            content={post.content}
+            sevVal={post.sevVal}
+            date={
+              post.createdAt
+                ? format(post.createdAt.toDate(), "PPP")
+                : "No date"
+            }
+            likes={post.likes || []}
+            dislikes={post.dislikes || []}
+          />
+        ))}
       </div>
     </>
   );
