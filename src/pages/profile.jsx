@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import Posts from "../components/UI/Posts";
 import { format } from "date-fns";
+import { IoMdClose } from "react-icons/io";
 
 function Profile() {
   const [profile, setProfile] = useState();
@@ -20,6 +21,7 @@ function Profile() {
   const [userData, setUserData] = useState();
   const [post, setPost] = useState([]);
   const [profilePic, setProfilePic] = useState("/src/icons/pfp.png");
+  const [isPFPClicked, setIsPFPClicked] = useState(false);
 
   const handleProfilePicUpload = async (e) => {
     const file = e.target.files[0];
@@ -112,6 +114,10 @@ function Profile() {
     setProfile(!profile);
   };
 
+  const handleProfileClick = () => {
+    setIsPFPClicked(!isPFPClicked);
+  }
+
   return (
     <>
       <div className="m-5 ml-[19px] bg-[#e0e0e0] rounded-lg shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] w-full p-5 z-10">
@@ -137,10 +143,20 @@ function Profile() {
               </label>
             </div>
           </div>
+          {(isPFPClicked && profilePic) && <>
+                      <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
+                        <IoMdClose
+                            className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
+                            onClick={handleProfileClick}
+                        />
+                        <img src={profilePic} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl shadow-Uni max-sm:shadow-transparent"/>
+                      </div>
+          </>}
           <img
-            className="w-[150px] h-[150px] rounded-full"
+            className="w-[150px] h-[150px] rounded-full object-cover"
             src={profilePic}
             alt="Profile"
+            onClick={handleProfileClick}
           />
           <h1 className="text-center">{userData?.name || "loading..."}</h1>
           <h1 className="text-center">

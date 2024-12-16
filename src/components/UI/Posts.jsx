@@ -177,9 +177,9 @@ const Posts = ({
       }
     };*/
 
-    const handleImageClick = () => {
-      setIsImageClicked(!isImageClicked);
-    }
+  const handleImageClick = () => {
+    setIsImageClicked(!isImageClicked);
+  }
 
   const handlePost = () => {
     setIsPostClicked(!isPostClicked);
