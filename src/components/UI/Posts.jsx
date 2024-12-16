@@ -194,7 +194,7 @@ const Posts = ({
                   className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
                   onClick={handleImageClick}
               />
-              <img src={imageUrl} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl animate-postButtonAnim1 shadow-Uni max-sm:shadow-transparent"/>
+              <img src={imageUrl} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl animate-postAnim1 max-sm:shadow-transparent"/>
             </div>
         </>}
       <div
@@ -215,14 +215,14 @@ const Posts = ({
           {date}
         </p>
         <h1 className="text-[19px] sm:text-[21px] font-bold py-4">{title}</h1>
-        <h2 className="text-[16px] sm:text-[19px] text-gray-700 font-semibold">
+        <h2 className="text-[16px] sm:text-[19px] text-gray-700 font-semibold pb-4">
           {content}
         </h2>
         {imageUrl && (
           <div className="aspect-video w-full h-[500px] max-sm:h-full relative overflow-hidden rounded-xl">
             <img src={imageUrl} 
                 alt="Post" 
-                className="absolute w-full h-full rounded-xl hover:shadow-Uni transition-all ease duration-300 object-cover" 
+                className="absolute w-full h-full rounded-xl object-cover" 
                 onClick={handleImageClick}/>
           </div>
         )}

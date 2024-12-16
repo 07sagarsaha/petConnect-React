@@ -149,7 +149,7 @@ function Profile() {
                             className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
                             onClick={handleProfileClick}
                         />
-                        <img src={profilePic} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl shadow-Uni max-sm:shadow-transparent"/>
+                        <img src={profilePic} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl animate-postAnim1 max-sm:shadow-transparent"/>
                       </div>
           </>}
           <img
