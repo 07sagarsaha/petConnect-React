@@ -47,30 +47,9 @@ const Posts = ({
 
   const isLiked = likes?.includes(auth.currentUser?.uid);
   const isDisliked = dislikes?.includes(auth.currentUser?.uid);
-  const [commentLikes, setCommentLikes] = useState({});
-  const [commentDislikes, setCommentDislikes] = useState({});
   const [isPostClicked, setIsPostClicked] = useState(false);
-  const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState([]);
   const [commentCount, setCommentCount] = useState(0);
-
-  useEffect(() => {
-    const commentsRef = collection(db, "posts", id, "comments");
-    const q = query(commentsRef);
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setCommentCount(snapshot.size);
-    });
-
-    return () => unsubscribe();
-  }, [id]);
-
-  const isCommentLiked = commentLikes[comments.id]?.includes(
-    auth.currentUser?.uid
-  );
-  const isCommentDisliked = commentDislikes[comments.id]?.includes(
-    auth.currentUser?.uid
-  );
+  const [isImageClicked, setIsImageClicked] = useState(false);
 
   const handleLike = async () => {
     if (!auth.currentUser) return;
@@ -115,6 +94,20 @@ const Posts = ({
       console.error("Error updating dislike:", error);
     }
   };
+
+  useEffect(() => {
+            const commentsRef = collection(db, 'posts', id, 'comments');
+            const q = query(commentsRef, orderBy('createdAt', 'desc'));
+            
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+              const commentsData = snapshot.docs.map(doc => ({
+                id: doc.id,
+              }));
+              setCommentCount(snapshot.size);
+            });
+    
+            return () => unsubscribe();
+  }, [id]);
 
   /*const handleCommentLike = async () => {
       if (!auth.currentUser || !id || !comments.id) {
@@ -184,38 +177,29 @@ const Posts = ({
       }
     };*/
 
+    const handleImageClick = () => {
+      setIsImageClicked(!isImageClicked);
+    }
+
   const handlePost = () => {
     setIsPostClicked(!isPostClicked);
   };
-
-  const handleAddComment = async (e) => {
-    e.preventDefault();
-    if (!newComment.trim() || !auth.currentUser) return;
-
-    const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
-    const userData = userDoc.exists() ? userDoc.data() : { handle: "Unknown" };
-
-    try {
-      const commentsRef = collection(db, "posts", id, "comments");
-      await addDoc(commentsRef, {
-        content: newComment,
-        userId: auth.currentUser.uid,
-        userHandle: userData.handle,
-        likes: [],
-        dislikes: [],
-        createdAt: serverTimestamp(),
-      });
-      setNewComment("");
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    }
-  };
+  
 
   return (
     <>
+      {(isImageClicked && imageUrl) && <>
+            <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
+              <IoMdClose
+                  className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
+                  onClick={handleImageClick}
+              />
+              <img src={imageUrl} alt="Image" className="h-4/5 max-sm:w-[auto w-max m-12 object-contain rounded-2xl shadow-Uni"/>
+            </div>
+        </>}
       <div
         key={id}
-        className="text-lg sm:text-xl bg-[#e0e0e0] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-fit max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200"
+        className="text-lg sm:text-xl bg-[#e0e0e0] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-[100%] max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200"
       >
         <div className="flex flex-row gap-2 items-center">
           <img
@@ -235,7 +219,7 @@ const Posts = ({
           {content}
         </h2>
         {imageUrl && (
-          <img src={imageUrl} alt="Post" className="w-full rounded-xl" />
+          <img src={imageUrl} alt="Post" className="w-[60%] max-sm:w-[80%] h-auto rounded-xl hover:shadow-Uni transition-all ease duration-300" onClick={handleImageClick}/>
         )}
         <div className="pt-2 flex justify-between">
           {sevVal && (

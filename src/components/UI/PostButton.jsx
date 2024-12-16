@@ -28,6 +28,14 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
       name: "Post_Image",
       url: "https://api.cloudinary.com/v1_1/dspxe3n3r/image/upload",
     },
+    {
+      name: "Post_Image",
+      url: "https://api.cloudinary.com/v1_1/dzyzdbf5s/image/upload",
+    },
+    {
+      name: "Post_Image",
+      url: "https://api.cloudinary.com/v1_1/dfhlildqv/image/upload",
+    },
   ];
   const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
   const getNextAccount = () => {
@@ -48,6 +56,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     if (isClicked) {
       setTitle("");
       setContent("");
+      setImageFile(null);
       setSevVal(3);
     }
   }

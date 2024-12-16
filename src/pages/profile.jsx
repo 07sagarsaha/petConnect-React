@@ -219,6 +219,8 @@ function Profile() {
             title={post.title}
             content={post.content}
             sevVal={post.sevVal}
+            profilePic={userData.profilePic || null}
+            imageUrl={post.imageUrl}
             date={
               post.createdAt
                 ? format(post.createdAt.toDate(), "PPP")
