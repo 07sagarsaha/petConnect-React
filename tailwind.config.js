@@ -18,14 +18,14 @@ export default {
           '100%':{transform: 'translateX(0%)', opacity: '1'}
         },
         postAnim3:{
-          '0%':{transform: 'translateY(-1000%)', opacity: '0'},
+          '0%':{transform: 'translateY(100%)', opacity: '0'},
           '100%':{transform: 'translateY(0%)', opacity: '1'}
         },
       },
       animation:{
         'postButtonAnim1':'postAnim 1s ease',
         'postButtonAnim2':'postAnim2 1s ease',
-        'postAnim3':'postAnim3 1s ease-in-out',
+        'postAnim3':'postAnim3 0.75s ease-in-out',
       },
     },
   },
