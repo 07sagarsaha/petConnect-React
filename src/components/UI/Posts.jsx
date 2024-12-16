@@ -194,18 +194,18 @@ const Posts = ({
                   className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
                   onClick={handleImageClick}
               />
-              <img src={imageUrl} alt="Image" className="h-4/5 max-sm:w-[auto w-max m-12 object-contain rounded-2xl shadow-Uni max-sm:shadow-transparent"/>
+              <img src={imageUrl} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl shadow-Uni max-sm:shadow-transparent"/>
             </div>
         </>}
       <div
         key={id}
-        className="text-lg sm:text-xl bg-[#e0e0e0] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-[100%] max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200"
+        className={`text-lg sm:text-xl bg-[#e0e0e0] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-[80%] max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}
       >
         <div className="flex flex-row gap-2 items-center">
           <img
             src={profilePic || pfp}
             alt="profile pic"
-            className="sm:w-10 sm:h-10 w-8 h-8 rounded-full "
+            className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover"
           />
           <p className="text-[18px] sm:top-0 max-sm:text-[15px] text-gray-500">
             {handle} posted:
@@ -219,7 +219,12 @@ const Posts = ({
           {content}
         </h2>
         {imageUrl && (
-          <img src={imageUrl} alt="Post" className="w-[60%] max-sm:w-[80%] h-auto rounded-xl hover:shadow-Uni transition-all ease duration-300" onClick={handleImageClick}/>
+          <div className="aspect-video w-full h-[500px] max-sm:h-full relative overflow-hidden rounded-xl">
+            <img src={imageUrl} 
+                alt="Post" 
+                className="absolute w-full h-full rounded-xl hover:shadow-Uni transition-all ease duration-300 object-cover" 
+                onClick={handleImageClick}/>
+          </div>
         )}
         <div className="pt-2 flex justify-between">
           {sevVal && (
