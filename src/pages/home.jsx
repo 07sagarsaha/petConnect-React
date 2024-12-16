@@ -64,6 +64,7 @@ function Home() {
           title={post.title}
           content={post.content}
           sevVal={post.sevVal}
+          imageUrl={post.imageUrl}
           date={
             post.createdAt ? format(post.createdAt.toDate(), "PPP") : "No date"
           }

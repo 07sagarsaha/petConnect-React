@@ -35,6 +35,7 @@ const Posts = ({
   likes = [],
   dislikes = [],
   profilePic,
+  imageUrl = null,
 }) => {
   const severityEmojis = {
     1: "😃 (very good)", // Very happy
@@ -233,12 +234,16 @@ const Posts = ({
         <h2 className="text-[16px] sm:text-[19px] text-gray-700 font-semibold">
           {content}
         </h2>
+        {imageUrl && (
+          <img src={imageUrl} alt="Post" className="w-full rounded-xl" />
+        )}
         <div className="pt-2 flex justify-between">
           {sevVal && (
             <h2 className="text-[14px] sm:text-[17px] text-gray-700 py-4">
               Severity Index: {severityEmojis[sevVal]}
             </h2>
           )}
+
           <div className="flex justify-end gap-7">
             <div>
               <button
