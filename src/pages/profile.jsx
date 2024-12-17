@@ -14,6 +14,7 @@ import {
 import Posts from "../components/UI/Posts";
 import { format } from "date-fns";
 import { IoMdClose } from "react-icons/io";
+import ProfileEdit from "../components/ProfileEdit";
 
 function Profile() {
   const [profile, setProfile] = useState();
@@ -22,9 +23,11 @@ function Profile() {
   const [post, setPost] = useState([]);
   const [profilePic, setProfilePic] = useState("/src/icons/pfp.png");
   const [isPFPClicked, setIsPFPClicked] = useState(false);
+  const [isProfileEdit, setisProfileEdit] = useState(false);
 
-  const handleProfilePicUpload = async (e) => {
-    const file = e.target.files[0];
+  const handleProfileUpdate = () => {
+    setisProfileEdit(!isProfileEdit);
+    /*const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
@@ -54,7 +57,7 @@ function Profile() {
       }
     } catch (error) {
       console.error("Error uploading profile picture:", error);
-    }
+    }*/
   };
 
   useEffect(() => {
@@ -120,7 +123,7 @@ function Profile() {
 
   return (
     <>
-      <div className="m-5 ml-[19px] bg-[#e0e0e0] rounded-lg shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] w-full p-5 z-10">
+      <div className="m-5 ml-[19px] bg-[#e0e0e0] rounded-lg shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] w-[90%] p-5 z-10">
         <div className="flex flex-col items-center justify-center text-center mb-[19px]">
           <div className="relative object-cover w-full h-[200px] mb-[20px]">
             <img
@@ -164,20 +167,23 @@ function Profile() {
           </h1>
 
           <div className="flex justify-center mt-4">
-            <label
-              className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"
-              htmlFor="profilePicUpload"
-            >
-              <input
-                type="file"
+              <button
                 id="profilePicUpload"
-                className="hidden"
-                accept="image/*"
-                onChange={handleProfilePicUpload}
-              />
-              Upload Profile Picture
-            </label>
+                className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"
+                onClick={handleProfileUpdate}
+              >
+              Edit Your Profile
+              </button>
           </div>
+
+          {isProfileEdit && 
+            <>
+              <IoMdClose
+                className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
+                onClick={handleProfileUpdate}
+              />
+              <ProfileEdit image = {profilePic} name={userData?.name} handle={userData?.handle}/>
+            </>}
 
           <p>Bio about their users</p>
         </div>

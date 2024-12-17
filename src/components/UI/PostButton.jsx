@@ -92,10 +92,9 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
       }
       if (user) {
         const userDoc = await getDoc(doc(db, "users", user.uid));
-        const userData = userDoc.exists()
+        const userData = userDoc.exists() 
           ? userDoc.data()
           : { handle: "Unknown" };
-        console.log(userData.handle);
         const postRef = collection(db, "posts");
         await addDoc(postRef, {
           title,
