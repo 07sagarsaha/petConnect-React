@@ -98,17 +98,17 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
 
     return (
         <><div className='h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#808080ab] transition-colors duration-200'>
-            <div className='h-4/5 w-[90%] absolute rounded-xl bg-[#e0e0e0] flex flex-col shadow-xl overflow-hidden'>
+            <div className='h-4/5 w-[75%] absolute rounded-xl bg-[#e0e0e0] flex flex-col shadow-xl overflow-hidden'>
 
                 {/*<h1 className='text-2xl flex mt-3 justify-center'>Post</h1>*/}
 
                 <div className="pt-6 pb-6 ml-[5%] rounded-lg max-w-screen-2xl w-full max-h-[90vh]">
                     <div className="text-sm px-1 text-gray-600">
-                      <span>{handle} posted</span>
-                      <span className="ml-2">on {date}:</span>
+                      
+                      <span> {date}:</span>
                     </div>
                     <h2 className="text-xl mt-3 font-bold overflow-x-auto max-w-[80%]">{title}</h2>
-                    <p className='text-[15px] mt-2 overflow-x-auto max-w-[95%]'>{content}</p>
+                    <p className='text-[15px] mt-2 overflow-x-auto text-wrap max-w-[85%]'>{content}</p>
 
                     <div className="flex mt-4 items-center gap-4">
                     <button onClick={handleLike}>
@@ -133,11 +133,10 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
                     Comment
                     </button>
                 </form>
-                <div className="comments-section mt-4 max-h-[40%] mx-[5%] max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
-                <div className="space-y-2 flex flex-col items-start ml-2 gap-4">
-                    <h3 className="text-lg font-bold my-2 mx-[5%]">Comments: {commentCount}</h3>
+                <h3 className="text-lg font-bold mt-3 mx-[5%]">Comments: {commentCount}</h3>
+                <div className="comments-section my-3 flex flex-col items-start mx-[5%] max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
                     {comments.map((comment) => (
-                    <div key={comment.id} className="bg-[#e0e0e0] w-max my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
+                    <div key={comment.id} className="bg-[#e0e0e0] w-fit my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
                         <div className='flex justify-between gap-7'>
                         <p className="text-sm font-semibold">{comment.userHandle}</p>
                         <p className="text-xs text-gray-500">
@@ -157,7 +156,7 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
                         </div>*/}
                     </div>
                     ))}
-                </div>
+                
                 </div>
             </div>
         </div></>
