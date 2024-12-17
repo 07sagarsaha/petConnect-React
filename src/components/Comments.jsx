@@ -134,10 +134,10 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
                     </button>
                 </form>
                 <div className="comments-section mt-4 max-h-[40%] mx-[5%] max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
-                <div className="space-y-2 flex flex-col items-start ml-2 gap-5">
+                <div className="space-y-2 flex flex-col items-start ml-2 gap-4">
                     <h3 className="text-lg font-bold my-2 mx-[5%]">Comments: {commentCount}</h3>
                     {comments.map((comment) => (
-                    <div key={comment.id} className="bg-[#e0e0e0] w-full my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
+                    <div key={comment.id} className="bg-[#e0e0e0] w-max my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
                         <div className='flex justify-between gap-7'>
                         <p className="text-sm font-semibold">{comment.userHandle}</p>
                         <p className="text-xs text-gray-500">
