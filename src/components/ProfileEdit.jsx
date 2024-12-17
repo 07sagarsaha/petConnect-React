@@ -3,10 +3,11 @@ import { auth, db } from '../firebase/firebase';
 import { collection, doc, getDoc, query, updateDoc, where, getDocs } from 'firebase/firestore';
 import { BsPencil } from 'react-icons/bs';
 
-const ProfileEdit = ({image, name, handle}) => {
+const ProfileEdit = ({image, name, handle, bio}) => {
   const [profilePic, setProfilePic] = useState(image);
   const [changeName, setNameChange] = useState(name);
   const [changeHandle, setChangeHandle] = useState(handle);
+  const [changeBio, setChangeBio] = useState(bio);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -44,7 +45,7 @@ const ProfileEdit = ({image, name, handle}) => {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    if(!changeName.trim() || !changeHandle.trim()){
+    if(!(changeName.trim() || changeHandle.trim() || changeBio.trim())){
       alert("Change Your Name Or Handle!");
       return;
     }
@@ -57,6 +58,7 @@ const ProfileEdit = ({image, name, handle}) => {
         await updateDoc(userDoc, {
           name: changeName,
           handle: changeHandle,
+          bio: changeBio,
         });
         alert("Updated Successfully!");
       }
@@ -85,7 +87,7 @@ const ProfileEdit = ({image, name, handle}) => {
   return (
     <>
         <div className='h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#808080ab] transition-colors duration-200'>
-            <div className='h-4/5 w-1/2 absolute rounded-xl bg-[#e0e0e0] shadow-xl overflow-hidden'>
+            <div className='h-4/5 max-sm:h-[50%] w-1/2 max-sm:w-[80%] absolute rounded-xl bg-[#e0e0e0] shadow-xl overflow-hidden'>
               <h1 className='text-2xl mt-4'>Update Your Profile</h1>
               <div className='flex flex-row justify-center gap-6 mt-10 items-center'>
                 <img
@@ -110,14 +112,21 @@ const ProfileEdit = ({image, name, handle}) => {
                 placeholder={name}
                 value={changeName} 
                 type="text" 
-                className='w-[55%] max-sm:max-w-[95%] max-sm:h-[5vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-9'
+                className='w-[55%] max-sm:w-[75%] max-sm:h-[5vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-9'
                 onChange={(e) => setNameChange(e.target.value)}/>
               <input 
                 placeholder={handle}
                 value={changeHandle} 
                 type="text" 
-                className='w-[55%] max-sm:max-w-[95%] max-sm:h-[5vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-9'
+                className='w-[55%] max-sm:w-[75%] max-sm:h-[5vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-5'
                 onChange={(e) => setChangeHandle(e.target.value)}/>
+
+              <textarea 
+                placeholder={bio}
+                value={changeBio} 
+                type="text" 
+                className='w-[55%] max-sm:w-[75%] h-[10vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-5'
+                onChange={(e) => setChangeBio(e.target.value)}/>
 
               <button 
                 className='absolute bottom-10 right-10 text-lg p-3 m-[10px] ml-40 mt-32 rounded-xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700'
