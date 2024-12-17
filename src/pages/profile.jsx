@@ -179,13 +179,13 @@ function Profile() {
           {isProfileEdit && 
             <>
               <IoMdClose
-                className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
+                className="text-5xl fixed z-50 p-2 right-[25%] top-24 max-sm:right-16 max-sm:top-[25%] rounded-lg hover:text-red-600 transition-all duration-300"
                 onClick={handleProfileUpdate}
               />
-              <ProfileEdit image = {profilePic} name={userData?.name} handle={userData?.handle}/>
+              <ProfileEdit image = {profilePic} name={userData?.name} handle={userData?.handle} bio={userData?.bio || "Write something about you..."}/>
             </>}
 
-          <p>Bio about their users</p>
+          <p>{userData?.bio || "Bio is Empty"}</p>
         </div>
         <div className="flex justify-between mb-[20px]">
           <div>
