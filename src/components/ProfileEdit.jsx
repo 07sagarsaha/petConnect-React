@@ -86,10 +86,10 @@ const ProfileEdit = ({image, name, handle, bio}) => {
 
   return (
     <>
-        <div className='h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#808080ab] transition-colors duration-200'>
-            <div className='h-4/5 max-sm:h-[50%] w-1/2 max-sm:w-[80%] absolute rounded-xl bg-[#e0e0e0] shadow-xl overflow-hidden'>
+        <div className='h-full w-full left-0 justify-center items-center flex flex-row fixed top-0 z-40 bg-[#808080ab] transition-colors duration-200'>
+            <div className='h-4/5 max-sm:h-max w-1/2 max-sm:w-[80%] absolute rounded-xl bg-[#e0e0e0] shadow-xl overflow-hidden'>
               <h1 className='text-2xl mt-4'>Update Your Profile</h1>
-              <div className='flex flex-row justify-center gap-6 mt-10 items-center'>
+              <div className='flex flex-row justify-center gap-6 items-center'>
                 <img
                   className="w-[150px] h-[150px] rounded-full object-cover"
                   src={profilePic}
@@ -97,7 +97,7 @@ const ProfileEdit = ({image, name, handle, bio}) => {
                 />
                 <label 
                   htmlFor="profile_image" 
-                  className='text-lg p-3 m-[10px] absolute ml-40 mt-32 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700'>
+                  className='text-lg p-3 m-[10px] absolute ml-40 mt-32 rounded-full bg-[#e43d12] text-white hover:bg-[#e0e0e0] hover:text-[#e43d12] ease-in-out duration-700'>
                     <BsPencil />
                   </label>
                 <input
@@ -129,7 +129,7 @@ const ProfileEdit = ({image, name, handle, bio}) => {
                 onChange={(e) => setChangeBio(e.target.value)}/>
 
               <button 
-                className='absolute bottom-10 right-10 text-lg p-3 m-[10px] ml-40 mt-32 rounded-xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700'
+                className=' text-lg p-3 m-[10px] ml-40 rounded-xl bg-[#e43d12] text-white shadow-[6px_6px_11px_#c8c6bf,-6px_-6px_11px_#ffffff] hover:bg-[#e0e0e0] hover:text-[#e43d12] ease-in-out duration-700'
                 onClick={handleProfileUpdate}>
                   Done
               </button>

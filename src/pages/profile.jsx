@@ -123,7 +123,7 @@ function Profile() {
 
   return (
     <>
-      <div className="m-5 ml-[19px] bg-[#e0e0e0] rounded-lg shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] w-[90%] p-5 z-10">
+      <div className="sm:m-3 m-1 bg-[#ebe9e1] rounded-lg shadow-[6px_6px_16px_#c8c6bf,-6px_-6px_16px_#ebe9e1] sm:p-5 p-2 z-10">
         <div className="flex flex-col items-center justify-center text-center mb-[19px]">
           <div className="relative object-cover w-full h-[200px] mb-[20px]">
             <img
@@ -133,7 +133,7 @@ function Profile() {
             />
             <div className="absolute top-2 right-2">
               <label
-                className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"
+                className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-[#e43d12] text-white  border-4 ease-in-out duration-700"
                 htmlFor="bgUpload" // Updated to refer to bgUpload
               >
                 <input
@@ -169,7 +169,7 @@ function Profile() {
           <div className="flex justify-center mt-4">
               <button
                 id="profilePicUpload"
-                className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 text-white hover:shadow-2xl border-4 ease-in-out duration-700"
+                className="text-lg p-3 m-[10px] flex justify-center border-4 items-center rounded-2xl bg-[#e43d12] text-white shadow-[6px_6px_11px_#c8c6bf,-6px_-6px_11px_#ffffff] hover:bg-[#e0e0e0] hover:text-[#e43d12] ease-in-out duration-700"
                 onClick={handleProfileUpdate}
               >
               Edit Your Profile
@@ -187,7 +187,7 @@ function Profile() {
 
           <p>{userData?.bio || "Bio is Empty"}</p>
         </div>
-        <div className="flex justify-between mb-[20px]">
+        <div className="flex flex-col sm:flex-row text-center items-center justify-between mb-[20px]">
           <div>
             <h2>Basic info</h2>
             <p className="mb-[10px]">
@@ -212,7 +212,7 @@ function Profile() {
         </div>
         <div className="mb-[20px]">
           <h3>Pet Profiles</h3>
-          <div className="flex justify-between bg-gradient-to-r from-purple-400 to-pink-400 p-[10px] rounded-lg">
+          <div className="flex justify-between bg-[#e43d12] text-white shadow-[6px_6px_11px_#c8c6bf,-6px_-6px_11px_#ffffff] m-2 p-[10px] rounded-lg">
             <div className="flex flex-col gap-2 text-white">
               <p>
                 <strong>Age:</strong> "3 years"

@@ -22,7 +22,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isImageClicked, setIsImageClicked] = useState(false);
   const cloudinaryAccounts = [
-    //add more cloudinary accounts here just add the name and and chege the url too
+    //add more cloudinary accounts here just add the name and and change the url too
     //  https://api.cloudinary.com/v1_1/Put_your_cloud_name_here/image/upload
     {
       name: "Post_Image",
@@ -39,6 +39,10 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     {
       name: "Post_Image",
       url: "https://api.cloudinary.com/v1_1/dfhlildqv/image/upload",
+    },
+    {
+      name: "post-image",
+      url: "https://api.cloudinary.com/v1_1/dvytq9twi/image/upload",
     },
   ];
   const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
@@ -145,10 +149,10 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     <>
       <div
         onClick={isClicked ? null : handleClickEvent}
-        className={`relative flex text-[#da80ea] hover:text-[#e0e0e0] z-10 p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out animate-postButtonAnim1 duration-700 ${
+        className={`relative flex text-[#e43d12] hover:text-[#ebe9e1] z-10 p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-[6px_6px_16px_#c1bfb9,-6px_-6px_16px_#ffffff] rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out animate-postButtonAnim1 duration-700 ${
           isClicked
-            ? `bg-purple-300 text-[210%] text-white hover:text-white flex-col gap-4 w-[80%] ${imagePreview ? `h-[94vh] max-sm:h-[750px]` : `h-[64vh] max-sm:h-[500px]`} max-sm:w-[90%] `
-            : `text-xl  max-sm:w-[90%] hover:bg-[#da80ea] bg-[#e0e0e0]  hover:shadow-[11px_11px_19px_#d0d0d0,-11px_-11px_19px_#f0f0f0]`
+            ? `bg-[#e43d12] text-[210%] text-white hover:text-white flex-col gap-4 w-[80%] ${imagePreview ? `h-[94vh] max-sm:h-[750px]` : `h-[64vh] max-sm:h-[500px]`} max-sm:w-[90%] `
+            : `text-xl  max-sm:w-[90%] hover:bg-[#e43d12] bg-[#ebe9e1]  hover:shadow-[11px_11px_19px_#d0d0d0,-11px_-11px_19px_#f0f0f0]`
         }`}
       >
         <p
@@ -227,7 +231,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
               {(isImageClicked && imagePreview) && <>
                           <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
                             <IoMdClose
-                                className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
+                                className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg transition-all duration-300"
                                 onClick={handleImageClick}
                             />
                             <img src={imagePreview} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl max-sm:shadow-transparent animate-postAnim1"/>

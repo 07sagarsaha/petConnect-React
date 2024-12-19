@@ -112,11 +112,11 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
 
                     <div className="flex mt-4 items-center gap-4">
                     <button onClick={handleLike}>
-                        {isLiked ? <FaThumbsUp className='text-pink-400'/> : <FaRegThumbsUp className='text-pink-400'/>}
+                        {isLiked ? <FaThumbsUp className='text-[#ffa2b6]'/> : <FaRegThumbsUp className='text-[#ffa2b6]'/>}
                     </button>
                     <span>{likes?.length || 0} likes</span>
                     <button onClick={handleDislike}>
-                        {isDisliked ? <FaThumbsDown className='text-[#da80ea]'/> : <FaRegThumbsDown className='text-[#da80ea]'/>}
+                        {isDisliked ? <FaThumbsDown className='text-[#e43d12]'/> : <FaRegThumbsDown className='text-[#e43d12]'/>}
                     </button>
                     <span>{dislikes?.length || 0} dislikes</span>
                     </div>
@@ -129,7 +129,7 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
                     placeholder="Add a comment..."
                     className="w-full p-2 max-sm:w-[30vh] max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
                     />
-                    <button type="submit" className=" px-4 py-2 bg-purple-400 text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-purple-400 hover:bg-[#e0e0e0] my-2 ease-in-out duration-300 rounded-md">
+                    <button type="submit" className=" px-4 py-2 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] my-2 ease-in-out duration-300 rounded-md">
                     Comment
                     </button>
                 </form>

@@ -189,7 +189,7 @@ const Posts = ({
   return (
     <>
       {(isImageClicked && imageUrl) && <>
-            <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
+            <div className="sm:h-full sm:w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
               <IoMdClose
                   className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
                   onClick={handleImageClick}
@@ -199,7 +199,7 @@ const Posts = ({
         </>}
       <div
         key={id}
-        className={`text-lg sm:text-xl bg-[#e0e0e0] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#9d9d9d,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-[80%] max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}
+        className={`text-lg sm:text-xl bg-[#EBE9E1] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#c8c6bf,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-[80%] max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}
       >
         <div className="flex flex-row gap-2 items-center">
           <img
@@ -236,7 +236,7 @@ const Posts = ({
           <div className="flex justify-end gap-7">
             <div>
               <button
-                className="text-xl text-[#da80ea] shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] rounded-full flex-row"
+                className="text-xl text-[#efb11d] rounded-full flex-row"
                 onClick={handlePost}
               >
                 <BiCommentDetail />
@@ -245,7 +245,7 @@ const Posts = ({
             </div>
             <div>
               <button
-                className="text-xl text-pink-400 shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] rounded-full flex-row"
+                className="text-xl text-[#ffa2b6] rounded-full flex-row"
                 onClick={handleLike}
               >
                 {isLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
@@ -254,7 +254,7 @@ const Posts = ({
             </div>
             <div>
               <button
-                className="text-xl text-[#da80ea] shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] rounded-full flex-row"
+                className="text-xl text-[#e43d12] rounded-full flex-row"
                 onClick={handleDislike}
               >
                 {isDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}

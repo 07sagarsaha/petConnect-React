@@ -8,13 +8,13 @@ function App() {
   
   const { userLoggedIn } = useAuth();
   return (
-    <div className="bg-[#e0e0e0]">
+    <div className="bg-[#EBE9E1]">
       {!userLoggedIn && <Navigate to={"/"} replace={true} />}
       <div className="flex flex-row sm:justify-start">
         <div className="fixed">
           <SideNav />
         </div>
-        <div className=" sm:w-3/5 sm:min-[calc(100vw - 200px)] bg-[#e0e0e0] sm:max-[calc(100vw - 250px)] sm:ml-[200px] ml-[90px]">
+        <div className=" sm:w-fit sm:min-[calc(100vw - 200px)] w-fit bg-[#EBE9E1] overflow-hidden sm:max-[calc(100vw - 250px)] sm:ml-[15%] ml-[19%]">
         <Outlet />
         </div>
       </div>

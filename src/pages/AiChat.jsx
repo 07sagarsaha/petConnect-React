@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import Button from "../context/authContext/button";
 
 const AiChat = () => {
   const API_KEY = import.meta.env.VITE_API_KEY2;
@@ -31,7 +32,7 @@ const AiChat = () => {
   }
 
   return (
-    <div className="w-[85vw] h-screen flex flex-col bg-[#e0e0e0]">
+    <div className="w-[85vw] h-screen flex flex-col bg-[#ebe9e1]">
       <div className="flex-1 p-4 overflow-y-scroll">
         {chatLog.map((message, index) => (
           <div key={index} className={`mb-7 ${message.sender === "AI" ? "text-left" : "text-right"}`}>
@@ -46,20 +47,18 @@ const AiChat = () => {
           </div>
         ))}
       </div>
-      <div className="w-full h-16 bg-[#e0e0e0] flex items-center px-4">
+      <div className="sm:w-full  h-16 bg-[#ebe9e1] flex items-center px-4">
         <input
           type="text"
           placeholder="Type your question..."
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          className="flex-1 h-10 px-4 rounded-md shadow-[inset_7px_7px_19px_#bebebe,inset_-7px_-7px_19px_#ffffff]"
+          className="flex-1 h-14 px-1 sm:px-4 rounded-md shadow-[inset_7px_7px_19px_#c8c6bf,inset_-7px_-7px_19px_#ffffff]"
         />
-        <button
+        <Button
           onClick={getResponse}
-          className="ml-4 bg-[#da80ea] text-white px-4 py-2 rounded-lg shadow-[7px_7px_11px_#bebebe,-7px_-7px_11px_#ffffff] hover:bg-purple-400 ease-in-out transition-[600ms]"
-        >
-          Send
-        </button>
+          title={"Send"}
+        />
       </div>
     </div>
   );

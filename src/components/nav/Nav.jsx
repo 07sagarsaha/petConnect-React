@@ -8,7 +8,7 @@ function Nav({ title, icon, to }) {
         to={to}
         className={({ isActive }) =>
           isActive
-            ? "text-white px-5 py-3 bg-[#da80ea] rounded-lg sm:rounded-2xl shadow-[4px_4px_7px_#aa54b9,-4px_-4px_7px_#f09bff] sm:shadow-[6px_6px_11px_#aa54b9,-6px_-6px_11px_#f09bff]"
+            ? "text-white px-5 py-3 bg-[#e43d12] rounded-lg sm:rounded-2xl shadow-[4px_4px_7px_#bb320f,-4px_-4px_7px_#ff4815] sm:shadow-[6px_6px_11px_#bb320f,-6px_-6px_11px_#ff4815]"
             : "text-white"
         }
       >
