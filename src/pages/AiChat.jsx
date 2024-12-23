@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useState } from "react";
-import Button from "../context/authContext/button";
 
 const AiChat = () => {
   const API_KEY = import.meta.env.VITE_API_KEY2;
@@ -55,10 +54,11 @@ const AiChat = () => {
           onChange={(e) => setQuestion(e.target.value)}
           className="flex-1 h-14 px-1 sm:px-4 rounded-md shadow-[inset_7px_7px_19px_#c8c6bf,inset_-7px_-7px_19px_#ffffff]"
         />
-        <Button
+        <button
           onClick={getResponse}
-          title={"Send"}
-        />
+          className="text-lg p-3 m-[7px] flex justify-center items rounded-xl bg-[#e43d12] text-white shadow-[6px_6px_11px_#c8c6bf,-6px_-6px_11px_#ffffff] hover:bg-[#ebe9e1] hover:text-[#e43d12] border-4 ease-in-out duration-700">
+            Send
+          </button>
       </div>
     </div>
   );
