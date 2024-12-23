@@ -32,13 +32,13 @@ const AiChat = () => {
   }
 
   return (
-    <div className="w-[85vw] h-screen flex flex-col bg-[#ebe9e1]">
+    <div className="w-fit sm:w-[85vw] overflow-hidden h-screen flex flex-col bg-[#ebe9e1]">
       <div className="flex-1 p-4 overflow-y-scroll">
         {chatLog.map((message, index) => (
           <div key={index} className={`mb-7 ${message.sender === "AI" ? "text-left" : "text-right"}`}>
             <p
               className={`inline-block p-3 rounded-lg ${
-                message.sender === "AI" ? "bg-[#d89de3] text-black, shadow-[7px_7px_11px_#bebebe,-7px_-7px_11px_#ffffff]" : "bg-[#e6b2ef] text-black rounded-lg shadow-[7px_7px_11px_#bebebe,-7px_-7px_11px_#ffffff]"
+                message.sender === "AI" ? "bg-[#d65368] text-black, shadow-[7px_7px_11px_#bebebe,-7px_-7px_11px_#ffffff]" : "bg-[#ffa2b6] text-black rounded-lg shadow-[7px_7px_11px_#bebebe,-7px_-7px_11px_#ffffff]"
               }`}
             >
               <strong>{message.sender}: </strong>
