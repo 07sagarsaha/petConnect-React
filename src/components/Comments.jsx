@@ -4,6 +4,7 @@ import { arrayRemove, arrayUnion, doc, updateDoc, collection, addDoc, serverTime
 import { IoMdClose } from 'react-icons/io';
 import { BiCommentDetail } from 'react-icons/bi';
 import { auth, db } from '../firebase/firebase';
+import { IoSend } from 'react-icons/io5';
 
 const CommentDisplay = ({postID, handle, date, title, content, likes = [], dislikes = [], imageURL = false,}) => {
     const isLiked = likes?.includes(auth.currentUser?.uid);
@@ -103,7 +104,7 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
           <div
             className={`transition-all duration-[0.625s] ease-in-out rounded-xl ${
               isPostClicked
-                ? 'h-4/5 w-[75%] max-sm:h-full max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl bg-[#e0e0e0] flex shadow-xl overflow-hidden'
+                ? 'h-4/5 w-[75%] max-sm:h-full max-sm:rounded-none max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl bg-[#e0e0e0] flex shadow-xl overflow-hidden'
                 : 'h-5 w-5 text-xl text-[#efb11d] flex-row flex items-center justify-center'
             }`}
             onClick={isPostClicked ? null : handlePost}
@@ -112,17 +113,17 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
             {isPostClicked ? (
               <>
                 <IoMdClose
-                  className="absolute right-5 top-5 text-3xl hover:text-red-600 transition-colors duration-300"
+                  className="absolute right-5 top-5 z-40 text-3xl hover:text-red-600 transition-colors duration-300"
                   onClick={handlePost}
                 />
                 {isImageURLPresent ? <>
-                <div className='flex flex-row max-sm:flex-col p-10 w-full gap-5 overflow-auto'>
+                <div className='flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto'>
                     <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
                       <span className='text-left'> {handle} posted:</span>
         
                       <h2 className="text-xl font-bold text-left">{title}</h2>
                       <p className='text-[16px]  mt-2 text-left'>{content}</p>
-                      <div className="aspect-video w-full h-full max-sm:h-full relative overflow-hidden rounded-xl">
+                      <div className="aspect-video w-full h-full max-sm:w-[90%] relative overflow-hidden rounded-xl">
                         <img src={imageURL} 
                             alt="Post" 
                             className="absolute w-full h-full rounded-xl object-cover" />
@@ -142,20 +143,20 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
                       </div>
                     </div>
 
-                  <div className='flex flex-col overflow-hidden max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10'>
-                    <form onSubmit={handleAddComment} className="relative flex max-sm:flex-col items-left gap-6 max-sm:gap-2 w-[80%]">
+                  <div className='flex flex-col w-[100%]  max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10'>
+                    <form onSubmit={handleAddComment} className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:absolute max-sm:bottom-5">
                         <input type='text'
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Add a comment..."
-                        className="w-full p-2 max-sm:w-[30vh] max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
+                        className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
                         />
-                        <button type="submit" className=" px-4 py-2 w-[20%] max-sm:w-1/2 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] my-2 ease-in-out duration-300 rounded-md">
-                        Comment
+                        <button type="submit" className=" px-4 py-2 w-fit h-12 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] ease-in-out duration-300 rounded-md">
+                        <IoSend />
                         </button>
                     </form>
                     <h3 className="text-lg font-bold mt-3 text-left">Comments: {commentCount}</h3>
-                    <div className="comments-section my-3 flex flex-col items-start max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
+                    <div className="comments-section my-3 flex flex-col items-start max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto">
                         {comments.map((comment) => (
                         <div key={comment.id} className="bg-[#e0e0e0] w-fit my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
                             <div className='flex justify-between gap-7'>
@@ -182,27 +183,27 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
                   </div></> 
                 : 
                 <>
-                  <div className='flex flex-col p-11 w-[85%]'>
+                  <div className='flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-auto'>
                     <span className='text-left'> {handle} posted:</span>
                     <h2 className="text-xl font-bold text-left">{title}</h2>
                     <p className='text-[16px]  mt-2 text-left'>{content}</p>
                         {/*<h1 className='text-2xl flex mt-3 justify-center'>Post</h1>*/}
                     <div className='flex flex-col pt-5'>
-                    <form onSubmit={handleAddComment} className="relative flex max-sm:flex-col items-left gap-6 max-sm:gap-2">
-                        <input type='text'
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Add a comment..."
-                        className="w-full p-2 max-sm:w-[30vh] max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
-                        />
-                        <button type="submit" className="w-[20%] max-sm:w-1/2 px-4 py-2 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] my-2 ease-in-out duration-300 rounded-md">
-                        Comment
-                        </button>
-                    </form>
+                      <form onSubmit={handleAddComment} className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:absolute max-sm:bottom-5">
+                          <input type='text'
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          placeholder="Add a comment..."
+                          className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
+                          />
+                          <button type="submit" className=" px-4 py-2 w-fit h-12 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] ease-in-out duration-300 rounded-md">
+                          <IoSend />
+                          </button>
+                      </form>
                     <h3 className="text-lg font-bold mt-3 text-left">Comments: {commentCount}</h3>
-                    <div className="comments-section my-3 flex flex-col items-start max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
+                    <div className="comments-section my-3 flex flex-col items-start overflow-y-auto">
                         {comments.map((comment) => (
-                        <div key={comment.id} className="bg-[#e0e0e0] w-fit my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
+                        <div key={comment.id} className="bg-[#e0e0e0] w-fit max-sm:w-full my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
                             <div className='flex justify-between gap-7'>
                             <p className="text-sm font-semibold">{comment.userHandle}</p>
                             <p className="text-xs text-gray-500">

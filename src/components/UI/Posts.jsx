@@ -189,13 +189,12 @@ const Posts = ({
   return (
     <>
       {(isImageClicked && imageUrl) && <>
-            <div className="sm:h-full sm:w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
+            <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-20 bg-[#4f4f4fcd] transition-colors duration-200" onClick={handleImageClick}/>
               <IoMdClose
                   className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
                   onClick={handleImageClick}
               />
-              <img src={imageUrl} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl animate-postAnim1 max-sm:shadow-transparent"/>
-            </div>
+              <img src={imageUrl} alt="Image" className="h-fit w-[75%] max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl"/>
         </>}
       <div
         key={id}
@@ -235,8 +234,8 @@ const Posts = ({
 
           <div className="flex justify-end gap-7">
             <div>
-              <button
-                className=""
+              <div
+                className="mb-1 pt-1"
               >
                 <CommentDisplay
                   postID={id}
@@ -248,8 +247,8 @@ const Posts = ({
                   dislikes={dislikes}
                   imageURL={{imageUrl} ? imageUrl : false}
                 />
-              </button>
-              <p>{commentCount || 0}</p>
+              </div>
+              <p className="pl-1">{commentCount || 0}</p>
             </div>
 
             <div>
