@@ -5,7 +5,7 @@ import { IoMdClose } from 'react-icons/io';
 import { BiCommentDetail } from 'react-icons/bi';
 import { auth, db } from '../firebase/firebase';
 
-const CommentDisplay = ({postID, handle, date, title, content, likes = [], dislikes = []}) => {
+const CommentDisplay = ({postID, handle, date, title, content, likes = [], dislikes = [], imageURL = false,}) => {
     const isLiked = likes?.includes(auth.currentUser?.uid);
     const isDisliked = dislikes?.includes(auth.currentUser?.uid);
     const [newComment, setNewComment] = useState('');
@@ -96,70 +96,143 @@ const CommentDisplay = ({postID, handle, date, title, content, likes = [], disli
         }
       };
 
+    const isImageURLPresent = !!imageURL;
+
     return (
-        <><div className='h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#808080ab] transition-colors duration-200'>
-            <div className='h-4/5 w-[75%] absolute rounded-xl bg-[#e0e0e0] flex flex-col shadow-xl overflow-hidden'>
+        <>
+          <div
+            className={`transition-all duration-[0.625s] ease-in-out rounded-xl ${
+              isPostClicked
+                ? 'h-4/5 w-[75%] max-sm:h-full max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl bg-[#e0e0e0] flex shadow-xl overflow-hidden'
+                : 'h-5 w-5 text-xl text-[#efb11d] flex-row flex items-center justify-center'
+            }`}
+            onClick={isPostClicked ? null : handlePost}
+            
+          >
+            {isPostClicked ? (
+              <>
+                <IoMdClose
+                  className="absolute right-5 top-5 text-3xl hover:text-red-600 transition-colors duration-300"
+                  onClick={handlePost}
+                />
+                {isImageURLPresent ? <>
+                <div className='flex flex-row max-sm:flex-col p-10 w-full gap-5 overflow-auto'>
+                    <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
+                      <span className='text-left'> {handle} posted:</span>
+        
+                      <h2 className="text-xl font-bold text-left">{title}</h2>
+                      <p className='text-[16px]  mt-2 text-left'>{content}</p>
+                      <div className="aspect-video w-full h-full max-sm:h-full relative overflow-hidden rounded-xl">
+                        <img src={imageURL} 
+                            alt="Post" 
+                            className="absolute w-full h-full rounded-xl object-cover" />
+                      </div>
 
-                {/*<h1 className='text-2xl flex mt-3 justify-center'>Post</h1>*/}
+                      <p className='text-base text-gray-600 mt-3'>{date}</p>
 
-                <div className="pt-6 pb-6 ml-[5%] rounded-lg max-w-screen-2xl w-full max-h-[90vh]">
-                    <div className="text-sm px-1 text-gray-600">
-                      
-                      <span> {date}:</span>
+                      <div className="flex flex-row mt-4 items-center gap-4">
+                        <button onClick={handleLike}>
+                            {isLiked ? <FaThumbsUp className='text-[#ffa2b6]'/> : <FaRegThumbsUp className='text-[#ffa2b6]'/>}
+                        </button>
+                        <span>{likes?.length || 0} likes</span>
+                        <button onClick={handleDislike}>
+                            {isDisliked ? <FaThumbsDown className='text-[#e43d12]'/> : <FaRegThumbsDown className='text-[#e43d12]'/>}
+                        </button>
+                        <span>{dislikes?.length || 0} dislikes</span>
+                      </div>
                     </div>
-                    <h2 className="text-xl mt-3 font-bold overflow-x-auto max-w-[80%]">{title}</h2>
-                    <p className='text-[15px] mt-2 overflow-x-auto text-wrap max-w-[85%]'>{content}</p>
 
-                    <div className="flex mt-4 items-center gap-4">
-                    <button onClick={handleLike}>
-                        {isLiked ? <FaThumbsUp className='text-[#ffa2b6]'/> : <FaRegThumbsUp className='text-[#ffa2b6]'/>}
-                    </button>
-                    <span>{likes?.length || 0} likes</span>
-                    <button onClick={handleDislike}>
-                        {isDisliked ? <FaThumbsDown className='text-[#e43d12]'/> : <FaRegThumbsDown className='text-[#e43d12]'/>}
-                    </button>
-                    <span>{dislikes?.length || 0} dislikes</span>
-                    </div>
-                </div>
-
-                <form onSubmit={handleAddComment} className="relative left-[5%] flex max-sm:flex-col items-left gap-6 max-sm:gap-2 w-1/2">
-                    <input type='text'
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Add a comment..."
-                    className="w-full p-2 max-sm:w-[30vh] max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
-                    />
-                    <button type="submit" className=" px-4 py-2 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] my-2 ease-in-out duration-300 rounded-md">
-                    Comment
-                    </button>
-                </form>
-                <h3 className="text-lg font-bold mt-3 mx-[5%]">Comments: {commentCount}</h3>
-                <div className="comments-section my-3 flex flex-col items-start mx-[5%] max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
-                    {comments.map((comment) => (
-                    <div key={comment.id} className="bg-[#e0e0e0] w-fit my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
-                        <div className='flex justify-between gap-7'>
-                        <p className="text-sm font-semibold">{comment.userHandle}</p>
-                        <p className="text-xs text-gray-500">
-                        {comment.createdAt?.toDate().toLocaleDateString()}
-                        </p>
+                  <div className='flex flex-col overflow-hidden max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10'>
+                    <form onSubmit={handleAddComment} className="relative flex max-sm:flex-col items-left gap-6 max-sm:gap-2 w-[80%]">
+                        <input type='text'
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment..."
+                        className="w-full p-2 max-sm:w-[30vh] max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
+                        />
+                        <button type="submit" className=" px-4 py-2 w-[20%] max-sm:w-1/2 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] my-2 ease-in-out duration-300 rounded-md">
+                        Comment
+                        </button>
+                    </form>
+                    <h3 className="text-lg font-bold mt-3 text-left">Comments: {commentCount}</h3>
+                    <div className="comments-section my-3 flex flex-col items-start max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
+                        {comments.map((comment) => (
+                        <div key={comment.id} className="bg-[#e0e0e0] w-fit my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
+                            <div className='flex justify-between gap-7'>
+                            <p className="text-sm font-semibold">{comment.userHandle}</p>
+                            <p className="text-xs text-gray-500">
+                            {comment.createdAt?.toDate().toLocaleDateString()}
+                            </p>
+                            </div>
+                            <p className="text-gray-700 my-2 text-left">{comment.content}</p>
+                            {/*<div className="flex mt-4 items-center gap-4">
+                            <button onClick={handleCommentLike}>
+                                {isCommentLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
+                            </button>
+                            <span>{comment.likes?.length || 0} likes</span>
+                            <button onClick={handleCommentDislike}>
+                                {isCommentDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
+                            </button>
+                            <span>{comment.dislikes?.length || 0} dislikes</span>
+                            </div>*/}
                         </div>
-                        <p className="text-gray-700 my-2">{comment.content}</p>
-                        {/*<div className="flex mt-4 items-center gap-4">
-                        <button onClick={handleCommentLike}>
-                            {isCommentLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
-                        </button>
-                        <span>{comment.likes?.length || 0} likes</span>
-                        <button onClick={handleCommentDislike}>
-                            {isCommentDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
-                        </button>
-                        <span>{comment.dislikes?.length || 0} dislikes</span>
-                        </div>*/}
+                        ))}
                     </div>
-                    ))}
-                
+                  </div>
+                  </div></> 
+                : 
+                <>
+                  <div className='flex flex-col p-11 w-[85%]'>
+                    <span className='text-left'> {handle} posted:</span>
+                    <h2 className="text-xl font-bold text-left">{title}</h2>
+                    <p className='text-[16px]  mt-2 text-left'>{content}</p>
+                        {/*<h1 className='text-2xl flex mt-3 justify-center'>Post</h1>*/}
+                    <div className='flex flex-col pt-5'>
+                    <form onSubmit={handleAddComment} className="relative flex max-sm:flex-col items-left gap-6 max-sm:gap-2">
+                        <input type='text'
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment..."
+                        className="w-full p-2 max-sm:w-[30vh] max-sm:h-12 border rounded-lg bg-gradient-to-br from-[#cacaca] to-[#f0f0f0] shadow-[11px_11px_27px_#bebebe,-11px_-11px_27px_#ffffff] z-0"
+                        />
+                        <button type="submit" className="w-[20%] max-sm:w-1/2 px-4 py-2 bg-[#e43d12] text-white shadow-[4px_4px_11px_#9d9d9d,-4px_-4px_11px_#ffffff] hover:text-[#e43d12] hover:bg-[#e0e0e0] my-2 ease-in-out duration-300 rounded-md">
+                        Comment
+                        </button>
+                    </form>
+                    <h3 className="text-lg font-bold mt-3 text-left">Comments: {commentCount}</h3>
+                    <div className="comments-section my-3 flex flex-col items-start max-sm:max-w-[100vh] max-sm:overflow-x-auto overflow-y-auto">
+                        {comments.map((comment) => (
+                        <div key={comment.id} className="bg-[#e0e0e0] w-fit my-4 p-3 rounded-md bg-gradient-to-br from-[#f0f0f0] to-[#cacaca] shadow-[3px_3px_7px_#bebebe,-3px_-3px_7px_#ffffff]">
+                            <div className='flex justify-between gap-7'>
+                            <p className="text-sm font-semibold">{comment.userHandle}</p>
+                            <p className="text-xs text-gray-500">
+                            {comment.createdAt?.toDate().toLocaleDateString()}
+                            </p>
+                            </div>
+                            <p className="text-gray-700 my-2 text-left">{comment.content}</p>
+                            {/*<div className="flex mt-4 items-center gap-4">
+                            <button onClick={handleCommentLike}>
+                                {isCommentLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
+                            </button>
+                            <span>{comment.likes?.length || 0} likes</span>
+                            <button onClick={handleCommentDislike}>
+                                {isCommentDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
+                            </button>
+                            <span>{comment.dislikes?.length || 0} dislikes</span>
+                            </div>*/}
+                        </div>
+                        ))}
+                    </div>
+                  </div>
                 </div>
-            </div>
-        </div></>
+                </>}
+              </>
+            ) : (
+              <BiCommentDetail />
+            )}
+          </div>
+          {isPostClicked && <div className={`h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#615d5d9c] transition-colors duration-200`} onClick={handlePost}></div>}
+        </>
   )
 }
 

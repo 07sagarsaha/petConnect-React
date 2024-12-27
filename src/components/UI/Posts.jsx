@@ -236,13 +236,22 @@ const Posts = ({
           <div className="flex justify-end gap-7">
             <div>
               <button
-                className="text-xl text-[#efb11d] rounded-full flex-row"
-                onClick={handlePost}
+                className=""
               >
-                <BiCommentDetail />
+                <CommentDisplay
+                  postID={id}
+                  handle={handle}
+                  date={date}
+                  title={title}
+                  content={content}
+                  likes={likes}
+                  dislikes={dislikes}
+                  imageURL={{imageUrl} ? imageUrl : false}
+                />
               </button>
               <p>{commentCount || 0}</p>
             </div>
+
             <div>
               <button
                 className="text-xl text-[#ffa2b6] rounded-full flex-row"
@@ -264,28 +273,6 @@ const Posts = ({
           </div>
         </div>
       </div>
-
-      {isPostClicked && (
-        <>
-          <div className="">
-            {
-              <IoMdClose
-                className="text-5xl fixed z-50 p-2 right-[10%] top-32 rounded-lg hover:text-red-600 transition-all duration-300"
-                onClick={handlePost}
-              />
-            }
-            <CommentDisplay
-              postID={id}
-              handle={handle}
-              date={date}
-              title={title}
-              content={content}
-              likes={likes}
-              dislikes={dislikes}
-            />
-          </div>
-        </>
-      )}
     </>
   );
 };
