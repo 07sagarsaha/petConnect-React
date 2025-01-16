@@ -7,9 +7,6 @@ import {
   doGoogleSignIn,
   doSignInWithEmailAndPassword,
 } from "../../firebase/auth";
-
-import regimg from "../../assets/login.jpg";
-
 import { Navigate, Link } from "react-router-dom";
 
 function Login() {
@@ -28,7 +25,6 @@ function Login() {
         setIsSigningIn(false);
         setErrorMessage(err.message);
       });
-      // doSendEmailVerification()
     }
   };
 
@@ -43,47 +39,50 @@ function Login() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen flex items-center justify-center bg-base-100">
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
 
-      <div>
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
         <Header />
-        <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-gray-200 flex-grow">
-          <div className="md:w-1/2 p-4">
-            <img
-              src={regimg}
-              alt="Landing Page"
-              className="w-full h-auto rounded-lg animation-navigate duration-1000"
-            />
+        <h1 className="text-4xl flex items-center justify-center font-bold text-center text-primary">
+          Login
+        </h1>
+        <form className="space-y-4" onSubmit={onSubmit}>
+          <InputFild
+            type="email"
+            id="Email"
+            placeholder="Enter Your Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <InputFild
+            type="password"
+            id="Password"
+            placeholder="Enter Your Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {errorMessage && (
+            <span className="text-error font-bold">{errorMessage}</span>
+          )}
+          <div className="flex justify-center">
+            <Button type="submit" title="Login" isDisabled={isSigningIn} />
           </div>
-          <div className="md:w-1/2 p-4">
-            <h1 className="text-4xl font-bold mb-4">Login</h1>
-            <form className="space-y-4" onSubmit={onSubmit} preventDefault>
-              <InputFild
-                type="email"
-                id="Email"
-                placeholder="Enter Your Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <InputFild
-                type="password"
-                id="Password"
-                placeholder="Enter Your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {errorMessage && (
-                <span className="text-red-600 font-bold">{errorMessage}</span>
-              )}
-              <Button type="submit" title="Login" isDisabled={isSigningIn} />
-            </form>
-            <Link to="/signup">
-              <button className="mt-4 text-gray-700 underline">
-                Don't have an account? Sign up
-              </button>
-            </Link>
-          </div>
+        </form>
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={onGoogleSignIn}
+            className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary border-4 ease-in-out duration-700"
+          >
+            Sign in with Google
+          </button>
+        </div>
+        <div className="text-center mt-4">
+          <Link to="/signup">
+            <button className="text-primary underline">
+              Don't have an account? Sign up
+            </button>
+          </Link>
         </div>
       </div>
     </div>

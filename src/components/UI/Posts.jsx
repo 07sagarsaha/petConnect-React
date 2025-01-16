@@ -12,18 +12,15 @@ import {
   doc,
   updateDoc,
   collection,
-  addDoc,
-  serverTimestamp,
   query,
   orderBy,
   onSnapshot,
   getDoc,
-  runTransaction,
 } from "firebase/firestore";
 import { IoMdClose } from "react-icons/io";
-import { BiCommentDetail } from "react-icons/bi";
 import CommentDisplay from "../Comments";
 import pfp from "../../icons/pfp.png";
+import { useNavigate } from "react-router-dom";
 
 const Posts = ({
   id,
@@ -36,13 +33,14 @@ const Posts = ({
   dislikes = [],
   profilePic,
   imageUrl = null,
+  userId,
 }) => {
   const severityEmojis = {
-    1: "😃 (very good)", // Very happy
-    2: "🙂 (good)", // Happy
-    3: "😐 (neutral)", // Neutral
-    4: "😨 (not good)", // Worried
-    5: "😭 (contact vet)", // Sad
+    1: "😃 (very good)",
+    2: "🙂 (good)",
+    3: "😐 (neutral)",
+    4: "😨 (not good)",
+    5: "😭 (contact vet)",
   };
 
   const isLiked = likes?.includes(auth.currentUser?.uid);
@@ -50,6 +48,7 @@ const Posts = ({
   const [isPostClicked, setIsPostClicked] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
   const [isImageClicked, setIsImageClicked] = useState(false);
+  const navigate = useNavigate();
 
   const handleLike = async () => {
     if (!auth.currentUser) return;
@@ -96,147 +95,93 @@ const Posts = ({
   };
 
   useEffect(() => {
-            const commentsRef = collection(db, 'posts', id, 'comments');
-            const q = query(commentsRef, orderBy('createdAt', 'desc'));
-            
-            const unsubscribe = onSnapshot(q, (snapshot) => {
-              const commentsData = snapshot.docs.map(doc => ({
-                id: doc.id,
-              }));
-              setCommentCount(snapshot.size);
-            });
-    
-            return () => unsubscribe();
-  }, [id]);
+    const commentsRef = collection(db, "posts", id, "comments");
+    const q = query(commentsRef, orderBy("createdAt", "desc"));
 
-  /*const handleCommentLike = async () => {
-      if (!auth.currentUser || !id || !comments.id) {
-          console.log('Missing required data');
-          return;
-      }
-  
-      const commentRef = doc(db, 'posts', String(id), 'comments', String(comments.id));
-      
-      try {
-          // Use a transaction to prevent race conditions
-          await runTransaction(db, async (transaction) => {
-              const commentDoc = await transaction.get(commentRef);
-              
-              if (!commentDoc.exists()) {
-                  throw new Error('Comment does not exist!');
-              }
-  
-              const commentData = commentDoc.data();
-              const userId = auth.currentUser.uid;
-              const likes = commentData.likes || [];
-              const dislikes = commentData.dislikes || [];
-  
-              const newData = {};
-  
-              if (dislikes.includes(userId)) {
-                  // If disliked, remove dislike and add like
-                  newData.dislikes = dislikes.filter(id => id !== userId);
-                  newData.likes = [...likes, userId];
-              } else if (likes.includes(userId)) {
-                  // If already liked, remove like
-                  newData.likes = likes.filter(id => id !== userId);
-              } else {
-                  // If neither liked nor disliked, add like
-                  newData.likes = [...likes, userId];
-              }
-  
-              transaction.update(commentRef, newData);
-          });
-  
-          // Update local state here if needed
-          
-      } catch (error) {
-          console.error("Error updating comment like:", error);
-          // Add user feedback here
-          throw error; // Rethrow to handle in component
-      }
-    };
-  
-    const handleCommentDislike = async (commentId) => {
-      if (!auth.currentUser || !id || !commentId) return; // Add extra validation
-      
-      const commentRef = doc(db, 'posts', id, 'comments', commentId);
-      try {
-        if (isCommentLiked) {
-          await updateDoc(commentRef, {
-            likes: arrayRemove(auth.currentUser.uid),
-            dislikes: arrayUnion(auth.currentUser.uid)
-          });
-        } else {
-          await updateDoc(commentRef, {
-            dislikes: isCommentLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid)
-          });
-        }
-      } catch (error) {
-        console.error("Error updating comment dislike:", error);
-      }
-    };*/
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setCommentCount(snapshot.size);
+    });
+
+    return () => unsubscribe();
+  }, [id]);
 
   const handleImageClick = () => {
     setIsImageClicked(!isImageClicked);
-  }
+  };
 
   const handlePost = () => {
     setIsPostClicked(!isPostClicked);
   };
-  
+
+  const handleProfileClick = () => {
+    navigate(`/in/profile/${userId}`);
+  };
 
   return (
-    <>
-      {(isImageClicked && imageUrl) && <>
-            <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-20 bg-[#4f4f4fcd] transition-colors duration-200" onClick={handleImageClick}/>
-              <IoMdClose
-                  className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
-                  onClick={handleImageClick}
-              />
-              <img src={imageUrl} alt="Image" className="h-fit w-[75%] max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl"/>
-        </>}
+    <div className="flex justify-start items-center w-full">
+      {isImageClicked && imageUrl && (
+        <>
+          <div
+            className="h-full w-full justify-center items-center flex bg-neutral-focus transition-colors duration-200"
+            onClick={handleImageClick}
+          />
+          <IoMdClose
+            className="text-5xl p-2 rounded-lg hover:text-error transition-all duration-300"
+            onClick={handleImageClick}
+          />
+          <img
+            src={imageUrl}
+            alt="Image"
+            className="h-fit w-[75%] max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl"
+          />
+        </>
+      )}
       <div
         key={id}
-        className={`text-lg sm:text-xl bg-[#EBE9E1] max-sm:ml-1 relative p-3 m-4 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-[6px_6px_16px_#c8c6bf,-6px_-6px_16px_#ffffff] h-max sm:min-h-12 w-[80%] max-sm:w-[95%] rounded-2xl animate-postAnim3 transition-all ease-in-out duration-200`}
+        className={`w-[95%] sm:w-[95%] text-lg sm:text-xl bg-base-100 max-sm:ml-1 p-3 mb-6 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-lg h-max sm:min-h-12 rounded-2xl transition-all ease-in-out duration-200`}
       >
         <div className="flex flex-row gap-2 items-center">
           <img
             src={profilePic || pfp}
             alt="profile pic"
-            className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover"
+            className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer"
+            onClick={handleProfileClick}
           />
-          <p className="text-[18px] sm:top-0 max-sm:text-[15px] text-gray-500">
-            {handle} posted:
-          </p>
+          <div className="flex flex-col items-start justify-center">
+            <p
+              className="text-[18px] max-sm:text-[15px] text-neutral cursor-pointer"
+              onClick={handleProfileClick}
+            >
+              {handle} posted:
+            </p>
+            <p className="max-sm:text-sm text-[15px] text-neutral">{date}</p>
+          </div>
         </div>
-        <p className="max-sm:text-sm text-[15px] text-gray-500 max-sm:relative absolute sm:right-0 top-0 sm:p-4">
-          {date}
-        </p>
+
         <h1 className="text-[19px] sm:text-[21px] font-bold py-4">{title}</h1>
-        <h2 className="text-[16px] sm:text-[19px] text-gray-700 font-semibold pb-4">
+        <h2 className="text-[16px] sm:text-[19px] text-neutral font-semibold pb-4">
           {content}
         </h2>
         {imageUrl && (
-          <div className="aspect-video w-full h-[500px] max-sm:h-full relative overflow-hidden rounded-xl">
-            <img src={imageUrl} 
-                alt="Post" 
-                className="absolute w-full h-full rounded-xl object-cover" 
-                onClick={handleImageClick}/>
+          <div className="aspect-video w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl">
+            <img
+              src={imageUrl}
+              alt="Post"
+              className="w-full h-full rounded-xl object-cover cursor-pointer"
+              onClick={handleImageClick}
+            />
           </div>
         )}
         <div className="pt-2 flex justify-between">
           {sevVal && (
-            <h2 className="text-[14px] sm:text-[17px] text-gray-700 py-4">
+            <h2 className="text-[14px] sm:text-[17px] text-neutral py-4">
               Severity Index: {severityEmojis[sevVal]}
             </h2>
           )}
 
           <div className="flex justify-end gap-7">
             <div>
-              <div
-                className="mb-1 pt-1"
-              >
+              <div className="mb-1 pt-1">
                 <CommentDisplay
                   postID={id}
                   handle={handle}
@@ -245,7 +190,7 @@ const Posts = ({
                   content={content}
                   likes={likes}
                   dislikes={dislikes}
-                  imageURL={{imageUrl} ? imageUrl : false}
+                  imageURL={imageUrl ? imageUrl : false}
                 />
               </div>
               <p className="pl-1">{commentCount || 0}</p>
@@ -253,7 +198,7 @@ const Posts = ({
 
             <div>
               <button
-                className="text-xl text-[#ffa2b6] rounded-full flex-row"
+                className="text-xl text-primary rounded-full flex-row"
                 onClick={handleLike}
               >
                 {isLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
@@ -262,7 +207,7 @@ const Posts = ({
             </div>
             <div>
               <button
-                className="text-xl text-[#e43d12] rounded-full flex-row"
+                className="text-xl text-error rounded-full flex-row"
                 onClick={handleDislike}
               >
                 {isDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
@@ -272,7 +217,7 @@ const Posts = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,38 +1,63 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Navigate, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/authContext/authContext";
 import landingimg from "../../assets/landingPage.jpg";
+import dog3d from "../../assets/voxel_dog.glb";
 import Header from "../../components/auth/header";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+
+const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
+const PetModel = () => {
+  const { scene } = useGLTF(dog3d);
+  return (
+    <primitive
+      object={scene}
+      scale={0.5}
+      rotation={[
+        degreesToRadians(20),
+        degreesToRadians(-50),
+        degreesToRadians(0),
+      ]} // Set default rotation
+    />
+  );
+};
+
 const Landing = () => {
   const { userLoggedIn } = useAuth();
+  const controlsRef = useRef();
+
   return (
-    <div>
+    <div className="flex flex-col h-screen ">
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
-      <div className="min-h-screen  flex flex-col">
+      <div className="flex flex-col bg-base-100">
         {/* header */}
         <Header />
         {/* landingPage */}
-        <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-gray-200 flex-grow">
-          <div className="md:w-1/2 p-4">
-            <h1 className="text-4xl font-bold mb-4">Welcome to Pet Connect</h1>
-            <p className="text-lg mb-4">
+        <div className="flex flex-col  md:flex-row items-center justify-between px-8 flex-grow">
+          <div className="w-1/2 p-4">
+            <h1 className="text-4xl font-bold mb-4 text-primary">
+              Welcome to Pet Connect
+            </h1>
+            <p className="text-lg mb-4 text-neutral">
               As a platform to help you figure out any problem, any question,
               from a wide range of pet lovers, pet owners, and pet parents just
               like you. We aim to build a community of like-minded pet lovers,
               which you can be a part of today, whether new or veteran!
             </p>
             <NavLink to="/signup">
-              <button className="bg-gradient-to-r from-orange-500 to-pink-500 text-white py-2 px-6 rounded-lg transform hover:scale-105 transition-transform duration-300">
+              <button className="bg-gradient-to-r from-primary to-neutral-300 text-base-100 py-2 px-6 rounded-lg transform hover:scale-105 transition-transform duration-300">
                 Join the community
               </button>
             </NavLink>
           </div>
-          <div className="md:w-1/2 p-4">
-            <img
-              src={landingimg}
-              alt="Landing Page"
-              className="w-full h-auto rounded-lg"
-            />
+          <div className="md:w-1/2 h-screen p-4 flex justify-center items-center">
+            <Canvas className="w-full h-full">
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[0, 5, 5]} />
+              <PetModel />
+              <OrbitControls ref={controlsRef} />
+            </Canvas>
           </div>
         </div>
       </div>

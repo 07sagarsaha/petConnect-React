@@ -18,7 +18,9 @@ import Settings from "./pages/Settings.jsx";
 import Register from "./pages/auth/signup.jsx";
 import Landing from "./pages/landing/landing.jsx";
 import Login from "./pages/auth/login.jsx";
+import UserProfile from "./pages/UserProfile";
 import { AuthProvider } from "./context/authContext/authContext.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +31,7 @@ const router = createBrowserRouter(
         <Route path="/in/ai-chat" element={<AiChat />} />
         <Route path="/in/about" element={<About />} />
         <Route path="/in/settings" element={<Settings />} />
+        <Route path="/in/profile/:userId" element={<UserProfile />} />
       </Route>
       <Route path="/signup" element={<Register />} />
       <Route path="/login" element={<Login />} />
@@ -40,7 +43,9 @@ const router = createBrowserRouter(
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </AuthProvider>
   </StrictMode>
 );

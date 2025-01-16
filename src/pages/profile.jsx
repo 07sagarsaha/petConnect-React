@@ -9,11 +9,12 @@ import {
   orderBy,
   query,
   where,
+  addDoc,
   updateDoc,
 } from "firebase/firestore";
 import Posts from "../components/UI/Posts";
 import { format } from "date-fns";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdAddCircleOutline, IoMdCreate } from "react-icons/io";
 import ProfileEdit from "../components/ProfileEdit";
 
 function Profile() {
@@ -24,66 +25,20 @@ function Profile() {
   const [profilePic, setProfilePic] = useState("/src/icons/pfp.png");
   const [isPFPClicked, setIsPFPClicked] = useState(false);
   const [isProfileEdit, setisProfileEdit] = useState(false);
+  const [pets, setPets] = useState([]);
+  const [newPet, setNewPet] = useState({
+    name: "",
+    age: "",
+    breed: "",
+    photoUrl: "",
+  });
+  const [isAddPetVisible, setIsAddPetVisible] = useState(false);
+  const [editPetId, setEditPetId] = useState(null);
+  const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
 
   const handleProfileUpdate = () => {
     setisProfileEdit(!isProfileEdit);
-    /*const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "Pet-connect");
-
-    try {
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/dagtbrme6/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const data = await res.json();
-
-      if (data.secure_url) {
-        setProfilePic(data.secure_url);
-
-        // Update user profile in Firestore
-        if (user) {
-          const userRef = doc(db, "users", user.uid);
-          await updateDoc(userRef, {
-            profilePic: data.secure_url,
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-    }*/
   };
-
-  useEffect(() => {
-    const q = query(
-      collection(db, "posts"),
-      where("userId", "==", user.uid),
-      orderBy("createdAt", "desc")
-    );
-
-    // Create real-time listener
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const postData = await Promise.all(
-        snapshot.docs.map(async (postDoc) => {
-          const postData = postDoc.data();
-          return {
-            id: postDoc.id,
-            ...postData,
-          };
-        })
-      );
-      setPost(postData);
-    });
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
 
   const user = auth.currentUser;
 
@@ -104,156 +59,372 @@ function Profile() {
     };
 
     fetchUser();
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, "posts"),
+      where("userId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      const postData = await Promise.all(
+        snapshot.docs.map(async (postDoc) => {
+          const postData = postDoc.data();
+          return {
+            id: postDoc.id,
+            ...postData,
+          };
+        })
+      );
+      setPost(postData);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  useEffect(() => {
+    const q = query(collection(db, "pets"), where("ownerId", "==", user.uid));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const petsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setPets(petsData);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const handleAddPet = async () => {
+    if (!newPet.name || !newPet.age || !newPet.breed || !newPet.photoUrl) {
+      alert("Please fill in all pet details.");
+      return;
+    }
+
+    try {
+      if (editPetId) {
+        // Update existing pet
+        await updateDoc(doc(db, "pets", editPetId), {
+          ...newPet,
+        });
+        setEditPetId(null);
+      } else {
+        // Add new pet
+        await addDoc(collection(db, "pets"), {
+          ...newPet,
+          ownerId: user.uid,
+        });
+      }
+      setNewPet({ name: "", age: "", breed: "", photoUrl: "" });
+      setIsAddPetVisible(false);
+      setIsEditPetModalOpen(false);
+    } catch (error) {
+      console.error("Error adding/updating pet:", error);
+    }
+  };
+
+  const handlePetImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "Pet-connect");
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/dagtbrme6/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await res.json();
+
+      if (data.secure_url) {
+        setNewPet((prevPet) => ({ ...prevPet, photoUrl: data.secure_url }));
+      }
+    } catch (error) {
+      console.error("Error uploading pet picture:", error);
+    }
+  };
 
   const bgPicChange = (e) => {
     const bgfile = e.target.files[0];
     if (bgfile) {
-      setBG(URL.createObjectURL(bgfile)); // Use setBG here to update background
+      setBG(URL.createObjectURL(bgfile));
     }
-  };
-
-  const handleProfileChange = () => {
-    setProfile(!profile);
   };
 
   const handleProfileClick = () => {
     setIsPFPClicked(!isPFPClicked);
-  }
+  };
+
+  const toggleAddPetSection = () => {
+    setIsAddPetVisible(!isAddPetVisible);
+    setEditPetId(null);
+    setNewPet({ name: "", age: "", breed: "", photoUrl: "" });
+  };
+
+  const handleEditPet = (pet) => {
+    setNewPet({
+      name: pet.name,
+      age: pet.age,
+      breed: pet.breed,
+      photoUrl: pet.photoUrl,
+    });
+    setEditPetId(pet.id);
+    setIsEditPetModalOpen(true);
+  };
+
+  const closeEditPetModal = () => {
+    setIsEditPetModalOpen(false);
+    setEditPetId(null);
+    setNewPet({ name: "", age: "", breed: "", photoUrl: "" });
+  };
 
   return (
-    <>
-      <div className="sm:m-3 m-1 bg-[#ebe9e1] rounded-lg shadow-[6px_6px_16px_#c8c6bf,-6px_-6px_16px_#ebe9e1] sm:p-5 p-2 z-10">
-        <div className="flex flex-col items-center justify-center text-center mb-[19px]">
-          <div className="relative object-cover w-full h-[200px] mb-[20px]">
-            <img
-              src={bg}
-              className="w-full rounded-lg h-full object-cover"
-              alt="Background"
-            />
-            <div className="absolute top-2 right-2">
-              <label
-                className="text-lg p-3 m-[10px] flex justify-center items-center rounded-2xl bg-[#e43d12] text-white  border-4 ease-in-out duration-700"
-                htmlFor="bgUpload" // Updated to refer to bgUpload
-              >
-                <input
-                  type="file"
-                  id="bgUpload" // Changed ID to bgUpload
-                  className="hidden"
-                  onChange={bgPicChange}
-                />
-                +
-              </label>
+    <div className="flex justify-center flex-col bg-base-100 text-gray-800 min-h-screen p-8 ">
+      <div className="w-full bg-white rounded-lg shadow-lg p-6">
+        <div className="flex flex-col items-center w-full text-center mb-5">
+          {isPFPClicked && profilePic && (
+            <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-neutral-focus transition-colors duration-200">
+              <IoMdClose
+                className="text-5xl fixed z-50 p-2 right-5 top-16 rounded-lg hover:text-error transition-all duration-300"
+                onClick={handleProfileClick}
+              />
+              <img
+                src={profilePic}
+                alt="Image"
+                className="h-4/5  w-36 m-12 object-contain rounded-2xl animate-postAnim1 max-sm:shadow-transparent"
+              />
             </div>
-          </div>
-          {(isPFPClicked && profilePic) && <>
-                      <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
-                        <IoMdClose
-                            className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg hover:text-red-600 transition-all duration-300"
-                            onClick={handleProfileClick}
-                        />
-                        <img src={profilePic} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl animate-postAnim1 max-sm:shadow-transparent"/>
-                      </div>
-          </>}
+          )}
           <img
-            className="w-[150px] h-[150px] rounded-full object-cover"
+            className="w-36 h-36 rounded-full object-cover"
             src={profilePic}
             alt="Profile"
             onClick={handleProfileClick}
           />
-          <h1 className="text-center">{userData?.name || "loading..."}</h1>
-          <h1 className="text-center">
-            {"@" + userData?.handle || "loading..."}
+          <h1 className="text-center text-2xl font-bold mt-4">
+            {userData?.name || "loading..."}
           </h1>
+          <h2 className="text-center text-xl text-neutral">
+            {"@" + userData?.handle || "loading..."}
+          </h2>
 
           <div className="flex justify-center mt-4">
-              <button
-                id="profilePicUpload"
-                className="text-lg p-3 m-[10px] flex justify-center border-4 items-center rounded-2xl bg-[#e43d12] text-white shadow-[6px_6px_11px_#c8c6bf,-6px_-6px_11px_#ffffff] hover:bg-[#e0e0e0] hover:text-[#e43d12] ease-in-out duration-700"
-                onClick={handleProfileUpdate}
-              >
+            <button
+              id="profilePicUpload"
+              className="text-lg p-3 m-2 flex justify-center border-4 items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+              onClick={handleProfileUpdate}
+            >
               Edit Your Profile
-              </button>
+            </button>
           </div>
 
-          {isProfileEdit && 
-            <>
-              <IoMdClose
-                className="text-5xl fixed z-50 p-2 right-[25%] top-24 max-sm:right-16 max-sm:top-[25%] rounded-lg hover:text-red-600 transition-all duration-300"
-                onClick={handleProfileUpdate}
-              />
-              <ProfileEdit image = {profilePic} name={userData?.name} handle={userData?.handle} bio={userData?.bio || "Write something about you..."}/>
-            </>}
+          {isProfileEdit && (
+            <ProfileEdit
+              image={profilePic}
+              name={userData?.name}
+              handle={userData?.handle}
+              bio={userData?.bio || "Write something about you..."}
+              handleProfileClose={handleProfileUpdate}
+            />
+          )}
 
-          <p>{userData?.bio || "Bio is Empty"}</p>
-        </div>
-        <div className="flex flex-col sm:flex-row text-center items-center justify-between mb-[20px]">
-          <div>
-            <h2>Basic info</h2>
-            <p className="mb-[10px]">
-              <strong>Location:</strong> "User location"
-            </p>
-            <p className="mb-[10px]">
-              <strong>Email:</strong> {userData?.email}
-            </p>
-          </div>
-          <div>
-            <h2>Pet info</h2>
-            <p className="mb-[10px]">
-              <strong>Number of pets:</strong> "2"
-            </p>
-            <p className="mb-[10px]">
-              <strong>Pets registered with vets:</strong> "Yes"
-            </p>
-          </div>
-        </div>
-        <div className="flex justify-center align-middle">
-          <Button title="Edit Pet profile" />
-        </div>
-        <div className="mb-[20px]">
-          <h3>Pet Profiles</h3>
-          <div className="flex justify-between bg-[#e43d12] text-white shadow-[6px_6px_11px_#c8c6bf,-6px_-6px_11px_#ffffff] m-2 p-[10px] rounded-lg">
-            <div className="flex flex-col gap-2 text-white">
-              <p>
-                <strong>Age:</strong> "3 years"
+          <p className="mt-4">{userData?.bio || "Bio is Empty"}</p>
+
+          <div className="flex flex-col text-center items-center justify-between mb-5">
+            <div>
+              <h2 className="text-xl font-semibold mb-2 text-primary">
+                Basic info
+              </h2>
+              <p className="mb-2">
+                <strong>Location:</strong> "User location"
               </p>
-              <p>
-                <strong>Breed:</strong> "Cat"
-              </p>
-              <p>
-                <strong>Medical Checkup:</strong> "Healthy"
+              <p className="mb-2">
+                <strong>Email:</strong> {userData?.email}
               </p>
             </div>
-            <img
-              className="w-[100px] h-auto rounded-md"
-              src="../src/Assets/catto.jpg"
-              alt="Pet"
-            />
+            <div>
+              <h2 className="text-xl font-semibold mb-2 text-primary">
+                Pet info
+              </h2>
+              <p className="mb-2">
+                <strong>Number of pets:</strong> {pets.length}
+              </p>
+            </div>
           </div>
+          <div className="mb-5 w-full">
+            <h3 className="text-xl font-semibold mb-2 text-primary">
+              Pet Profiles
+            </h3>
+            <div className="flex flex-col w-full">
+              {pets.map((pet) => (
+                <div
+                  key={pet.id}
+                  className="flex justify-between bg-primary text-base-100 shadow-lg m-2 p-4 rounded-lg"
+                >
+                  <div className="flex flex-row gap-2">
+                    <img
+                      className="w-24 h-auto rounded-md"
+                      src={pet.photoUrl}
+                      alt="Pet"
+                    />
+                    <div className="flex flex-col gap-2">
+                      <p>
+                        <strong>Name:</strong> {pet.name}
+                      </p>
+                      <p>
+                        <strong>Age:</strong> {pet.age}
+                      </p>
+                      <p>
+                        <strong>Breed:</strong> {pet.breed}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    className="flex justify-center items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                    onClick={() => handleEditPet(pet)}
+                  >
+                    <IoMdCreate className="size-7 m-2" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-center align-middle">
+            <button
+              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+              onClick={toggleAddPetSection}
+            >
+              <IoMdAddCircleOutline className="size-7 mr-2" />
+              Add Pet
+            </button>
+          </div>
+          {isAddPetVisible && (
+            <div className="mb-5 w-full">
+              <h3 className="text-xl font-semibold mb-2 text-primary">
+                {editPetId ? "Edit Pet" : "Add New Pet"}
+              </h3>
+              <input
+                type="text"
+                placeholder="Pet Name"
+                value={newPet.name}
+                onChange={(e) => setNewPet({ ...newPet, name: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded-md mb-2"
+              />
+              <input
+                type="text"
+                placeholder="Pet Age"
+                value={newPet.age}
+                onChange={(e) => setNewPet({ ...newPet, age: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded-md mb-2"
+              />
+              <input
+                type="text"
+                placeholder="Pet Breed"
+                value={newPet.breed}
+                onChange={(e) =>
+                  setNewPet({ ...newPet, breed: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded-md mb-2"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePetImageChange}
+                className="w-full p-2 border border-gray-300 rounded-md mb-2"
+              />
+              <button
+                onClick={handleAddPet}
+                className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+              >
+                {editPetId ? "Update Pet" : "Add Pet"}
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h1 className="p-8 text-3xl text-primary">Your Posts:</h1>
+        </div>
+        <div className="flex flex-col items-center w-full">
+          {post.map((post) => (
+            <Posts
+              key={post.id}
+              id={post.id}
+              handle={post.handle}
+              title={post.title}
+              content={post.content}
+              sevVal={post.sevVal}
+              profilePic={userData?.profilePic || null}
+              imageUrl={post.imageUrl}
+              date={
+                post.createdAt
+                  ? format(post.createdAt.toDate(), "PPP")
+                  : "No date"
+              }
+              likes={post.likes || []}
+              dislikes={post.dislikes || []}
+            />
+          ))}
         </div>
       </div>
-      <div>
-        <h1 className="p-8 text-3xl">Your Posts:</h1>
-        {post.map((post) => (
-          <Posts
-            id={post.id}
-            handle={post.handle}
-            title={post.title}
-            content={post.content}
-            sevVal={post.sevVal}
-            profilePic={userData?.profilePic || null}
-            imageUrl={post.imageUrl}
-            date={
-              post.createdAt
-                ? format(post.createdAt.toDate(), "PPP")
-                : "No date"
-            }
-            likes={post.likes || []}
-            dislikes={post.dislikes || []}
-          />
-        ))}
-      </div>
-    </>
+
+      {isEditPetModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-base-100 p-6 rounded-lg shadow-lg w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Edit Pet</h2>
+              <button
+                className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-error-focus hover:text-error"
+                onClick={closeEditPetModal}
+              >
+                <IoMdClose />
+              </button>
+            </div>
+            <input
+              type="text"
+              placeholder="Pet Name"
+              value={newPet.name}
+              onChange={(e) => setNewPet({ ...newPet, name: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-md mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Pet Age"
+              value={newPet.age}
+              onChange={(e) => setNewPet({ ...newPet, age: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-md mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Pet Breed"
+              value={newPet.breed}
+              onChange={(e) => setNewPet({ ...newPet, breed: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-md mb-2"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePetImageChange}
+              className="w-full p-2 border border-gray-300 rounded-md mb-2"
+            />
+            <button
+              onClick={handleAddPet}
+              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+            >
+              Update Pet
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

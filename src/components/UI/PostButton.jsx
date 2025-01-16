@@ -26,23 +26,23 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     //  https://api.cloudinary.com/v1_1/Put_your_cloud_name_here/image/upload
     {
       name: "Post_Image",
-      url: "https://api.cloudinary.com/v1_1/dvczcmdgh/image/upload",
+      url: import.meta.env.VITE_CLOUDINARY_URL_1,
     },
     {
       name: "Post_Image",
-      url: "https://api.cloudinary.com/v1_1/dspxe3n3r/image/upload",
+      url: import.meta.env.VITE_CLOUDINARY_URL_2,
     },
     {
       name: "Post_Image",
-      url: "https://api.cloudinary.com/v1_1/dzyzdbf5s/image/upload",
+      url: import.meta.env.VITE_CLOUDINARY_URL_3,
     },
     {
       name: "Post_Image",
-      url: "https://api.cloudinary.com/v1_1/dfhlildqv/image/upload",
+      url: import.meta.env.VITE_CLOUDINARY_URL_4,
     },
     {
       name: "post-image",
-      url: "https://api.cloudinary.com/v1_1/dvytq9twi/image/upload",
+      url: import.meta.env.VITE_CLOUDINARY_URL_5,
     },
   ];
   const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
@@ -76,16 +76,16 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
       alert("Set a title before posting!");
       return;
     }
+    const currentAccount = getNextAccount();
     const formData = new FormData();
     formData.append("file", imageFile);
-    formData.append("upload_preset", "Post_Image");
+    formData.append("upload_preset", currentAccount.name);
 
     const user = auth.currentUser;
     let uploadedImageUrl = "";
 
     try {
       if (imageFile) {
-        const currentAccount = getNextAccount();
         const response = await fetch(currentAccount.url, {
           method: "POST",
           body: formData,
@@ -96,7 +96,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
       }
       if (user) {
         const userDoc = await getDoc(doc(db, "users", user.uid));
-        const userData = userDoc.exists() 
+        const userData = userDoc.exists()
           ? userDoc.data()
           : { handle: "Unknown" };
         const postRef = collection(db, "posts");
@@ -139,54 +139,52 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
   const removeImage = () => {
     setImageFile(null);
     setImagePreview(null);
-  }
+  };
 
   const handleImageClick = () => {
     setIsImageClicked(!isImageClicked);
-  }
+  };
 
   return (
     <>
       <div
         onClick={isClicked ? null : handleClickEvent}
-        className={`relative flex text-[#e43d12] hover:text-[#ebe9e1] z-10 p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-[6px_6px_16px_#c1bfb9,-6px_-6px_16px_#ffffff] rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out animate-postButtonAnim1 duration-700 ${
+        className={`flex text-primary hover:text-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out animate-postButtonAnim1 duration-700 ${
           isClicked
-            ? `bg-[#e43d12] text-[210%] text-white hover:text-white flex-col gap-4 w-[80%] ${imagePreview ? `h-[94vh] max-sm:h-[750px]` : `h-[64vh] max-sm:h-[500px]`} max-sm:w-[90%] `
-            : `text-xl  max-sm:w-[90%] hover:bg-[#e43d12] bg-[#ebe9e1]  hover:shadow-[11px_11px_19px_#d0d0d0,-11px_-11px_19px_#f0f0f0]`
+            ? `w-full sm:w-[95%] ${imagePreview ? `h-[31%]` : `h-[30%]`} `
+            : `text-xl max-sm:w-[90%] hover:bg-primary bg-base-100 hover:shadow-lg`
         }`}
       >
-        <p
-          className={`${
-            isClicked ? `absolute top-4 self-center` : `relative ml-[-50px]`
-          }`}
-        >
-          {buttonName}
-        </p>
         <div
-          className={`ml-3 absolute top-0 right-0 px-4 py-[1.1rem] rounded-lg transition-all duration-500 ${
-            isClicked && `rotate-45 text-white hover:text-red-600`
+          className={`flex justify-center items-center ${
+            isClicked ? `hidden` : ` `
           }`}
-          onClick={handleClickEvent}
         >
           {icon}
         </div>
+        <p className={`${isClicked ? `hidden` : ` `}`}>{buttonName}</p>
+
         {isClicked && (
-          <>
+          <div className="flex flex-col justify-center items-center gap-4 bg-primary w-full h-full p-4 rounded-2xl text-base-100">
+            <div className="flex justify-center items-center">
+              {icon}
+              <p className="text-2xl">New Post</p>
+            </div>
             <input
               type="text"
               placeholder={`What's on your mind?`}
               value={title}
-              className={`w-[95%] mt-[-25px] max-sm:max-w-[95%] max-sm:h-[5vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black animate-postButtonAnim1 shadow-Uni`}
+              className={`w-[95%] rounded-lg pl-4 py-2 text-xl text-gray-600 shadow-lg`}
               onChange={(e) => setTitle(e.target.value)}
             ></input>
             <textarea
               placeholder={`Describe some more...`}
               value={content}
-              className={`h-44 w-[95%] max-sm:max-w-[95%] max-sm:h-[15vh] max-sm:text-lg outline-none text-xl rounded-lg pl-4 pt-2 text-gray-600 animate-postButtonAnim1 shadow-Uni`}
+              className={`h-44 w-[95%] text-xl rounded-lg pl-4 pt-2 text-gray-600 shadow-lg`}
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
             <div
-              className={`w-[95%] max-sm:h-[8vh]  mb-5 relative pl-4 flex-col justify-center items-start rounded-lg py-2 max-sm:max-w-[95%] text-gray-600 bg-white animate-postButtonAnim1 shadow-Uni transition-all duration-100`}
+              className={`w-[95%] pl-4 flex-col justify-center items-start rounded-lg py-2 max-sm:max-w-[95%] text-gray-600 bg-base-100 shadow-lg`}
             >
               <p
                 htmlFor="sevScale"
@@ -197,12 +195,12 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
                 {sevVal === 1
                   ? "😃 (very good)"
                   : sevVal === 2
-                  ? "🙂 (good)"
-                  : sevVal === 3
-                  ? "😐 (neutral)"
-                  : sevVal === 4
-                  ? "😨 (not good)"
-                  : "😭 (contact vet)"}
+                    ? "🙂 (good)"
+                    : sevVal === 3
+                      ? "😐 (neutral)"
+                      : sevVal === 4
+                        ? "😨 (not good)"
+                        : "😭 (contact vet)"}
               </p>
               <input
                 type="range"
@@ -210,55 +208,69 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
                 max={5}
                 value={sevVal}
                 id="sevScale"
-                className={`relative text-gray-600 animate-postButtonAnim1 w-56 max-sm:w-[10rem]`}
+                className={`text-gray-600 animate-postButtonAnim1 w-56 max-sm:w-[10rem]`}
                 onChange={(e) => setSevVal(parseInt(e.target.value))}
               />
             </div>
 
-            {imagePreview && 
-            <>
-              <button 
-                className="absolute bottom-10 p-2 rounded-full bg-[#474747a1]" 
-                onClick={removeImage}>
-                  <IoMdClose/>
-              </button>
+            {imagePreview && (
+              <>
+                <button
+                  className="rounded-full bg-[#474747a1]"
+                  onClick={removeImage}
+                >
+                  <IoMdClose />
+                </button>
 
-              <img 
-                src={imagePreview} 
-                className="object-cover rounded-xl w-fit h-[30%] max-sm:h-[25%]"
-                onClick={handleImageClick}/>
+                <img
+                  src={imagePreview}
+                  className="object-cover rounded-xl w-fit h-[30%] max-sm:h-[25%]"
+                  onClick={handleImageClick}
+                />
 
-              {(isImageClicked && imagePreview) && <>
-                          <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
-                            <IoMdClose
-                                className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg transition-all duration-300"
-                                onClick={handleImageClick}
-                            />
-                            <img src={imagePreview} alt="Image" className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl max-sm:shadow-transparent animate-postAnim1"/>
-                          </div>
-              </>}
-            </>}
+                {isImageClicked && imagePreview && (
+                  <>
+                    <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
+                      <IoMdClose
+                        className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg transition-all duration-300"
+                        onClick={handleImageClick}
+                      />
+                      <img
+                        src={imagePreview}
+                        alt="Image"
+                        className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl max-sm:shadow-transparent animate-postAnim1"
+                      />
+                    </div>
+                  </>
+                )}
+              </>
+            )}
 
-            <label htmlFor="image upload" className="text-3xl bg-white absolute bottom-0 left-0 text-black p-3 py-3 m-6 animate-postButtonAnim1 shadow-Uni hover:shadow-lg rounded-lg transition-all duration-500"><CiImageOn /></label>
+            <label
+              htmlFor="image upload"
+              className={`text-3xl bg-base-100 text-black p-3 py-3 animate-postButtonAnim1 shadow-lg hover:shadow-lg rounded-lg transition-all duration-500 ${
+                imagePreview ? `hidden` : ` `
+              }`}
+            >
+              <CiImageOn />
+            </label>
 
             <input
               type="file"
               id="image upload"
               accept="image/*"
               onChange={handleImageChange}
-              className={
-                "hidden"
-              }
+              className={"hidden"}
             />
 
             <button
               type="submit"
-              className={`text-[20px] bg-white absolute bottom-0 right-0 text-black p-3 py-3 m-6 animate-postButtonAnim1 shadow-Uni hover:shadow-lg rounded-lg transition-all duration-500`}
+              className={`text-[20px] bg-base-100 bottom-0 right-0 text-black p-3 py-3 animate-postButtonAnim1 shadow-lg hover:shadow-lg rounded-lg transition-all duration-500`}
               onClick={handleSubmit}
             >
               {submitName}
             </button>
-          </>
+          </div>
         )}
       </div>
     </>
