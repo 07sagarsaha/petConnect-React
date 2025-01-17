@@ -114,6 +114,7 @@ const Posts = ({
   };
 
   const handleProfileClick = () => {
+    console.log(userId);
     navigate(`/in/profile/${userId}`);
   };
 

@@ -219,7 +219,7 @@ function Profile() {
           <div className="flex justify-center mt-4">
             <button
               id="profilePicUpload"
-              className="text-lg p-3 m-2 flex justify-center border-4 items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
               onClick={handleProfileUpdate}
             >
               Edit Your Profile

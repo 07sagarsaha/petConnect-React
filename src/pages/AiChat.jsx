@@ -69,7 +69,7 @@ const AiChat = () => {
         />
         <button
           onClick={getResponse}
-          className="text-lg p-4 m-[7px] flex mb-16 justify-center items-center rounded-xl bg-primary-focus text-primary  hover:bg-primary hover:text-base-100 border-4 ease-in-out duration-700"
+          className="text-lg h-14 p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 mb-16"
         >
           Send
         </button>

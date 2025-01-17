@@ -51,7 +51,12 @@ function SideNav() {
           className="flex flex-row gap-4 text-base-100 hover:scale-105 transition-transform duration-300"
           style={{ display: showLogout ? "flex" : "none" }}
         >
-          <img src={logout} className="w-8 h-8" alt="logout" />
+          <img
+            src={logout}
+            onClick={handleLogout}
+            className="w-8 h-8"
+            alt="logout"
+          />
           <button onClick={handleLogout} className="hidden sm:flex">
             Logout
           </button>

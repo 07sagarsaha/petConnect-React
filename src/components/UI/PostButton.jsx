@@ -22,8 +22,6 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isImageClicked, setIsImageClicked] = useState(false);
   const cloudinaryAccounts = [
-    //add more cloudinary accounts here just add the name and and change the url too
-    //  https://api.cloudinary.com/v1_1/Put_your_cloud_name_here/image/upload
     {
       name: "Post_Image",
       url: import.meta.env.VITE_CLOUDINARY_URL_1,
@@ -119,6 +117,13 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
           setImageFile(null);
           setImagePreview(null);
           setIsClicked(!isClicked);
+
+          // Send browser notification
+          if (Notification.permission === "granted") {
+            new Notification("New Post", {
+              body: `${userData.name} (@${userData.handle}) posted: ${title} - Severity: ${sevVal}`,
+            });
+          }
         });
       } else {
         console.error("User is not logged in.");
@@ -149,7 +154,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     <>
       <div
         onClick={isClicked ? null : handleClickEvent}
-        className={`flex text-primary hover:text-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out animate-postButtonAnim1 duration-700 ${
+        className={`flex text-primary hover:text-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
           isClicked
             ? `w-full sm:w-[95%] ${imagePreview ? `h-[31%]` : `h-[30%]`} `
             : `text-xl max-sm:w-[90%] hover:bg-primary bg-base-100 hover:shadow-lg`
@@ -166,9 +171,17 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
         {isClicked && (
           <div className="flex flex-col justify-center items-center gap-4 bg-primary w-full h-full p-4 rounded-2xl text-base-100">
-            <div className="flex justify-center items-center">
-              {icon}
-              <p className="text-2xl">New Post</p>
+            <div className="flex flex-row w-full ml-4 mt-4 items-center">
+              <div className="flex w-[100%] justify-center ml-4 ">
+                {icon}
+                <p className="text-2xl ">New Post</p>
+              </div>
+              <div className="">
+                <IoMdClose
+                  className="w-8 h-8 justify-end  mr-8"
+                  onClick={handleClickEvent}
+                ></IoMdClose>
+              </div>
             </div>
             <input
               type="text"
@@ -229,19 +242,17 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
                 />
 
                 {isImageClicked && imagePreview && (
-                  <>
-                    <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
-                      <IoMdClose
-                        className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg transition-all duration-300"
-                        onClick={handleImageClick}
-                      />
-                      <img
-                        src={imagePreview}
-                        alt="Image"
-                        className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl max-sm:shadow-transparent animate-postAnim1"
-                      />
-                    </div>
-                  </>
+                  <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
+                    <IoMdClose
+                      className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg transition-all duration-300"
+                      onClick={handleImageClick}
+                    />
+                    <img
+                      src={imagePreview}
+                      alt="Image"
+                      className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl max-sm:shadow-transparent animate-postAnim1"
+                    />
+                  </div>
                 )}
               </>
             )}

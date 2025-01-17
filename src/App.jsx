@@ -1,12 +1,22 @@
+import React, { useEffect } from "react";
 import SideNav from "./components/SideNav";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./context/authContext/authContext";
-
 import "../src/App.css";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   const { userLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (
+      Notification.permission !== "granted" &&
+      Notification.permission !== "denied"
+    ) {
+      Notification.requestPermission();
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       <div className="bg-[#EBE9E1]">
@@ -15,7 +25,7 @@ function App() {
           <div className="fixed">
             <SideNav />
           </div>
-          <div className=" w-full bg-[#EBE9E1] ml-20 sm:ml-52 ">
+          <div className="w-full bg-[#EBE9E1] ml-20 sm:ml-52">
             <Outlet />
           </div>
         </div>

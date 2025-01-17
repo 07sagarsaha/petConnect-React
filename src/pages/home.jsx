@@ -126,14 +126,21 @@ function Home() {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
-    const q = query(collection(db, "users"), where("name", "==", searchQuery));
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    const q = query(collection(db, "users"));
 
     try {
       const snapshot = await getDocs(q);
-      const results = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const results = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter(
+          (user) =>
+            user.name.toLowerCase().includes(lowerCaseQuery) ||
+            user.handle.toLowerCase().includes(lowerCaseQuery)
+        );
       setSearchResults(results);
     } catch (error) {
       console.error("Error searching users:", error);
@@ -149,18 +156,21 @@ function Home() {
     setSearchQuery(queryText);
 
     if (queryText.length > 2) {
-      const q = query(
-        collection(db, "users"),
-        where("name", ">=", queryText),
-        where("name", "<=", queryText + "\uf8ff")
-      );
+      const lowerCaseQuery = queryText.toLowerCase();
+      const q = query(collection(db, "users"));
 
       try {
         const snapshot = await getDocs(q);
-        const results = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const results = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter(
+            (user) =>
+              user.name.toLowerCase().includes(lowerCaseQuery) ||
+              user.handle.toLowerCase().includes(lowerCaseQuery)
+          );
         setAutocompleteResults(results);
       } catch (error) {
         console.error("Error fetching autocomplete results:", error);
@@ -194,7 +204,7 @@ function Home() {
           submitName={"Post"}
         />
         <button
-          className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary border-4 ease-in-out duration-700 ml-2"
+          className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary border-4 ease-in-out duration-700 mr-6"
           onClick={openSearchModal}
         >
           <IoMdSearch />
