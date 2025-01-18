@@ -1,6 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
+// Placeholder for Workbox to inject the precache manifest
+self.__WB_MANIFEST;
+
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "INIT") {
     const firebaseConfig = event.data.payload;
