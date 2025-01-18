@@ -4,15 +4,17 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./context/authContext/authContext";
 import "../src/App.css";
 import { ThemeProvider } from "./context/ThemeContext";
-import { requestNotificationPermission } from "./firebase/firebase";
-import { registerServiceWorker } from "./firebase/firebase-messaging-sw-registration";
 
 function App() {
   const { userLoggedIn } = useAuth();
 
   useEffect(() => {
-    requestNotificationPermission();
-    registerServiceWorker();
+    if (
+      Notification.permission !== "granted" &&
+      Notification.permission !== "denied"
+    ) {
+      Notification.requestPermission();
+    }
   }, []);
 
   return (

@@ -98,7 +98,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
           ? userDoc.data()
           : { handle: "Unknown" };
         const postRef = collection(db, "posts");
-        const newPost = await addDoc(postRef, {
+        await addDoc(postRef, {
           title,
           content,
           sevVal,
@@ -109,24 +109,22 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
           createdAt: serverTimestamp(),
           userId: user.uid,
           author: user.email,
+        }).then(() => {
+          // Clear the form fields after successful submission
+          setTitle("");
+          setContent("");
+          setSevVal(3);
+          setImageFile(null);
+          setImagePreview(null);
+          setIsClicked(!isClicked);
+
+          // Send browser notification
+          if (Notification.permission === "granted") {
+            new Notification("New Post", {
+              body: `${userData.name} (@${userData.handle}) posted: ${title} - Severity: ${sevVal}`,
+            });
+          }
         });
-
-        // Clear the form fields after successful submission
-        setTitle("");
-        setContent("");
-        setSevVal(3);
-        setImageFile(null);
-        setImagePreview(null);
-        setIsClicked(!isClicked);
-
-        // Send browser notification
-        if (Notification.permission === "granted") {
-          new Notification("New Post", {
-            body: `${userData.name} (@${userData.handle}) posted: ${title} - Severity: ${sevVal}`,
-            icon: userData.profilePic || "/src/icons/pfp.png",
-            click_action: `${window.location.origin}/post/${newPost.id}`, // Add click action URL
-          });
-        }
       } else {
         console.error("User is not logged in.");
       }
