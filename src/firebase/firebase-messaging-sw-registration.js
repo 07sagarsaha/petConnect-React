@@ -4,7 +4,7 @@ export const registerServiceWorker = async () => {
       const registration = await navigator.serviceWorker.register(
         "/firebase-messaging-sw.js",
         {
-          scope: "/firebase-cloud-messaging-push-scope",
+          scope: "/",
         }
       );
 
