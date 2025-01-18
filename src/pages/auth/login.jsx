@@ -69,6 +69,7 @@ function Login() {
             <Button type="submit" title="Login" isDisabled={isSigningIn} />
           </div>
         </form>
+        {/*         
         <div className="flex justify-center mt-4">
           <button
             onClick={onGoogleSignIn}
@@ -77,6 +78,7 @@ function Login() {
             Sign in with Google
           </button>
         </div>
+         */}
         <div className="text-center mt-4">
           <Link to="/signup">
             <button className="text-primary underline">
