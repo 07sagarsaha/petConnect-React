@@ -154,10 +154,10 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     <>
       <div
         onClick={isClicked ? null : handleClickEvent}
-        className={`flex text-primary hover:text-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
+        className={`flex text-neutral bg-base-200 hover:text-accent hover:bg-neutral border-accent border-2 p-0 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
           isClicked
             ? `w-full sm:w-[95%] ${imagePreview ? `h-[31%]` : `h-[30%]`} `
-            : `text-xl max-sm:w-[90%] hover:bg-primary bg-base-100 hover:shadow-lg`
+            : `text-xl text-neutral max-sm:w-[90%] hover:bg-primary`
         }`}
       >
         <div
@@ -170,7 +170,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
         <p className={`${isClicked ? `hidden` : ` `}`}>{buttonName}</p>
 
         {isClicked && (
-          <div className="flex flex-col justify-center items-center gap-4 bg-primary w-full h-full p-4 rounded-2xl text-base-100">
+          <div className="flex flex-col justify-center items-center gap-4 bg-primary w-full h-full p-4 rounded-xl text-base-100">
             <div className="flex flex-row w-full ml-4 mt-4 items-center">
               <div className="flex w-[100%] justify-center ml-4 ">
                 {icon}
@@ -187,17 +187,17 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
               type="text"
               placeholder={`What's on your mind?`}
               value={title}
-              className={`w-[95%] rounded-lg pl-4 py-2 text-xl text-gray-600 shadow-lg`}
+              className={`w-[95%] rounded-lg pl-4 py-2 text-xl text-gray-600 `}
               onChange={(e) => setTitle(e.target.value)}
             ></input>
             <textarea
               placeholder={`Describe some more...`}
               value={content}
-              className={`h-44 w-[95%] text-xl rounded-lg pl-4 pt-2 text-gray-600 shadow-lg`}
+              className={`h-44 w-[95%] text-xl rounded-lg pl-4 pt-2 text-gray-600 `}
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
             <div
-              className={`w-[95%] pl-4 flex-col justify-center items-start rounded-lg py-2 max-sm:max-w-[95%] text-gray-600 bg-base-100 shadow-lg`}
+              className={`w-[95%] pl-4 flex-col justify-center items-start rounded-lg py-2 max-sm:max-w-[95%] text-gray-600 bg-base-100 `}
             >
               <p
                 htmlFor="sevScale"
@@ -250,7 +250,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
                     <img
                       src={imagePreview}
                       alt="Image"
-                      className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl max-sm:shadow-transparent animate-postAnim1"
+                      className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl animate-postAnim1"
                     />
                   </div>
                 )}
@@ -259,7 +259,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
             <label
               htmlFor="image upload"
-              className={`text-3xl bg-base-100 text-black p-3 py-3 animate-postButtonAnim1 shadow-lg hover:shadow-lg rounded-lg transition-all duration-500 ${
+              className={`text-3xl bg-base-100 text-black p-3 py-3 animate-postButtonAnim1   rounded-lg transition-all duration-500 ${
                 imagePreview ? `hidden` : ` `
               }`}
             >
@@ -276,7 +276,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
             <button
               type="submit"
-              className={`text-[20px] bg-base-100 bottom-0 right-0 text-black p-3 py-3 animate-postButtonAnim1 shadow-lg hover:shadow-lg rounded-lg transition-all duration-500`}
+              className={`text-[20px] bg-base-100 bottom-0 right-0 text-black p-3 py-3 animate-postButtonAnim1  rounded-lg transition-all duration-500`}
               onClick={handleSubmit}
             >
               {submitName}

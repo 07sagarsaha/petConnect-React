@@ -19,7 +19,7 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className="bg-[#EBE9E1]">
+      <div>
         {!userLoggedIn && <Navigate to={"/"} replace={true} />}
         <div className="flex flex-row sm:justify-start">
           <div className="fixed">
