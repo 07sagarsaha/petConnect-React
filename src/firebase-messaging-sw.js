@@ -1,17 +1,13 @@
-importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js");
+import { initializeApp } from "firebase/app";
+import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
-let firebaseConfig = {};
-
-// Listen for messages from the registration script
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "INIT") {
-    firebaseConfig = event.data.payload;
-    firebase.initializeApp(firebaseConfig);
+    const firebaseConfig = event.data.payload;
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
 
-    const messaging = firebase.messaging();
-
-    messaging.onBackgroundMessage((payload) => {
+    onBackgroundMessage(messaging, (payload) => {
       console.log("Received background message ", payload);
       const notificationTitle = payload.notification.title;
       const notificationOptions = {
