@@ -164,19 +164,17 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     <>
       <div
         onClick={isClicked ? null : handleClickEvent}
-        className={`flex text-primary hover:text-base-100 bg-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
+        className={`flex text-primary hover:text-base-100 bg-base-100 p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center self-center transition-all duration-[0.85s] shadow-lg rounded-2xl max-sm:m-2 ease ${
           isClicked
-            ? `w-full sm:w-[95%] ${imagePreview ? `h-[31%]` : `h-[30%]`} `
-            : `text-xl text-neutral max-sm:w-[90%] hover:bg-primary`
+            ? `w-full max-sm:w-full h-[30%] ${imagePreview && `h-[31%]`} `
+            : `text-xl text-neutral w-[10%] max-sm:w-full hover:bg-primary h-[10%]`
         }`}
       >
-        <div
-          className={`flex justify-center items-center ${
-            isClicked ? `hidden` : ` `
-          }`}
+        {!isClicked && <div
+          className={`flex justify-center items-center`}
         >
           {icon}
-        </div>
+        </div>}
         <p className={`${isClicked ? `hidden` : ` `}`}>{buttonName}</p>
 
         {isClicked && (

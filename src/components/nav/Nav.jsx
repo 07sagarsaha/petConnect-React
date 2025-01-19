@@ -8,8 +8,8 @@ function Nav({ title, icon, to }) {
         to={to}
         className={({ isActive }) =>
           isActive
-            ? "text-white px-5 py-3 bg-primary rounded-lg sm:rounded-2xl shadow-md"
-            : "text-white"
+            ? "text-white px-5 py-3 max-sm:px-3 bg-primary rounded-lg max-sm:rounded-2xl shadow-md"
+            : "text-white max-sm:px-3 py-3"
         }
       >
         <div className="flex flex-row gap-2 sm:gap-4 items-center">

@@ -119,7 +119,7 @@ const Posts = ({
   };
 
   return (
-    <div className="flex justify-start items-center w-full text-base-content bg-base-200">
+    <div className="flex justify-center items-center w-full text-base-content bg-base-200">
       {isImageClicked && imageUrl && (
         <>
           <div

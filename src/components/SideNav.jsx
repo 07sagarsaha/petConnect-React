@@ -36,10 +36,9 @@ function SideNav() {
         </button>
       </div> */}
       <div
-        className={`fixed top-0 left-0 w-20 sm:p-4 h-screen flex flex-col justify-evenly items-center rounded-r-xl transition-transform duration-300 z-40 bg-gradient-to-br from-primary to-neutral-300  sm:min-w-[200px] translate-x-0" 
-        }`}
+        className={`fixed max-sm:bottom-0 left-0 w-20 h-screen max-sm:h-20 max-sm:w-full max-sm:rounded-none flex flex-col max-sm:flex-row justify-evenly items-center rounded-r-xl transition-transform duration-300 z-40 bg-gradient-to-br from-primary to-neutral-300 sm:min-w-[200px] translate-x-0`}
       >
-        <div className="flex w-full flex-col text-left gap-12 transition-all ease duration-200">
+        <div className="flex w-full flex-col max-sm:flex-row max-sm:justify-center max-sm:items-center text-left gap-12 max-sm:gap-7 transition-all ease duration-200">
           <Nav title="Home" icon={home} to="/in/home" />
           <Nav title="Profile" icon={user} to="/in/profile" />
           <Nav title="Ai Chat" icon={ai} to="/in/ai-chat" />
@@ -53,10 +52,10 @@ function SideNav() {
           <img
             src={logout}
             onClick={handleLogout}
-            className="w-8 h-8"
+            className="w-8 h-8 max-sm:hidden"
             alt="logout"
           />
-          <button onClick={handleLogout} className="hidden sm:flex text-white">
+          <button onClick={handleLogout} className="max-sm:hidden sm:flex text-white">
             Logout
           </button>
         </div>

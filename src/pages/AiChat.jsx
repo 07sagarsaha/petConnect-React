@@ -8,6 +8,16 @@ const AiChat = () => {
 
   async function getResponse() {
     if (!question.trim()) return;
+
+    // Add user's message to the chat log immediately
+    setChatLog((prevChat) => [
+      ...prevChat,
+      { sender: "You", text: question },
+    ]);
+
+    // Clear the input field
+    setQuestion("");
+
     try {
       const response = await axios({
         url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
@@ -25,20 +35,22 @@ const AiChat = () => {
         response?.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
         "No response";
 
+      // Add AI's response to the chat log
       setChatLog((prevChat) => [
         ...prevChat,
-        { sender: "You", text: question },
         { sender: "Pet Connect", text: aiResponse },
       ]);
-      setQuestion("");
     } catch (error) {
-      console.error("Error fetching response:", error);
+      setChatLog((prevChat) => [
+        ...prevChat,
+        { sender: "Pet Connect", text: "Sorry, something went wrong! Please again later." },
+      ]);
     }
   }
 
   return (
     <div className="w-full overflow-hidden h-screen flex flex-col bg-base-100">
-      <div className="flex-1 mr-4 p-4 overflow-y-scroll">
+      <div className="flex-1 max-sm:mb-16 p-4 overflow-y-scroll">
         {chatLog.map((message, index) => (
           <div
             key={index}
@@ -49,8 +61,8 @@ const AiChat = () => {
             <p
               className={`inline-block p-3 rounded-lg ${
                 message.sender === "Pet Connect"
-                  ? "bg-primary text-base-100 shadow-lg"
-                  : "bg-secondary text-base-100 shadow-lg"
+                  ? "bg-primary text-base-100 shadow-lg animate-postAnim3"
+                  : "bg-secondary text-base-100 shadow-lg animate-postAnim3"
               }`}
             >
               <strong>{message.sender}: </strong>
@@ -59,17 +71,17 @@ const AiChat = () => {
           </div>
         ))}
       </div>
-      <div className="sm:w-full h-16 bg-base-100 flex items-center px-4">
+      <div className="max-sm:w-full h-16 bg-base-100 max-sm:bg-transparent mb-10 max-sm:mb-2 flex justify-center items-center px-4 max-sm:px-0 fixed z-10 max-sm:bottom-20 max-sm:left-1 w-[80%] left-[200px] bottom-2">
         <input
           type="text"
           placeholder="Type your question..."
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          className="flex-1 h-14 px-1 sm:px-4 mb-16 rounded-md shadow-inner bg-base-200"
+          className="flex-1 h-14 px-1 max-sm:px-4 rounded-md shadow-inner bg-base-200"
         />
         <button
           onClick={getResponse}
-          className="text-lg h-14 p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 mb-16"
+          className="text-lg p-3 m-2 h-14 flex justify-center items-center rounded-md bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 "
         >
           Send
         </button>
