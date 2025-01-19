@@ -142,7 +142,7 @@ const CommentDisplay = ({
         {isPostClicked ? (
           <>
             <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100">
-              <h1 className="text-2xl font-bold p-4">Add come</h1>
+              <h1 className="text-2xl font-bold p-4">Add comment</h1>
               <IoMdClose
                 className="text-3xl hover:text-error transition-colors duration-300 mr-4"
                 onClick={handlePost}

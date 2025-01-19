@@ -123,17 +123,17 @@ const Posts = ({
       {isImageClicked && imageUrl && (
         <>
           <div
-            className="h-full w-full justify-center items-center flex bg-neutral-focus transition-colors duration-200"
+            className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-30 top-0 left-0"
             onClick={handleImageClick}
           />
           <IoMdClose
-            className="text-5xl p-2 rounded-lg hover:text-error transition-all duration-300"
+            className="text-5xl p-2 rounded-lg hover:text-error transition-all duration-300 fixed top-5 right-5 z-50 bg-base-200 text-primary"
             onClick={handleImageClick}
           />
           <img
             src={imageUrl}
             alt="Image"
-            className="h-fit w-[75%] max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl"
+            className="h-fit w-[75%] max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-40 rounded-xl"
           />
         </>
       )}
