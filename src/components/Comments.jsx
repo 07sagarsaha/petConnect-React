@@ -134,17 +134,20 @@ const CommentDisplay = ({
       <div
         className={`transition-all duration-[0.625s] ease-in-out rounded-xl ${
           isPostClicked
-            ? "h-4/5 w-[75%] max-sm:h-full max-sm:rounded-none max-sm:w-full transform -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 rounded-xl bg-base-100 flex shadow-xl overflow-hidden"
+            ? "h-4/5 w-full top-1/2  max-sm:h-full max-sm:rounded-none  max-sm:w-full flex-col justify-center rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
             : "h-5 w-5 text-xl text-primary flex-row flex items-center justify-center"
         }`}
         onClick={isPostClicked ? null : handlePost}
       >
         {isPostClicked ? (
           <>
-            <IoMdClose
-              className="absolute right-5 top-5 z-40 text-3xl hover:text-error transition-colors duration-300"
-              onClick={handlePost}
-            />
+            <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100">
+              <h1 className="text-2xl font-bold p-4">Add come</h1>
+              <IoMdClose
+                className="text-3xl hover:text-error transition-colors duration-300 mr-4"
+                onClick={handlePost}
+              />
+            </div>
             {isImageURLPresent ? (
               <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto">
                 <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">

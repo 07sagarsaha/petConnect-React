@@ -2,29 +2,45 @@ import React, { useContext } from "react";
 import ThemeContext from "../context/ThemeContext";
 
 const themes = [
+  "light",
+  "dark",
   "cupcake",
   "bumblebee",
   "emerald",
+  "corporate",
+  "synthwave",
   "retro",
+  "cyberpunk",
   "valentine",
+  "halloween",
   "garden",
+  "forest",
   "aqua",
   "lofi",
   "pastel",
   "fantasy",
+  "wireframe",
+  "black",
+  "dracula",
   "cmyk",
   "autumn",
+  "business",
+  "acid",
   "lemonade",
+  "night",
+  "coffee",
   "winter",
+  "dim",
   "nord",
+  "sunset",
 ];
 
 function Settings() {
   const { theme, changeTheme } = useContext(ThemeContext);
 
   return (
-    <div className="flex flex-col justify-center p-8 bg-base-100 text-gray-800 min-h-screen">
-      <div className="w-full bg-white rounded-lg shadow-lg p-6">
+    <div className="flex flex-col justify-center p-8 bg-base-200  min-h-screen">
+      <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
         <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">

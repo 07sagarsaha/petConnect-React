@@ -196,7 +196,7 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-base-100 text-gray-800 min-h-screen p-4">
+    <div className="flex flex-col items-center bg-base-200 text-gray-800 min-h-screen p-4 rounded-lg">
       <div className="flex flex-col lg:flex-row w-full justify-between items-center mb-4 ">
         <Button
           buttonName={"New Post"}
