@@ -154,7 +154,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     <>
       <div
         onClick={isClicked ? null : handleClickEvent}
-        className={`flex text-neutral bg-base-200 hover:text-accent hover:bg-neutral border-accent border-2 p-0 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
+        className={`flex text-primary hover:text-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
           isClicked
             ? `w-full sm:w-[95%] ${imagePreview ? `h-[31%]` : `h-[30%]`} `
             : `text-xl text-neutral max-sm:w-[90%] hover:bg-primary`
@@ -187,13 +187,13 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
               type="text"
               placeholder={`What's on your mind?`}
               value={title}
-              className={`w-[95%] rounded-lg pl-4 py-2 text-xl text-gray-600 `}
+              className={`w-[95%] rounded-lg pl-4 py-2 text-xl text-gray-600  shadow-lg`}
               onChange={(e) => setTitle(e.target.value)}
             ></input>
             <textarea
               placeholder={`Describe some more...`}
               value={content}
-              className={`h-44 w-[95%] text-xl rounded-lg pl-4 pt-2 text-gray-600 `}
+              className={`h-44 w-[95%] text-xl rounded-lg pl-4 pt-2 text-gray-600 shadow-lg`}
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
             <div
@@ -259,7 +259,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
             <label
               htmlFor="image upload"
-              className={`text-3xl bg-base-100 text-black p-3 py-3 animate-postButtonAnim1   rounded-lg transition-all duration-500 ${
+              className={`text-3xl bg-base-100 shadow-lg text-black p-3 py-3 animate-postButtonAnim1   rounded-lg transition-all duration-500 ${
                 imagePreview ? `hidden` : ` `
               }`}
             >
@@ -276,7 +276,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
             <button
               type="submit"
-              className={`text-[20px] bg-base-100 bottom-0 right-0 text-black p-3 py-3 animate-postButtonAnim1  rounded-lg transition-all duration-500`}
+              className={`text-[20px] shadow-lg hover:shadow-lg bg-base-100 bottom-0 right-0 text-black p-3 py-3 animate-postButtonAnim1  rounded-lg transition-all duration-500`}
               onClick={handleSubmit}
             >
               {submitName}

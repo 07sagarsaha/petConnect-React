@@ -2,21 +2,37 @@ import React, { useContext } from "react";
 import ThemeContext from "../context/ThemeContext";
 
 const themes = [
+  "light",
+  "dark",
   "cupcake",
   "bumblebee",
   "emerald",
+  "corporate",
+  "synthwave",
   "retro",
+  "cyberpunk",
   "valentine",
+  "halloween",
   "garden",
+  "forest",
   "aqua",
   "lofi",
   "pastel",
   "fantasy",
+  "wireframe",
+  "black",
+  "dracula",
   "cmyk",
   "autumn",
+  "business",
+  "acid",
   "lemonade",
+  "night",
+  "coffee",
   "winter",
+  "dim",
   "nord",
+  "sunset",
 ];
 
 function Settings() {

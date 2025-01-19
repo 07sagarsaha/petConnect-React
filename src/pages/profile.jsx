@@ -188,7 +188,7 @@ function Profile() {
 
   return (
     <div className="flex justify-center flex-col bg-base-100 text-gray-800 min-h-screen p-8 ">
-      <div className="w-full bg-base-300 rounded-lg  p-6">
+      <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex flex-col items-center w-full text-center mb-5">
           {isPFPClicked && profilePic && (
             <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 glass transition-colors duration-200">
@@ -219,7 +219,7 @@ function Profile() {
           <div className="flex justify-center mt-4">
             <button
               id="profilePicUpload"
-              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-accent text-neutral  hover:bg-neutral hover:text-accent ease-in-out duration-700"
+              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
               onClick={handleProfileUpdate}
             >
               Edit Your Profile
@@ -240,7 +240,7 @@ function Profile() {
 
           <div className="flex flex-col text-center items-center justify-between mb-5">
             <div>
-              <h2 className="text-xl font-semibold mb-2 text-neutral">
+              <h2 className="text-xl font-semibold mb-2 text-primary">
                 Basic info
               </h2>
               <p className="mb-2">
@@ -251,7 +251,7 @@ function Profile() {
               </p>
             </div>
             <div>
-              <h2 className="text-xl font-semibold mb-2 text-neutral">
+              <h2 className="text-xl font-semibold mb-2 text-primary">
                 Pet info
               </h2>
               <p className="mb-2">
@@ -260,14 +260,14 @@ function Profile() {
             </div>
           </div>
           <div className="mb-5 w-full">
-            <h3 className="text-xl font-semibold mb-2 text-neutral">
+            <h3 className="text-xl font-semibold mb-2 text-primary">
               Pet Profiles
             </h3>
             <div className="flex flex-col w-full">
               {pets.map((pet) => (
                 <div
                   key={pet.id}
-                  className="flex justify-between items-center bg-primary text-base-100  m-2 p-4 rounded-lg"
+                  className="flex items-center justify-between bg-primary text-base-100 shadow-lg m-2 p-4 rounded-lg"
                 >
                   <div className="flex flex-row gap-2">
                     <img
@@ -288,7 +288,7 @@ function Profile() {
                     </div>
                   </div>
                   <button
-                    className="flex justify-center items-center rounded-2xl bg-accent text-neutral hover:bg-neutral h-fit hover:text-accent ease-in-out duration-700"
+                    className="flex justify-center items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out duration-700"
                     onClick={() => handleEditPet(pet)}
                   >
                     <IoMdCreate className="size-7 m-2" />
@@ -299,7 +299,7 @@ function Profile() {
           </div>
           <div className="flex justify-center align-middle">
             <button
-              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-accent text-neutral  hover:bg-neutral hover:text-accent ease-in-out duration-700"
+              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
               onClick={toggleAddPetSection}
             >
               <IoMdAddCircleOutline className="size-7 mr-2" />
@@ -342,7 +342,7 @@ function Profile() {
               />
               <button
                 onClick={handleAddPet}
-                className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
               >
                 {editPetId ? "Update Pet" : "Add Pet"}
               </button>
@@ -351,7 +351,7 @@ function Profile() {
         </div>
 
         <div>
-          <h1 className="p-8 text-3xl text-neutral">Your Posts:</h1>
+          <h1 className="p-8 text-3xl text-primary">Your Posts:</h1>
         </div>
         <div className="flex flex-col items-center w-full">
           {post.map((post) => (
@@ -417,7 +417,7 @@ function Profile() {
             />
             <button
               onClick={handleAddPet}
-              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100  hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
             >
               Update Pet
             </button>

@@ -36,7 +36,7 @@ function SideNav() {
         </button>
       </div>
       <div
-        className={`fixed top-0 left-0 w-40 sm:p-4 h-screen flex flex-col justify-evenly items-center rounded-r-xl transition-transform duration-300 z-40 bg-primary  sm:min-w-[200px] ${
+        className={`fixed top-0 left-0 w-40 sm:p-4 h-screen flex flex-col justify-evenly items-center rounded-r-xl transition-transform duration-300 z-40 bg-gradient-to-br from-primary to-neutral-300  sm:min-w-[200px] ${
           isNavOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
         }`}
       >
@@ -57,7 +57,7 @@ function SideNav() {
             className="w-8 h-8"
             alt="logout"
           />
-          <button onClick={handleLogout} className="hidden sm:flex text-neutral">
+          <button onClick={handleLogout} className="hidden sm:flex ">
             Logout
           </button>
         </div>

@@ -139,7 +139,7 @@ const Posts = ({
       )}
       <div
         key={id}
-        className={`w-[95%] sm:w-[95%] text-lg sm:text-xl bg-base-300 border-accent border-2 max-sm:ml-1 p-3 mb-6 sm:p-6 sm:m-8 flex-col justify-center items-center  h-max sm:min-h-12 rounded-2xl transition-all ease-in-out duration-200`}
+        className={`w-[95%] sm:w-[95%] text-lg sm:text-xl bg-base-100 max-sm:ml-1 p-3 mb-6 sm:p-6 sm:m-8 flex-col justify-center items-center shadow-lg h-max sm:min-h-12 rounded-2xl transition-all ease-in-out duration-200`}
       >
         <div className="flex flex-row gap-2 items-center">
           <img
@@ -199,7 +199,7 @@ const Posts = ({
 
             <div>
               <button
-                className="text-xl text-secondary rounded-full flex-row"
+                className="text-xl text-primary rounded-full flex-row"
                 onClick={handleLike}
               >
                 {isLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
