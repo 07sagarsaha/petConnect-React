@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   collection,
   addDoc,
@@ -10,6 +10,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../firebase/firebase";
 import { CiImageOn } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import LoadingBar from "react-top-loading-bar";
 
 const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -21,6 +23,8 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isImageClicked, setIsImageClicked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const loadingBarRef = useRef(null);
   const cloudinaryAccounts = [
     {
       name: "Post_Image",
@@ -64,6 +68,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
       setContent("");
       setImageFile(null);
       setImagePreview(null);
+      setIsLoading(false);
       setSevVal(3);
     }
   }
@@ -74,6 +79,8 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
       alert("Set a title before posting!");
       return;
     }
+    setIsLoading(true);
+    loadingBarRef.current.continuousStart();
     const currentAccount = getNextAccount();
     const formData = new FormData();
     formData.append("file", imageFile);
@@ -117,6 +124,8 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
           setImageFile(null);
           setImagePreview(null);
           setIsClicked(!isClicked);
+          setIsLoading(false);
+          loadingBarRef.current.complete();
 
           // Send browser notification
           if (Notification.permission === "granted") {
@@ -130,6 +139,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
       }
     } catch (error) {
       console.error("Error adding post: ", error);
+      loadingBarRef.current.complete();
     }
   };
 
@@ -276,10 +286,13 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
             <button
               type="submit"
-              className={`text-[20px] shadow-lg hover:shadow-lg bg-base-100 bottom-0 right-0 text-black p-3 py-3 animate-postButtonAnim1  rounded-lg transition-all duration-500`}
-              onClick={handleSubmit}
+              className={`text-[20px] bg-base-100 bottom-0 right-0 p-3 py-3 flex flex-row gap-2 animate-postButtonAnim1 rounded-lg transition-all duration-500 ${isLoading? `text-gray-600` : `text-black`}`}
+              onClick={isLoading? null : handleSubmit}
+              disabled={isLoading}
             >
               {submitName}
+              {isLoading && <AiOutlineLoading3Quarters className="animate-spin self-center"/>}
+              <LoadingBar color="#f11946" ref={loadingBarRef} className=""/>
             </button>
           </div>
         )}
