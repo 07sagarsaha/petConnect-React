@@ -194,7 +194,6 @@ const Posts = ({
                   imageURL={imageUrl ? imageUrl : false}
                 />
               </div>
-              <p className="pl-1">{commentCount || 0}</p>
             </div>
 
             <div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { db } from "../firebase/firebase";
 import {
   collection,
@@ -17,6 +17,8 @@ import Posts from "../components/UI/Posts";
 import Button from "../components/UI/PostButton";
 import { IoMdAddCircleOutline, IoMdClose, IoMdSearch } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { debounce } from "lodash";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function Home() {
   const [post, setPost] = useState([]);
@@ -28,6 +30,7 @@ function Home() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const postsPerPage = 5;
   const navigate = useNavigate();
+  const scrollListenerRef = useRef(null);
 
   // Create real-time listener
   useEffect(() => {
@@ -109,18 +112,24 @@ function Home() {
 
   // Add scroll event listener
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight
-      )
-        return;
-      fetchMorePosts();
-    };
+    const handleScroll = debounce(() => {
+      if (isLoading) return; // Prevent fetching if already loading
+      const scrollPosition = window.innerHeight + document.documentElement.scrollTop;
+      const threshold = document.documentElement.offsetHeight - 100; // 100px from the bottom
+      if (scrollPosition >= threshold) {
+        fetchMorePosts();
+      }
+    }, 200); // Adjust debounce delay as needed
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastDoc, isLoading]);
+    scrollListenerRef.current = handleScroll;
+    window.addEventListener("scroll", scrollListenerRef.current);
+
+    return () => {
+      if (scrollListenerRef.current) {
+        window.removeEventListener("scroll", scrollListenerRef.current);
+      }
+    };
+  }, [lastDoc, isLoading, fetchMorePosts]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -229,7 +238,7 @@ function Home() {
           userId={post.userId} // Pass userId to Posts component
         />
       ))}
-      {isLoading && <p className="flex justify-center">Loading...</p>}
+      {isLoading && <p className="flex justify-center"><AiOutlineLoading3Quarters className="animate-spin self-center"/></p>}
 
       {isSearchModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

@@ -127,6 +127,10 @@ const CommentDisplay = ({
     }
   };
 
+  const handleCommentTag = (userHandle) => {
+    setNewComment("@"+userHandle+" ");
+  };
+
   const isImageURLPresent = !!imageURL;
 
   return (
@@ -134,14 +138,14 @@ const CommentDisplay = ({
       <div
         className={`transition-all duration-[0.625s] ease-in-out rounded-xl ${
           isPostClicked
-            ? "h-4/5 w-full top-1/2  max-sm:h-full max-sm:rounded-none  max-sm:w-full flex-col justify-center rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
-            : "h-5 w-5 text-xl text-primary flex-row flex items-center justify-center"
+            ? "h-4/5 w-3/5 top-1/2 fixed z-50 transform -translate-x-1/2 -translate-y-1/2 left-1/2 max-sm:h-full max-sm:rounded-none  max-sm:w-full flex-col rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
+            : "h-5 w-5 text-xl text-primary flex-row flex gap-2 justify-center"
         }`}
         onClick={isPostClicked ? null : handlePost}
       >
         {isPostClicked ? (
           <>
-            <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100">
+            <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100 animate-postAnim3">
               <h1 className="text-2xl font-bold p-4">Add comment</h1>
               <IoMdClose
                 className="text-3xl hover:text-error transition-colors duration-300 mr-4"
@@ -149,12 +153,12 @@ const CommentDisplay = ({
               />
             </div>
             {isImageURLPresent ? (
-              <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto">
+              <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto animate-postAnim3 delay-150">
                 <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
                   <span className="text-left"> {handle} posted:</span>
                   <h2 className="text-xl font-bold text-left">{title}</h2>
                   <p className="text-[16px] mt-2 text-left">{content}</p>
-                  <div className="aspect-video w-full h-full max-sm:w-[90%] relative overflow-hidden rounded-xl">
+                  <div className="aspect-square w-full h-full max-sm:w-[90%] relative overflow-hidden rounded-xl">
                     <img
                       src={imageURL}
                       alt="Post"
@@ -203,11 +207,12 @@ const CommentDisplay = ({
                   <h3 className="text-lg font-bold mt-3 text-left">
                     Comments: {commentCount}
                   </h3>
-                  <div className="comments-section my-3 flex flex-col items-start max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto">
+                  <div className="comments-section my-3 flex flex-col items-start pb-11 max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto">
                     {comments.map((comment) => (
                       <div
                         key={comment.id}
                         className="bg-base-200 w-fit my-4 p-3 rounded-md shadow-lg"
+                        onClick={() => {handleCommentTag(comment.userHandle)}}
                       >
                         <div className="flex justify-between gap-7">
                           <p className="text-sm font-semibold">
@@ -230,6 +235,24 @@ const CommentDisplay = ({
                 <span className="text-left"> {handle} posted:</span>
                 <h2 className="text-xl font-bold text-left">{title}</h2>
                 <p className="text-[16px] mt-2 text-left">{content}</p>
+                <div className="flex flex-row mt-4 items-center gap-4">
+                    <button onClick={handleLike}>
+                      {isLiked ? (
+                        <FaThumbsUp className="text-primary" />
+                      ) : (
+                        <FaRegThumbsUp className="text-primary" />
+                      )}
+                    </button>
+                    <span>{likes?.length || 0} likes</span>
+                    <button onClick={handleDislike}>
+                      {isDisliked ? (
+                        <FaThumbsDown className="text-error" />
+                      ) : (
+                        <FaRegThumbsDown className="text-error" />
+                      )}
+                    </button>
+                    <span>{dislikes?.length || 0} dislikes</span>
+                  </div>
                 <div className="flex flex-col pt-5">
                   <form
                     onSubmit={handleAddComment}
@@ -257,6 +280,7 @@ const CommentDisplay = ({
                       <div
                         key={comment.id}
                         className="bg-base-200 w-fit max-sm:w-full my-4 p-3 rounded-md shadow-lg"
+                        onClick={() => {handleCommentTag(comment.userHandle)}}
                       >
                         <div className="flex justify-between gap-7">
                           <p className="text-sm font-semibold">
@@ -276,13 +300,16 @@ const CommentDisplay = ({
               </div>
             )}
           </>
-        ) : (
-          <BiCommentDetail />
-        )}
+        ) : 
+          <div>
+            <BiCommentDetail />
+            <p className="pt-1">{commentCount}</p>
+          </div>
+        }
       </div>
       {isPostClicked && (
         <div
-          className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-neutral-focus transition-colors duration-200"
+          className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-30 top-0 left-0"
           onClick={handlePost}
         ></div>
       )}
