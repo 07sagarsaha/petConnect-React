@@ -57,7 +57,7 @@ function SideNav() {
             className="w-8 h-8"
             alt="logout"
           />
-          <button onClick={handleLogout} className="hidden sm:flex ">
+          <button onClick={handleLogout} className="hidden sm:flex text-white">
             Logout
           </button>
         </div>

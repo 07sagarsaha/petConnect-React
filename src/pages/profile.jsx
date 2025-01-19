@@ -187,7 +187,7 @@ function Profile() {
   };
 
   return (
-    <div className="flex justify-center flex-col bg-base-100 text-gray-800 min-h-screen p-8 ">
+    <div className="flex justify-center flex-col bg-base-200 text-primary-focus min-h-screen p-8 ">
       <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex flex-col items-center w-full text-center mb-5">
           {isPFPClicked && profilePic && (
@@ -212,7 +212,7 @@ function Profile() {
           <h1 className="text-center text-2xl font-bold mt-4">
             {userData?.name || "loading..."}
           </h1>
-          <h2 className="text-center text-xl text-neutral">
+          <h2 className="text-center text-xl text-primary-focus">
             {"@" + userData?.handle || "loading..."}
           </h2>
 

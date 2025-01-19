@@ -78,8 +78,8 @@ function UserProfile() {
   };
 
   return (
-    <div className="flex flex-col w-full p-4 bg-base-100 text-gray-800">
-      <div className="flex flex-col justify-center m-3 bg-base-200 rounded-lg shadow-lg sm:p-5 p-2 ">
+    <div className="flex flex-col w-full p-4 bg-base-200 text-primary-focus">
+      <div className="flex flex-col justify-center m-3 bg-base-100 rounded-lg shadow-lg sm:p-5 p-2 ">
         <div className="flex flex-col items-center justify-center text-center mb-5">
           {isPFPClicked && userData?.profilePic && (
             <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-neutral-focus transition-colors duration-200">

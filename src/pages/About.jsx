@@ -2,8 +2,8 @@ import React from "react";
 
 function About() {
   return (
-    <div className="flex flex-col w-full p-8 bg-base-100 text-gray-800">
-      <div className="w-full bg-base-200 rounded-lg shadow-lg p-6">
+    <div className="flex flex-col w-full p-8 bg-base-200 text-primary-focus">
+      <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
         <h1 className="text-3xl font-bold mb-4 text-primary">About Us</h1>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">

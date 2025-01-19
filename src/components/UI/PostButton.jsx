@@ -154,7 +154,7 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     <>
       <div
         onClick={isClicked ? null : handleClickEvent}
-        className={`flex text-primary hover:text-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
+        className={`flex text-primary hover:text-base-100 bg-base-100  p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center transition-all shadow-lg rounded-2xl w-52 max-sm:w-[95%] h-16 ease-in-out  ${
           isClicked
             ? `w-full sm:w-[95%] ${imagePreview ? `h-[31%]` : `h-[30%]`} `
             : `text-xl text-neutral max-sm:w-[90%] hover:bg-primary`

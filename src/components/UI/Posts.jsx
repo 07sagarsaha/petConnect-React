@@ -119,7 +119,7 @@ const Posts = ({
   };
 
   return (
-    <div className="flex justify-start items-center w-full">
+    <div className="flex justify-start items-center w-full text-base-content bg-base-200">
       {isImageClicked && imageUrl && (
         <>
           <div
@@ -150,21 +150,21 @@ const Posts = ({
           />
           <div className="flex flex-col items-start justify-center">
             <p
-              className="text-[18px] max-sm:text-[15px] text-neutral cursor-pointer"
+              className="text-[18px] max-sm:text-[15px]   cursor-pointer"
               onClick={handleProfileClick}
             >
               {handle} posted:
             </p>
-            <p className="max-sm:text-sm text-[15px] text-neutral">{date}</p>
+            <p className="max-sm:text-sm text-[15px] ">{date}</p>
           </div>
         </div>
 
         <h1 className="text-[19px] sm:text-[21px] font-bold py-4">{title}</h1>
-        <h2 className="text-[16px] sm:text-[19px] text-neutral font-semibold pb-4">
+        <h2 className="text-[16px] sm:text-[19px]  font-semibold pb-4">
           {content}
         </h2>
         {imageUrl && (
-          <div className="aspect-video w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl">
+          <div className=" aspect-auto w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl">
             <img
               src={imageUrl}
               alt="Post"
@@ -175,7 +175,7 @@ const Posts = ({
         )}
         <div className="pt-2 flex justify-between">
           {sevVal && (
-            <h2 className="text-[14px] sm:text-[17px] text-neutral py-4">
+            <h2 className="text-[14px] sm:text-[17px] text-primary-focus py-4">
               Severity Index: {severityEmojis[sevVal]}
             </h2>
           )}

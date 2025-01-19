@@ -25,7 +25,7 @@ function App() {
           <div className="fixed">
             <SideNav />
           </div>
-          <div className="w-full bg-[#EBE9E1] ml-20 sm:ml-52">
+          <div className="w-full ml-20 sm:ml-52">
             <Outlet />
           </div>
         </div>
