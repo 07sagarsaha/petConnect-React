@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 import ThemeContext from "../context/ThemeContext";
+import logout from "../icons/logout.png";
+import { doSignOut } from "../firebase/auth";
 
 const themes = [
   "light",
@@ -34,6 +36,12 @@ const themes = [
   "nord",
   "sunset",
 ];
+
+  const handleLogout = () => {
+    doSignOut().then(() => {
+      navigate("/");
+    });
+  };
 
 function Settings() {
   const { theme, changeTheme } = useContext(ThemeContext);
@@ -70,6 +78,19 @@ function Settings() {
             ))}
           </div>
         </section>
+        <div
+          className="max-sm:flex flex-row gap-4 text-base-100 transition-transform duration-300 bg-error hidden max-sm:p-4 max-sm:mx-[20%] max-sm:rounded-lg"
+        >
+          <img
+            src={logout}
+            onClick={handleLogout}
+            className="w-8 h-8 max-sm:flex"
+            alt="logout"
+          />
+          <button onClick={handleLogout} className="max-sm:flex hidden text-white">
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );
