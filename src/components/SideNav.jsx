@@ -27,17 +27,16 @@ function SideNav() {
 
   return (
     <>
-      <div className="sm:hidden fixed top-4 left-4 z-50">
+      {/* <div className="sm:hidden fixed top-4 left-3 z-50">
         <button
           onClick={toggleNav}
-          className="text-3xl p-2 rounded-full bg-primary text-base-100"
+          className="text-3xl py-2 px-3 rounded-xl bg-primary text-base-100"
         >
           {isNavOpen ? <IoMdClose /> : <IoMdMenu />}
         </button>
-      </div>
+      </div> */}
       <div
-        className={`fixed top-0 left-0 w-40 sm:p-4 h-screen flex flex-col justify-evenly items-center rounded-r-xl transition-transform duration-300 z-40 bg-gradient-to-br from-primary to-neutral-300  sm:min-w-[200px] ${
-          isNavOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
+        className={`fixed top-0 left-0 w-20 sm:p-4 h-screen flex flex-col justify-evenly items-center rounded-r-xl transition-transform duration-300 z-40 bg-gradient-to-br from-primary to-neutral-300  sm:min-w-[200px] translate-x-0" 
         }`}
       >
         <div className="flex w-full flex-col text-left gap-12 transition-all ease duration-200">
@@ -62,12 +61,12 @@ function SideNav() {
           </button>
         </div>
       </div>
-      {isNavOpen && (
+      {/* {isNavOpen && (
         <div
           className="fixed inset-0 bg-black opacity-50 z-30"
           onClick={toggleNav}
         ></div>
-      )}
+      )} */}
     </>
   );
 }

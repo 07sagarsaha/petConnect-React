@@ -164,7 +164,7 @@ const Posts = ({
           {content}
         </h2>
         {imageUrl && (
-          <div className=" aspect-auto w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl">
+          <div className=" aspect-video w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl">
             <img
               src={imageUrl}
               alt="Post"
