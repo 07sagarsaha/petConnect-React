@@ -37,11 +37,11 @@ const themes = [
   "sunset",
 ];
 
-  const handleLogout = () => {
-    doSignOut().then(() => {
-      navigate("/");
-    });
-  };
+const handleLogout = () => {
+  doSignOut().then(() => {
+    navigate("/");
+  });
+};
 
 function Settings() {
   const { theme, changeTheme } = useContext(ThemeContext);
@@ -49,7 +49,23 @@ function Settings() {
   return (
     <div className="flex flex-col justify-center p-8 bg-base-200  min-h-screen">
       <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
-        <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>
+          <div className="max-sm:flex ml-4 flex-row gap-4 text-base-100 transition-transform duration-300 bg-error hidden max-sm:p-4  max-sm:rounded-lg">
+            <img
+              src={logout}
+              onClick={handleLogout}
+              className="w-8 h-8 max-sm:flex"
+              alt="logout"
+            />
+            <button
+              onClick={handleLogout}
+              className="max-sm:flex hidden text-white"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">
             Theme Switcher
@@ -78,19 +94,6 @@ function Settings() {
             ))}
           </div>
         </section>
-        <div
-          className="max-sm:flex flex-row gap-4 text-base-100 transition-transform duration-300 bg-error hidden max-sm:p-4 max-sm:mx-[20%] max-sm:rounded-lg"
-        >
-          <img
-            src={logout}
-            onClick={handleLogout}
-            className="w-8 h-8 max-sm:flex"
-            alt="logout"
-          />
-          <button onClick={handleLogout} className="max-sm:flex hidden text-white">
-            Logout
-          </button>
-        </div>
       </div>
     </div>
   );

@@ -167,14 +167,12 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
         className={`flex text-primary hover:text-base-100 bg-base-100 p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center self-center transition-all duration-[0.85s] shadow-lg rounded-2xl max-sm:m-2 ease ${
           isClicked
             ? `w-full max-sm:w-full h-[30%] ${imagePreview && `h-[31%]`} `
-            : `text-xl text-neutral w-[10%] max-sm:w-full hover:bg-primary h-[10%]`
+            : `text-xl text-neutral w-[100%] max-sm:w-full hover:bg-primary h-[10%]`
         }`}
       >
-        {!isClicked && <div
-          className={`flex justify-center items-center`}
-        >
-          {icon}
-        </div>}
+        {!isClicked && (
+          <div className={`flex justify-center items-center`}>{icon}</div>
+        )}
         <p className={`${isClicked ? `hidden` : ` `}`}>{buttonName}</p>
 
         {isClicked && (
@@ -284,13 +282,15 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
             <button
               type="submit"
-              className={`text-[20px] bg-base-100 bottom-0 right-0 p-3 py-3 flex flex-row gap-2 animate-postButtonAnim1 rounded-lg transition-all duration-500 ${isLoading? `text-gray-600` : `text-black`}`}
-              onClick={isLoading? null : handleSubmit}
+              className={`text-[20px] bg-base-100 bottom-0 right-0 p-3 py-3 flex flex-row gap-2 animate-postButtonAnim1 rounded-lg transition-all duration-500 ${isLoading ? `text-gray-600` : `text-black`}`}
+              onClick={isLoading ? null : handleSubmit}
               disabled={isLoading}
             >
               {submitName}
-              {isLoading && <AiOutlineLoading3Quarters className="animate-spin self-center"/>}
-              <LoadingBar color="#f11946" ref={loadingBarRef} className=""/>
+              {isLoading && (
+                <AiOutlineLoading3Quarters className="animate-spin self-center" />
+              )}
+              <LoadingBar color="#f11946" ref={loadingBarRef} className="" />
             </button>
           </div>
         )}

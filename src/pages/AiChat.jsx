@@ -1,46 +1,43 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
+import ReactMarkdown from "react-markdown";
 const AiChat = () => {
   const API_KEY = import.meta.env.VITE_API_KEY2;
   const [question, setQuestion] = useState("");
   const [chatLog, setChatLog] = useState([]);
   const [loading, setLoading] = useState(false); // New loading state
 
-  const formatResponse = (text) => {
-    // Split the response into lines
-    const lines = text.split("\n");
+  // const formatResponse = (text) => {
+  //   // Split the response into lines
+  //   const lines = text.split("\n");
 
-    // Create an array to hold formatted JSX elements
-    const formattedElements = [];
+  //   // Create an array to hold formatted JSX elements
+  //   const formattedElements = [];
 
-    lines.forEach((line) => {
-      if (line.startsWith("## ")) {
-        // Convert to a heading
-        formattedElements.push(<h2 key={line}>{line.slice(3)}</h2>);
-      } else if (line.startsWith("**")) {
-        // Convert to a subheading
-        formattedElements.push(<h3 key={line}>{line.slice(2, -2)}</h3>);
-      } else if (line.startsWith("* ")) {
-        // Convert to a list item
-        formattedElements.push(<li key={line}>{line.slice(2)}</li>);
-      } else {
-        // Convert to a paragraph
-        formattedElements.push(<p key={line}>{line}</p>);
-      }
-    });
+  //   lines.forEach((line) => {
+  //     if (line.startsWith("## ")) {
+  //       // Convert to a heading
+  //       formattedElements.push(<h2 key={line}>{line.slice(3)}</h2>);
+  //     } else if (line.startsWith("**")) {
+  //       // Convert to a subheading
+  //       formattedElements.push(<h3 key={line}>{line.slice(2, -2)}</h3>);
+  //     } else if (line.startsWith("* ")) {
+  //       // Convert to a list item
+  //       formattedElements.push(<li key={line}>{line.slice(2)}</li>);
+  //     } else {
+  //       // Convert to a paragraph
+  //       formattedElements.push(<p key={line}>{line}</p>);
+  //     }
+  //   });
 
-    return formattedElements;
-  };
+  //   return formattedElements;
+  // };
 
   async function getResponse() {
     if (!question.trim()) return;
 
-    setChatLog((prevChat) => [
-      ...prevChat,
-      { sender: "You", text: question },
-    ]);
+    setChatLog((prevChat) => [...prevChat, { sender: "You", text: question }]);
 
     setQuestion("");
     setLoading(true); // Set loading to true when fetching starts
@@ -63,16 +60,19 @@ const AiChat = () => {
         "No response";
 
       // Format the AI response
-      const formattedResponse = formatResponse(aiResponse);
+      // const formattedResponse = formatResponse(aiResponse);
 
       setChatLog((prevChat) => [
         ...prevChat,
-        { sender: "Pet Connect", text: formattedResponse },
+        { sender: "Pet Connect", text: aiResponse },
       ]);
     } catch (error) {
       setChatLog((prevChat) => [
         ...prevChat,
-        { sender: "Pet Connect", text: "Sorry but something went wrong, please try again later!" },
+        {
+          sender: "Pet Connect",
+          text: "Sorry but something went wrong, please try again later!",
+        },
       ]);
     } finally {
       setLoading(false); // Set loading to false when fetching ends
@@ -80,8 +80,8 @@ const AiChat = () => {
   }
 
   return (
-    <div className="w-full overflow-hidden h-screen flex flex-col bg-base-100">
-      <div className="flex-1 mr-4 p-4 overflow-y-scroll max-sm:mb-32 max-sm:mt-10">
+    <div className="w-full overflow-hidden h-screen  flex flex-col bg-base-100">
+      <div className="flex-1 mx-4 p-4 overflow-y-scroll max-sm:mb-40 max-sm:mt-10 mb-36 rounded-xl bg-base-200">
         {chatLog.map((message, index) => (
           <div
             key={index}
@@ -100,13 +100,17 @@ const AiChat = () => {
               {Array.isArray(message.text) ? (
                 <div>{message.text}</div>
               ) : (
-                <p>{message.text}</p>
+                <ReactMarkdown allowElement={() => true}>
+                  {message.text}
+                </ReactMarkdown>
               )}
             </div>
           </div>
         ))}
       </div>
-      {loading && <AiOutlineLoading3Quarters className="animate-spin self-center"/>}
+      {loading && (
+        <AiOutlineLoading3Quarters className="animate-spin self-center" />
+      )}
       <div className="max-sm:w-full h-16 bg-base-100 max-sm:bg-transparent mb-16 max-sm:mb-2 flex justify-center items-center px-4 max-sm:px-0 fixed z-10 max-sm:bottom-20 max-sm:left-1 w-[80%] left-[200px] bottom-2">
         <input
           type="text"
