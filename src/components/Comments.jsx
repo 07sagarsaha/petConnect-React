@@ -188,7 +188,7 @@ const CommentDisplay = ({
                 <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10">
                   <form
                     onSubmit={handleAddComment}
-                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-5 transition-all animate-postAnim3"
+                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-5 transition-all"
                   >
                     <input
                       type="text"

@@ -227,23 +227,24 @@ function Home() {
           </>}
         </form>
         {isSearchModalOpen && <>
-        {(autocompleteResults.length > 0 || searchResults.length > 0) && (
-              <div className="max-sm:w-full w-[50%] flex flex-col outline-none self-start ml-8 max-sm:ml-0 max-sm:text-sm bg-base-100 max-sm:mt-4 p-4 max-sm:text-[24px] shadow-lg rounded-2xl max-sm:m-2 ease">
-                {autocompleteResults.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex justify-between items-center bg-base-200 p-4 rounded-lg shadow-lg mb-2 cursor-pointer"
-                    onClick={() => handleUserClick(user.id)}
-                  >
-                    <div>
-                      <p className="font-bold">{user.name}</p>
-                      <p className="text-sm text-neutral">@{user.handle}</p>
-                    </div>
+          {(autocompleteResults.length > 0 || searchResults.length > 0) && (
+            <div className="max-sm:w-full w-[50%] max-sm:h-fit flex flex-col outline-none self-start ml-8 max-sm:ml-0 max-sm:text-sm bg-base-100 max-sm:mt-2 p-4 max-sm:text-[24px] shadow-lg rounded-2xl max-sm:m-2">
+              {autocompleteResults.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex justify-between items-center bg-base-200 p-4 rounded-lg shadow-lg mb-2 cursor-pointer"
+                  onClick={() => handleUserClick(user.id)}
+                >
+                  <div>
+                    <p className="font-bold">{user.name}</p>
+                    <p className="text-sm text-neutral">@{user.handle}</p>
                   </div>
-                ))}
-                {searchResults.length > 0 && (
-                  <div className="mb-4">
-                    <h2 className="text-xl font-bold mb-2">Search Results:</h2>
+                </div>
+              ))}
+              {searchResults.length > 0 && (
+                <div className="mb-4">
+                  <h2 className="text-xl font-bold mb-2">Search Results:</h2>
+                  <div className="overflow-y-auto h-fit max-h-[30rem]">
                     {searchResults.map((user) => (
                       <div
                         key={user.id}
@@ -255,13 +256,13 @@ function Home() {
                           <p className="text-sm text-neutral">@{user.handle}</p>
                         </div>
                       </div>
-                    ))
-                    }
+                    ))}
                   </div>
-                  )
-                }
-              </div>
-            )}
+                </div>
+              )}
+            </div>
+          )}
+
       </>}
       </div>
       {isSearchModalOpen && <div className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-30 top-0 left-0" onClick={closeSearchModal}/>}
