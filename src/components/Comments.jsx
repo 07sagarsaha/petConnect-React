@@ -136,7 +136,7 @@ const CommentDisplay = ({
   return (
     <>
       <div
-        className={`transition-all duration-[0.625s] ease-in-out rounded-xl ${
+        className={`transition-all max-sm:transition-none duration-[0.625s] ease-in-out rounded-xl ${
           isPostClicked
             ? "h-4/5 w-3/5 top-1/2 fixed z-50 transform -translate-x-1/2 -translate-y-1/2 left-1/2 max-sm:h-full max-sm:rounded-none  max-sm:w-full flex-col rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
             : "h-5 w-5 text-xl text-primary flex-row flex gap-2 justify-center"
@@ -145,7 +145,7 @@ const CommentDisplay = ({
       >
         {isPostClicked ? (
           <>
-            <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100 animate-postAnim3">
+            <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100">
               <h1 className="text-2xl font-bold p-4">Add comment</h1>
               <IoMdClose
                 className="text-3xl hover:text-error transition-colors duration-300 mr-4"
@@ -153,7 +153,7 @@ const CommentDisplay = ({
               />
             </div>
             {isImageURLPresent ? (
-              <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto animate-postAnim3 delay-150">
+              <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto max-sm:animate-postAnim1">
                 <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
                   <span className="text-left"> {handle} posted:</span>
                   <h2 className="text-xl font-bold text-left">{title}</h2>
@@ -188,7 +188,7 @@ const CommentDisplay = ({
                 <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10">
                   <form
                     onSubmit={handleAddComment}
-                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:absolute max-sm:bottom-5"
+                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-5 transition-all animate-postAnim3"
                   >
                     <input
                       type="text"
@@ -231,7 +231,7 @@ const CommentDisplay = ({
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-auto">
+              <div className="flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-auto animate-postAnim1">
                 <span className="text-left"> {handle} posted:</span>
                 <h2 className="text-xl font-bold text-left">{title}</h2>
                 <p className="text-[16px] mt-2 text-left">{content}</p>
