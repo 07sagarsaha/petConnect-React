@@ -2,8 +2,8 @@ import React from "react";
 
 function About() {
   return (
-    <div className="flex flex-col w-full p-8 bg-base-200 text-primary-focus">
-      <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
+    <div className="flex flex-col w-full p-8 bg-base-200 text-primary-focus items-center">
+      <div className="w-full max-w-4xl bg-base-100 rounded-lg shadow-lg p-6">
         <h1 className="text-3xl font-bold mb-4 text-primary">About Us</h1>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">
@@ -65,11 +65,29 @@ function About() {
             This project began as a shared dream among three Computer Science
             students:
           </p>
-          <ul className="list-disc list-inside">
-            <li>Sagar Saha – Developer and Team Lead</li>
-            <li>Shubham Chakraborty – Developer</li>
-            <li>Rajdeep Majumdar – Developer</li>
-          </ul>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="card w-full bg-base-100 shadow-xl">
+              <div className="card-body items-center text-center">
+                <h2 className="card-title">Sagar Saha</h2>
+                <p>Developer & Team Lead</p>
+                <p>Passionate about building scalable and user-friendly applications.</p>
+              </div>
+            </div>
+            <div className="card w-full bg-base-100 shadow-xl">
+              <div className="card-body items-center text-center">
+                <h2 className="card-title">Shubham Chakraborty</h2>
+                <p>Developer</p>
+                <p>Focused on creating efficient and maintainable code.</p>
+              </div>
+            </div>
+            <div className="card w-full bg-base-100 shadow-xl">
+              <div className="card-body items-center text-center">
+                <h2 className="card-title">Rajdeep Majumdar</h2>
+                <p>Developer</p>
+                <p>Dedicated to delivering high-quality and innovative solutions.</p>
+              </div>
+            </div>
+          </div>
           <p>
             Our goal was to design something meaningful, impactful, and scalable
             while challenging ourselves to apply the knowledge and creativity
