@@ -21,6 +21,14 @@ import Login from "./pages/auth/login.jsx";
 import UserProfile from "./pages/UserProfile";
 import { AuthProvider } from "./context/authContext/authContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { ClerkProvider } from "@clerk/clerk-react";
+import ErrorBoundary from "./components/auth/ErrorBoundary.jsx";
+
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Clerk publishable key not found");
+}
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,10 +50,26 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <ThemeProvider>
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+    <ClerkProvider 
+      publishableKey={PUBLISHABLE_KEY}
+      appearance={{
+        elements: {
+          formButtonPrimary: 'primary-button',
+          card: 'clerk-card',
+        }
+      }}
+      signInUrl="/login"
+      signUpUrl="/signup"
+      signInFallbackRedirectUrl={"/in/home"}
+      signUpFallbackRedirectUrl={"/in/home"}
+    >
+      <AuthProvider>
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </AuthProvider>
+    </ClerkProvider>
+    </ErrorBoundary>
   </StrictMode>
 );

@@ -34,8 +34,8 @@ const Landing = () => {
         {/* header */}
         <Header />
         {/* landingPage */}
-        <div className="flex flex-col  md:flex-row items-center justify-between px-8 flex-grow">
-          <div className="w-1/2 p-4">
+        <div className="flex flex-col  md:flex-row items-center justify-center px-8 flex-grow">
+          <div className="w-1/2 p-4 max-sm:w-full">
             <h1 className="text-4xl text-center font-bold mb-4 text-primary">
               Welcome to Pet Connect
             </h1>
