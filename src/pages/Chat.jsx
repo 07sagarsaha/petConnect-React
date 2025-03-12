@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { auth, db } from "../firebase/firebase";
 import {
@@ -18,6 +18,17 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [recipientHandle, setRecipientHandle] = useState("");
+  const messagesEndRef = useRef(null); // Add ref for auto-scroll
+
+  // Add scroll to bottom function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Effect for auto-scrolling
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // Fetch recipient's handle
   useEffect(() => {
@@ -35,14 +46,14 @@ const Chat = () => {
     fetchRecipientHandle();
   }, [userId]);
 
-  // Listen to messages
+  // Listen to messages - Updated query ordering
   useEffect(() => {
     if (!auth.currentUser || !userId) return;
 
     const chatQuery = query(
       collection(db, "chats"),
       where("participants", "array-contains", auth.currentUser.uid),
-      orderBy("timestamp", "desc")
+      orderBy("timestamp", "asc") // Changed to "asc" for correct chronological order
     );
 
     const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
@@ -115,6 +126,7 @@ const Chat = () => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} /> {/* Add ref element for auto-scroll */}
       </div>
 
       {/* Message Input */}
