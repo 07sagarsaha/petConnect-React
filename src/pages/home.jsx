@@ -57,6 +57,7 @@ function Home() {
             return {
               id: postDoc.id,
               ...postData,
+              profilePic: userProfile.profilePic,
               userProfile,
             };
           })
@@ -98,6 +99,7 @@ function Home() {
           return {
             id: postDoc.id,
             ...postData,
+            profilePic: userProfile.profilePic,
             userProfile,
           };
         })
@@ -285,7 +287,7 @@ function Home() {
           {" "}
           {/* Added container with z-index */}
           {post.map((post) => (
-            <Posts key={post.id} id={post.id} {...post} />
+            <Posts key={post.id} {...post} profilePic={post.profilePic} />
           ))}
         </div>
       </div>
