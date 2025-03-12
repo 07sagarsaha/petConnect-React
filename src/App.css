@@ -4,3 +4,16 @@ body{
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
 }
+
+/* Add these styles to handle mobile chat view */
+@media (max-width: 640px) {
+  .chat-container {
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+  
+  /* Prevent content from being hidden behind mobile browser chrome */
+  .chat-input-container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

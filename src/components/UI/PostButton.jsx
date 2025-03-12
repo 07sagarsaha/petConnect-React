@@ -13,7 +13,7 @@ import { IoMdClose } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import LoadingBar from "react-top-loading-bar";
 
-const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
+const Button = ({ buttonName, icon, submitName, className }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -52,6 +52,15 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
     const nextIndex = (currentAccountIndex + 1) % cloudinaryAccounts.length;
     setCurrentAccountIndex(nextIndex);
     return cloudinaryAccounts[nextIndex];
+  };
+
+  // Add severity emojis mapping
+  const severityEmojis = {
+    1: "😃 (very good)",
+    2: "🙂 (good)",
+    3: "😐 (neutral)",
+    4: "😨 (not good)",
+    5: "😭 (contact vet)",
   };
 
   useEffect(() => {
@@ -162,139 +171,133 @@ const Button = ({ buttonName, icon, submitName, howMuchCurve }) => {
 
   return (
     <>
+      {/* Button */}
       <div
-        onClick={isClicked ? null : handleClickEvent}
-        className={`flex text-primary hover:text-base-100 bg-base-100 p-4 m-8 max-sm:mt-4 max-sm:ml-0 max-sm:text-[24px] justify-center items-center self-center transition-all duration-[0.85s] shadow-lg rounded-2xl max-sm:m-2 ease ${
-          isClicked
-            ? `w-full max-sm:w-full h-[30%] ${imagePreview && `h-[31%]`} `
-            : `text-xl text-neutral w-[100%] max-sm:w-full hover:bg-primary h-[10%]`
-        }`}
+        onClick={handleClickEvent}
+        className={`flex text-primary hover:text-base-100 bg-base-100 p-4 justify-center items-center transition-all duration-[0.85s] shadow-lg rounded-2xl ease hover:bg-primary h-[64px] ${className}`}
       >
-        {!isClicked && (
-          <div className={`flex justify-center items-center`}>{icon}</div>
-        )}
-        <p className={`${isClicked ? `hidden` : ` `}`}>{buttonName}</p>
+        <div className="flex justify-center items-center gap-2">
+          {icon}
+          <span>{buttonName}</span>
+        </div>
+      </div>
 
-        {isClicked && (
-          <div className="flex flex-col justify-center items-center gap-4 bg-primary w-full h-full p-4 rounded-xl text-base-100">
-            <div className="flex flex-row w-full ml-4 mt-4 items-center">
-              <div className="flex w-[100%] justify-center ml-4 ">
-                {icon}
-                <p className="text-2xl ">New Post</p>
-              </div>
-              <div className="">
-                <IoMdClose
-                  className="w-8 h-8 justify-end  mr-8"
-                  onClick={handleClickEvent}
-                ></IoMdClose>
-              </div>
-            </div>
-            <input
-              type="text"
-              placeholder={`What's on your mind?`}
-              value={title}
-              className={`w-[95%] rounded-lg pl-4 py-2 text-xl text-gray-600  shadow-lg`}
-              onChange={(e) => setTitle(e.target.value)}
-            ></input>
-            <textarea
-              placeholder={`Describe some more...`}
-              value={content}
-              className={`h-44 w-[95%] text-xl rounded-lg pl-4 pt-2 text-gray-600 shadow-lg`}
-              onChange={(e) => setContent(e.target.value)}
-            ></textarea>
-            <div
-              className={`w-[95%] pl-4 flex-col justify-center items-start rounded-lg py-2 max-sm:max-w-[95%] text-gray-600 bg-base-100 `}
-            >
-              <p
-                htmlFor="sevScale"
-                className="text-xl max-sm:text-base relative"
-              >
-                {" "}
-                Severity Scale:{" "}
-                {sevVal === 1
-                  ? "😃 (very good)"
-                  : sevVal === 2
-                    ? "🙂 (good)"
-                    : sevVal === 3
-                      ? "😐 (neutral)"
-                      : sevVal === 4
-                        ? "😨 (not good)"
-                        : "😭 (contact vet)"}
-              </p>
-              <input
-                type="range"
-                min={1}
-                max={5}
-                value={sevVal}
-                id="sevScale"
-                className={`text-gray-600 animate-postButtonAnim1 w-56 max-sm:w-[10rem]`}
-                onChange={(e) => setSevVal(parseInt(e.target.value))}
+      {/* Modal for desktop / Full screen for mobile */}
+      {isClicked && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={handleClickEvent}
+          />
+
+          {/* Modal/Form Container */}
+          <div
+            className={`fixed z-50 transform transition-all duration-500 ease-in-out
+            max-sm:inset-0 max-sm:w-full max-sm:h-full
+            sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[600px] sm:max-h-[80vh]
+            bg-base-100 rounded-xl overflow-hidden shadow-xl`}
+          >
+            {/* Header */}
+            <div className="flex justify-between items-center bg-primary text-base-100 p-4">
+              <h2 className="text-xl font-bold">Create New Post</h2>
+              <IoMdClose
+                className="text-2xl cursor-pointer hover:text-error transition-colors"
+                onClick={handleClickEvent}
               />
             </div>
 
-            {imagePreview && (
-              <>
-                <button
-                  className="rounded-full bg-[#474747a1]"
-                  onClick={removeImage}
-                >
-                  <IoMdClose />
-                </button>
-
-                <img
-                  src={imagePreview}
-                  className="object-cover rounded-xl w-fit h-[30%] max-sm:h-[25%]"
-                  onClick={handleImageClick}
+            {/* Form Content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(80vh-4rem)]">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <input
+                  type="text"
+                  placeholder="What's on your mind?"
+                  value={title}
+                  className="w-full rounded-lg px-4 py-2 text-xl text-gray-600 border border-gray-200"
+                  onChange={(e) => setTitle(e.target.value)}
                 />
 
-                {isImageClicked && imagePreview && (
-                  <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-[#4f4f4fcd] transition-colors duration-200">
-                    <IoMdClose
-                      className="text-5xl fixed z-50 p-2 right-[5%] top-16 rounded-lg transition-all duration-300"
-                      onClick={handleImageClick}
+                <textarea
+                  placeholder="Describe some more..."
+                  value={content}
+                  className="w-full rounded-lg px-4 py-2 text-lg text-gray-600 border border-gray-200 min-h-[100px]"
+                  onChange={(e) => setContent(e.target.value)}
+                />
+
+                {/* Updated Severity Slider Section */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-gray-600">Severity:</label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="range"
+                      min={1}
+                      max={5}
+                      value={sevVal}
+                      className="w-56"
+                      onChange={(e) => setSevVal(parseInt(e.target.value))}
                     />
+                    <span className="text-xl min-w-[200px]">
+                      {severityEmojis[sevVal]}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Image Preview */}
+                {imagePreview && (
+                  <div className="relative">
                     <img
                       src={imagePreview}
-                      alt="Image"
-                      className="h-4/5 max-sm:w-auto w-max m-12 object-contain rounded-2xl animate-postAnim1"
+                      alt="Preview"
+                      className="w-full h-auto rounded-lg"
                     />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute top-2 right-2 p-1 bg-error text-white rounded-full"
+                    >
+                      <IoMdClose />
+                    </button>
                   </div>
                 )}
-              </>
-            )}
 
-            <label
-              htmlFor="image upload"
-              className={`text-3xl bg-base-100 shadow-lg text-black p-3 py-3 animate-postButtonAnim1   rounded-lg transition-all duration-500 ${
-                imagePreview ? `hidden` : ` `
-              }`}
-            >
-              <CiImageOn />
-            </label>
+                {/* Image Upload */}
+                <div className="flex items-center gap-4">
+                  <label
+                    htmlFor="image-upload"
+                    className="cursor-pointer text-3xl text-primary hover:text-primary-focus"
+                  >
+                    <CiImageOn />
+                  </label>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </div>
 
-            <input
-              type="file"
-              id="image upload"
-              accept="image/*"
-              onChange={handleImageChange}
-              className={"hidden"}
-            />
-
-            <button
-              type="submit"
-              className={`text-[20px] bg-base-100 bottom-0 right-0 p-3 py-3 flex flex-row gap-2 animate-postButtonAnim1 rounded-lg transition-all duration-500 ${isLoading ? `text-gray-600` : `text-black`}`}
-              onClick={isLoading ? null : handleSubmit}
-              disabled={isLoading}
-            >
-              {submitName}
-              {isLoading && (
-                <AiOutlineLoading3Quarters className="animate-spin self-center" />
-              )}
-              <LoadingBar color="#f11946" ref={loadingBarRef} className="" />
-            </button>
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="bg-primary text-base-100 py-2 px-4 rounded-lg hover:bg-primary-focus transition-colors"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <AiOutlineLoading3Quarters className="animate-spin mx-auto" />
+                  ) : (
+                    "Post"
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {/* Loading Bar */}
+      <LoadingBar color="#f11946" ref={loadingBarRef} />
     </>
   );
 };

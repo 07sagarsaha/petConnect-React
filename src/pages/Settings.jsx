@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import ThemeContext from "../context/ThemeContext";
-import logout from "../icons/logout.png";
+import { IoLogOut } from "react-icons/io5";
 import { doSignOut } from "../firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const themes = [
   "light",
@@ -45,26 +46,20 @@ const handleLogout = () => {
 
 function Settings() {
   const { theme, changeTheme } = useContext(ThemeContext);
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col justify-center p-8 bg-base-200  min-h-screen">
       <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>
-          <div className="max-sm:flex ml-4 flex-row gap-4 text-base-100 transition-transform duration-300 bg-error hidden max-sm:p-4  max-sm:rounded-lg">
-            <img
-              src={logout}
-              onClick={handleLogout}
-              className="w-8 h-8 max-sm:flex"
-              alt="logout"
-            />
-            <button
-              onClick={handleLogout}
-              className="max-sm:flex hidden text-white"
-            >
-              Logout
-            </button>
-          </div>
+          <button
+            className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+            onClick={handleLogout}
+          >
+            <IoLogOut className="size-7 mr-2" />
+            Logout
+          </button>
         </div>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">

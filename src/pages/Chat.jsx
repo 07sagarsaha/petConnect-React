@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Add useNavigate
 import { auth, db } from "../firebase/firebase";
 import {
   collection,
@@ -12,9 +12,11 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
+import { IoArrowBack } from "react-icons/io5"; // Import back arrow icon
 
 const Chat = () => {
   const { userId } = useParams();
+  const navigate = useNavigate(); // Add navigation
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [recipientHandle, setRecipientHandle] = useState("");
@@ -90,58 +92,71 @@ const Chat = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate("/in/messages");
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-base-100">
+    <div className="flex flex-col h-screen bg-base-100 max-sm:h-[100dvh]">
       {/* Header */}
-      <div className="bg-primary text-base-100 p-4">
-        <h2 className="text-xl font-semibold">
+      <div className="bg-primary text-base-100 p-4 flex items-center gap-3 sticky top-0 z-10 shadow-md">
+        <button
+          onClick={handleBack}
+          className="p-2 rounded-full hover:bg-primary-focus transition-colors"
+        >
+          <IoArrowBack className="w-6 h-6" />
+        </button>
+        <h2 className="text-xl font-semibold truncate">
           Chat with {recipientHandle || "User"}
         </h2>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4">
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-4 pb-32 max-sm:pb-40">
+        {" "}
+        {/* Increased bottom padding for mobile */}
         {messages.map((message) => (
           <div
             key={message.id}
             className={`mb-4 ${
               message.senderId === auth.currentUser?.uid
-                ? "text-right"
-                : "text-left"
+                ? "flex justify-end"
+                : "flex justify-start"
             }`}
           >
             <div
-              className={`inline-block p-3 rounded-lg max-w-[70%] ${
+              className={`max-w-[75%] p-3 rounded-lg ${
                 message.senderId === auth.currentUser?.uid
                   ? "bg-primary text-base-100"
                   : "bg-base-200"
               }`}
             >
-              <p className="text-sm opacity-75 mb-1">
-                {message.senderId === auth.currentUser?.uid
-                  ? "You"
-                  : message.senderHandle}
+              <p>{message.text}</p>
+              <p className="text-xs mt-1 opacity-70">
+                {message.timestamp?.toDate().toLocaleTimeString()}
               </p>
-              <p className="break-words">{message.text}</p>
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} /> {/* Add ref element for auto-scroll */}
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <form onSubmit={sendMessage} className="p-4 border-t border-base-200">
-        <div className="flex gap-2">
+      {/* Message Input - Adjusted for both desktop and mobile */}
+      <form
+        onSubmit={sendMessage}
+        className="p-4 border-t border-base-200 bg-base-100 fixed bottom-4 max-sm:bottom-20 left-0 right-0 ml-[200px] max-sm:ml-0 "
+      >
+        <div className="flex gap-2 max-w-4xl mx-auto">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="flex-1 p-2 rounded-md bg-base-200"
+            className="flex-1 p-3 rounded-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="Type a message..."
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-primary text-base-100 rounded-md hover:bg-primary-focus transition-colors"
+            className="px-6 py-3 bg-primary text-base-100 rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!newMessage.trim()}
           >
             Send
