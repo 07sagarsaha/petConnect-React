@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase/firebase";
 import {
   doc,
@@ -12,7 +12,8 @@ import {
 } from "firebase/firestore";
 import Posts from "../components/UI/Posts";
 import { format } from "date-fns";
-import { IoMdClose } from "react-icons/io";
+import { IoMdCloseCircleOutline } from "react-icons/io";
+import { IoChatbubbleOutline } from "react-icons/io5";
 import pfp from "../icons/pfp.png";
 
 function UserProfile() {
@@ -21,6 +22,11 @@ function UserProfile() {
   const [posts, setPosts] = useState([]);
   const [pets, setPets] = useState([]);
   const [isPFPClicked, setIsPFPClicked] = useState(false);
+  const navigate = useNavigate();
+
+  const startChat = () => {
+    navigate(`/in/chat/${userId}`);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -83,7 +89,7 @@ function UserProfile() {
         <div className="flex flex-col items-center justify-center text-center mb-5">
           {isPFPClicked && userData?.profilePic && (
             <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 bg-neutral-focus transition-colors duration-200">
-              <IoMdClose
+              <IoMdCloseCircleOutline
                 className="text-5xl fixed z-50 p-2 right-5 top-16 rounded-lg hover:text-error transition-all duration-300"
                 onClick={handleProfileClick}
               />
@@ -129,6 +135,13 @@ function UserProfile() {
             </p>
           </div>
         </div>
+        <button
+          onClick={startChat}
+          className="text-lg p-3 m-2 rounded-md bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 flex items-center justify-center gap-2"
+        >
+          <IoChatbubbleOutline className="text-xl" />
+          Start Chat
+        </button>
         <div className="mb-5">
           <h3 className="text-xl font-semibold mb-2 text-primary">
             Pet Profiles

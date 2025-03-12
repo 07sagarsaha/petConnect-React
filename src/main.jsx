@@ -23,6 +23,8 @@ import { AuthProvider } from "./context/authContext/authContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ClerkProvider } from "@clerk/clerk-react";
 import ErrorBoundary from "./components/auth/ErrorBoundary.jsx";
+import Chat from "./pages/Chat.jsx";
+import ChatList from "./pages/ChatList.jsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -36,6 +38,8 @@ const router = createBrowserRouter(
       <Route path="/in" element={<App />}>
         <Route path="/in/home" element={<Home />} />
         <Route path="/in/profile" element={<Profile />} />
+        <Route path="/in/messages" element={<ChatList />} />
+        <Route path="/in/chat/:userId" element={<Chat />} />
         <Route path="/in/ai-chat" element={<AiChat />} />
         <Route path="/in/about" element={<About />} />
         <Route path="/in/settings" element={<Settings />} />
@@ -51,25 +55,25 @@ const router = createBrowserRouter(
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ErrorBoundary>
-    <ClerkProvider 
-      publishableKey={PUBLISHABLE_KEY}
-      appearance={{
-        elements: {
-          formButtonPrimary: 'primary-button',
-          card: 'clerk-card',
-        }
-      }}
-      signInUrl="/login"
-      signUpUrl="/signup"
-      signInFallbackRedirectUrl={"/in/home"}
-      signUpFallbackRedirectUrl={"/in/home"}
-    >
-      <AuthProvider>
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </AuthProvider>
-    </ClerkProvider>
+      <ClerkProvider
+        publishableKey={PUBLISHABLE_KEY}
+        appearance={{
+          elements: {
+            formButtonPrimary: "primary-button",
+            card: "clerk-card",
+          },
+        }}
+        signInUrl="/login"
+        signUpUrl="/signup"
+        signInFallbackRedirectUrl={"/in/home"}
+        signUpFallbackRedirectUrl={"/in/home"}
+      >
+        <AuthProvider>
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </AuthProvider>
+      </ClerkProvider>
     </ErrorBoundary>
   </StrictMode>
 );
