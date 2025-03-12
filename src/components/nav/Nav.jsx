@@ -8,13 +8,13 @@ function Nav({ title, icon, to }) {
         to={to}
         className={({ isActive }) =>
           isActive
-            ? "text-white px-4 py-2 max-sm:px-2 max-sm:py-1 bg-primary rounded-lg max-sm:rounded-xl shadow-md"
-            : "text-white max-sm:px-2 py-2"
+            ? "text-white px-4 py-2 max-lg:px-2 max-lg:py-1 bg-primary rounded-lg max-lg:rounded-xl shadow-md"
+            : "text-white max-lg:px-2 py-2"
         }
       >
-        <div className="flex flex-row gap-2 sm:gap-3 items-center">
+        <div className="flex flex-row gap-2 lg:gap-3 items-center">
           {icon}
-          <p className="hidden sm:flex text-sm">{title}</p>
+          <p className="hidden lg:flex text-sm">{title}</p>
         </div>
       </NavLink>
     </div>

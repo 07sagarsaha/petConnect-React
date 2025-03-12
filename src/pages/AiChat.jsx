@@ -80,8 +80,9 @@ const AiChat = () => {
   }
 
   return (
-    <div className="w-full overflow-hidden h-screen  flex flex-col bg-base-100">
-      <div className="flex-1 mx-4 p-4 overflow-y-scroll max-sm:mb-40 max-sm:mt-10 mb-36 rounded-xl bg-base-200">
+    <div className="w-full overflow-hidden h-screen flex flex-col bg-base-100">
+      {/* Chat Messages Container */}
+      <div className="flex-1 mx-4 p-4 overflow-y-auto max-lg:mb-40 max-lg:mt-4 mb-36 rounded-xl bg-base-200">
         {chatLog.map((message, index) => (
           <div
             key={index}
@@ -100,32 +101,45 @@ const AiChat = () => {
               {Array.isArray(message.text) ? (
                 <div>{message.text}</div>
               ) : (
-                <ReactMarkdown allowElement={() => true}>
-                  {message.text}
-                </ReactMarkdown>
+                <ReactMarkdown>{message.text}</ReactMarkdown>
               )}
             </div>
           </div>
         ))}
       </div>
+
+      {/* Loading Indicator */}
       {loading && (
-        <AiOutlineLoading3Quarters className="animate-spin self-center" />
+        <div className="flex justify-center items-center">
+          <AiOutlineLoading3Quarters className="animate-spin w-6 h-6" />
+        </div>
       )}
-      <div className="max-sm:w-full h-16 bg-base-100 max-sm:bg-transparent mb-16 max-sm:mb-2 flex justify-center items-center px-4 max-sm:px-0 fixed z-10 max-sm:bottom-20 max-sm:left-1 w-[80%] left-[200px] bottom-2">
-        <input
-          type="text"
-          placeholder="Type your question..."
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          className="flex-1 h-14 px-1 max-sm:px-4 rounded-md shadow-inner bg-base-200"
-        />
-        <button
-          onClick={getResponse}
-          className="text-lg p-3 m-2 h-14 flex justify-center items-center rounded-md bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 "
-        >
-          Send
-        </button>
-      </div>
+
+      {/* Input Form */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          getResponse();
+        }}
+        className="fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[200px] max-lg:ml-0 p-4 bg-base-100 border-t border-base-200"
+      >
+        <div className="flex gap-2 max-w-4xl mx-auto">
+          <input
+            type="text"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask me anything about pets..."
+            className="flex-1 p-3 rounded-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <button
+            type="submit"
+            disabled={!question.trim() || loading}
+            className="px-6 py-3 bg-primary text-base-100 rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Send
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

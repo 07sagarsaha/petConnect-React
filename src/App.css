@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-body{
+body {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
 }
 
-/* Add these styles to handle mobile chat view */
-@media (max-width: 640px) {
+/* Add these styles to handle mobile and tablet chat view */
+@media (max-width: 1024px) {
   .chat-container {
     margin-left: 0;
     margin-bottom: 0;
@@ -15,5 +15,70 @@ body{
   /* Prevent content from being hidden behind mobile browser chrome */
   .chat-input-container {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Additional spacing for bottom navigation */
+  .content-wrapper {
+    padding-bottom: 5rem;
+  }
+}
+
+/* Ensure proper spacing on larger screens */
+@media (min-width: 1025px) {
+  .content-wrapper {
+    margin-left: 200px;
+  }
+}
+
+/* Chat and AI Chat specific styles */
+.chat-message {
+  max-width: 75%;
+  word-wrap: break-word;
+}
+
+/* Ensure proper spacing for chat input on different devices */
+@media (max-width: 1024px) {
+  /* Tablet and Mobile adjustments */
+  .chat-input-container {
+    bottom: 5rem !important; /* Account for bottom navigation */
+    margin-left: 0 !important;
+  }
+
+  .chat-messages-container {
+    margin-bottom: 7rem !important; /* Extra space for input and navigation */
+    padding-bottom: 2rem;
+  }
+
+  /* Adjust header for better touch targets */
+  .chat-header {
+    padding: 1rem;
+  }
+
+  .chat-header button {
+    padding: 0.75rem;
+  }
+
+  /* Improve touch targets for message bubbles */
+  .message-bubble {
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+  }
+}
+
+/* Desktop specific adjustments */
+@media (min-width: 1025px) {
+  .chat-input-container {
+    margin-left: 200px; /* Account for sidebar */
+  }
+
+  .chat-messages-container {
+    margin-bottom: 5rem;
+  }
+}
+
+/* Safe area insets for modern mobile browsers */
+@supports (padding: max(0px)) {
+  .chat-input-container {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }

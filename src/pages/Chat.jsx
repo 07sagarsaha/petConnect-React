@@ -97,7 +97,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-base-100 max-sm:h-[100dvh]">
+    <div className="flex flex-col h-screen bg-base-100 max-lg:h-[100dvh]">
       {/* Header */}
       <div className="bg-primary text-base-100 p-4 flex items-center gap-3 sticky top-0 z-10 shadow-md">
         <button
@@ -112,9 +112,7 @@ const Chat = () => {
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-4 pb-32 max-sm:pb-40">
-        {" "}
-        {/* Increased bottom padding for mobile */}
+      <div className="flex-1 overflow-y-auto p-4 pb-32 max-lg:pb-40">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -141,10 +139,10 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input - Adjusted for both desktop and mobile */}
+      {/* Message Input - Adjusted for desktop, tablet, and mobile */}
       <form
         onSubmit={sendMessage}
-        className="p-4 border-t border-base-200 bg-base-100 fixed bottom-4 max-sm:bottom-20 left-0 right-0 ml-[200px] max-sm:ml-0 "
+        className="p-4 border-t border-base-200 bg-base-100 fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[200px] max-lg:ml-0"
       >
         <div className="flex gap-2 max-w-4xl mx-auto">
           <input

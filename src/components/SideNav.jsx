@@ -33,9 +33,9 @@ function SideNav() {
   return (
     <>
       <div
-        className={`fixed max-sm:bottom-0 left-0 max-sm:right-0 w-20 h-full max-sm:h-20 max-sm:w-[95%] flex flex-col max-sm:flex-row justify-evenly items-center rounded-r-xl transition-transform duration-300 z-20 bg-gradient-to-br bg-primary bg-opacity-60 min-w-[200px] translate-x-0 backdrop-blur-md max-sm:rounded-xl max-sm:m-2 max-sm:ml-[0.7rem]`}
+        className={`fixed max-lg:bottom-0 left-0 max-lg:right-0 w-20 h-full max-lg:h-20 max-lg:w-[95%] flex flex-col max-lg:flex-row justify-evenly items-center rounded-r-xl transition-transform duration-300 z-20 bg-gradient-to-br bg-primary bg-opacity-60 min-w-[200px] translate-x-0 backdrop-blur-md max-lg:rounded-xl max-lg:m-2 max-lg:ml-[0.7rem]`}
       >
-        <div className="flex w-full flex-col max-sm:flex-row max-sm:justify-evenly max-sm:items-center text-left gap-12 max-sm:gap-5 max-sm:px-2 transition-all ease duration-200">
+        <div className="flex w-full flex-col max-lg:flex-row max-lg:justify-evenly max-lg:items-center text-left gap-12 max-lg:gap-5 max-lg:px-2 transition-all ease duration-200">
           <Nav
             title="Home"
             icon={<AiOutlineHome className="w-8 h-8" />}
@@ -73,11 +73,11 @@ function SideNav() {
         >
           <IoLogOutOutline
             onClick={handleLogout}
-            className="w-8 h-8 max-sm:hidden cursor-pointer"
+            className="w-8 h-8 max-lg:hidden cursor-pointer"
           />
           <button
             onClick={handleLogout}
-            className="max-sm:hidden sm:flex text-white"
+            className="max-lg:hidden lg:flex text-white"
           >
             Logout
           </button>
