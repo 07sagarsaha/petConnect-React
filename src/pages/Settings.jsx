@@ -2,7 +2,8 @@ import React, { useContext } from "react";
 import ThemeContext from "../context/ThemeContext";
 import { IoLogOut } from "react-icons/io5";
 import { doSignOut } from "../firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const themes = [
   "light",
@@ -54,13 +55,18 @@ function Settings() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>
           <button
-            className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+            className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 lg:hidden md:hidden"
             onClick={handleLogout}
           >
             <IoLogOut className="size-7 mr-2" />
             Logout
           </button>
         </div>
+        <NavLink
+          to="/in/about"
+          className="text-xl gap-2 w-[50%] text-semibold text-base-100 rounded-2xl self-start my-4 flex items-center justify-center bg-primary p-3 md:hidden lg:hidden">
+            <AiOutlineInfoCircle className="text-2xl"/>{"About us"}
+        </NavLink>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">
             Theme Switcher

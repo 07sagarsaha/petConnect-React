@@ -56,16 +56,18 @@ function SideNav() {
             icon={<AiOutlineRobot className="w-8 h-8" />}
             to="/in/ai-chat"
           />
-          <Nav
-            title="About"
-            icon={<AiOutlineInfoCircle className="w-8 h-8" />}
-            to="/in/about"
-          />
-          <Nav
-            title="Settings"
-            icon={<IoSettingsOutline className="w-8 h-8" />}
-            to="/in/settings"
-          />
+          <div className="max-sm:hidden flex w-full flex-col max-lg:flex-row max-lg:justify-evenly max-lg:items-center text-left gap-12 max-lg:gap-5 max-lg:px-2 transition-all ease duration-200">
+            <Nav
+              title="About"
+              icon={<AiOutlineInfoCircle className="w-8 h-8" />}
+              to="/in/about"
+            />
+            <Nav
+              title="Settings"
+              icon={<IoSettingsOutline className="w-8 h-8" />}
+              to="/in/settings"
+            />
+          </div>
         </div>
         <div
           className="flex flex-row gap-4 text-base-100 hover:scale-105 transition-transform duration-300"

@@ -19,7 +19,8 @@ import { format } from "date-fns";
 import { IoMdClose, IoMdAddCircleOutline, IoMdCreate } from "react-icons/io";
 import ProfileEdit from "../components/ProfileEdit";
 import { BsPencil } from "react-icons/bs";
-import { FaDeleteLeft, FaUpRightAndDownLeftFromCenter } from "react-icons/fa6";
+import { IoSettingsOutline } from "react-icons/io5";
+import { NavLink } from "react-router-dom";
 
 function Profile() {
   const [profile, setProfile] = useState();
@@ -246,13 +247,21 @@ function Profile() {
                 </h2>
               </div>
             </div>
-            <button
-              id="profilePicUpload"
-              className="text-2xl p-3 flex justify-end items-center self-center gap-3 rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
-              onClick={handleProfileUpdate}
-            >
-              <p className="text-lg">{"Edit"}</p><BsPencil/>
-            </button>
+            <div className="flex self-center gap-3">
+              <button
+                id="profilePicUpload"
+                className="text-2xl p-3 flex justify-end items-center gap-3 rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                onClick={handleProfileUpdate}
+              >
+                <p className="text-lg">{"Edit"}</p><BsPencil/>
+              </button>
+              <NavLink
+                to="/in/settings"
+                className="text-3xl text-base-100 rounded-2xl self-center flex items-center justify-center bg-primary p-3 md:hidden lg:hidden"
+              >
+                <IoSettingsOutline/>
+              </NavLink>
+            </div>
           </div>
 
           {isProfileEdit && (
