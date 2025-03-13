@@ -121,16 +121,14 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
     <>
       <div className="h-full w-full left-0 justify-center items-center flex flex-col fixed top-0 z-40 bg-neutral-focus transition-colors duration-200">
         <div className="h-4/5 max-sm:h-max w-1/2 max-sm:w-[80%] rounded-xl bg-base-100 shadow-xl overflow-hidden">
-          <div className="flex flex-row w-full ml-4 mt-4 items-center">
-            <h1 className="flex w-[100%] justify-center ml-4 text-2xl my-4 text-primary">
+          <div className="flex flex-row justify-center w-full ml-4 mt-4 items-center">
+            <h1 className="flex w-full justify-center text-2xl my-4 text-primary">
               Update Your Profile
             </h1>
-            <div className="">
-              <IoMdClose
-                className="text-4xl mr-6 justify-end hover:text-error transition-all duration-300"
-                onClick={handleProfileClose}
-              />
-            </div>
+            <IoMdClose
+              className="text-4xl mr-8 hover:text-error transition-all duration-300"
+              onClick={handleProfileClose}
+            />
           </div>
           <div className="flex flex-row justify-center mt gap-6 items-center">
             <img
@@ -183,6 +181,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
           </div>
         </div>
       </div>
+      <div className="fixed z-20 bg-black opacity-50 w-full h-full left-0 top-0" onClick={handleProfileClose}/>
     </>
   );
 };
