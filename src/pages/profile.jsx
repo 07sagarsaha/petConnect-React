@@ -213,7 +213,7 @@ function Profile() {
 
   return (
     <div className="flex justify-center flex-col bg-base-200 text-primary-focus min-h-screen p-8 ">
-      <div className="w-4/5 self-center bg-base-100 rounded-lg shadow-lg p-6">
+      <div className="w-4/5 max-sm:w-full self-center bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex flex-col items-start text-center mb-5">
           {isPFPClicked && profilePic && (
             <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 transition-colors duration-200">
@@ -230,9 +230,9 @@ function Profile() {
             </div>
           )}
           <div className="flex flex-row justify-between w-full gap-5 max-sm:flex-col">
-            <div className="flex gap-5">
+            <div className="flex gap-5 flex-row max-sm:flex-col">
               <img
-                className="w-36 h-36 rounded-full object-cover"
+                className="w-36 h-36 rounded-full object-cover max-sm:self-center"
                 src={profilePic}
                 alt="Profile"
                 onClick={handleProfileClick}
@@ -260,12 +260,12 @@ function Profile() {
               image={profilePic}
               name={userData?.name}
               handle={userData?.handle}
-              bio={userData?.bio || "Write something about you..."}
+              bio={userData?.bio || "No Bio."}
               handleProfileClose={handleProfileUpdate}
             />
           )}
 
-          <div className="flex flex-col gap-5 justify-start items-start w-full p-5 rounded-xl bg-base-200 mt-8 hover:bg-base-300 transition-all mb-5" onClick={handleBioExpand}>
+          <div className={`flex flex-col gap-5 justify-start items-start w-full p-5 rounded-xl bg-base-200 mt-8 ${isBioExpanded ? `hover:bg-base-200` : `hover:bg-base-300`} transition-all mb-5`} onClick={handleBioExpand}>
             <p className="self-start w-full flex items-start">{userData?.bio || "Bio is Empty"}</p>
             {isBioExpanded && 
             <div className="flex flex-col text-start items-start justify-between w-full">
@@ -276,7 +276,7 @@ function Profile() {
                 <p className="mb-2">
                   <strong>{"Location:"}</strong> {userData?.location || "No Location Added"}
                 </p>
-                <p className="mb-2">
+                <p className="mb-2 max-sm:text-sm">
                   <strong>{"Email:"}</strong> {userData?.email}
                 </p>
               </div>
@@ -303,11 +303,11 @@ function Profile() {
               {pets.map((pet) => (
                 <div
                   key={pet.id}
-                  className="flex items-center justify-between bg-primary mt-2 p-4 rounded-lg bg-opacity-30"
+                  className="flex flex-row max-sm:flex-col gap-2 items-center justify-between bg-primary mt-2 p-4 rounded-lg bg-opacity-30"
                 >
-                  <div className="flex flex-row gap-2">
+                  <div className="flex flex-row gap-2 max-sm:flex-col">
                     <img
-                      className="w-24 h-auto rounded-md"
+                      className="w-24 h-auto rounded-md object-cover max-sm:w-full"
                       src={pet.photoUrl}
                       alt="Pet"
                     />
@@ -338,7 +338,7 @@ function Profile() {
                     </button>
                     {confirmDelete && <>
                     <div className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0" onClick={confirmDeleteBox}/>
-                    <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-1/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+                    <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-1/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
                       <button
                         className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
                         onClick={confirmDeleteBox}
@@ -362,7 +362,7 @@ function Profile() {
           {isAddPetVisible && 
           <>
             <div className="fixed z-20 bg-black opacity-50 w-full h-full left-0 top-0" onClick={toggleAddPetSection}/>
-            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-2/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-2/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
               <button
                 className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
                 onClick={toggleAddPetSection}
@@ -416,7 +416,7 @@ function Profile() {
       {isEditPetModalOpen && (
         <>
         <div className="fixed z-20 bg-black opacity-50 w-full h-full left-0 top-0" onClick={closeEditPetModal}/>
-        <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-2/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+        <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-2/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
             <h2 className="text-xl font-bold">Edit Pet</h2>
             <button
               className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
@@ -460,7 +460,7 @@ function Profile() {
         </div>
         </>
       )}
-      <div className="w-4/5 self-center">
+      <div className="w-4/5 max-sm:w-full self-center">
         <div>
           <h1 className="py-8 text-3xl text-primary">Your Posts:</h1>
         </div>
