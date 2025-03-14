@@ -174,7 +174,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
       {/* Button */}
       <div
         onClick={handleClickEvent}
-        className={`flex text-primary hover:text-base-100 bg-base-100 p-2 justify-center items-center transition-all duration-[0.85s] shadow-lg rounded-2xl ease hover:bg-primary h-20 ${className}`}
+        className={`flex text-primary hover:text-base-100 bg-base-100 p-2 justify-center items-center transition-all duration-[0.85s] shadow-lg rounded-lg ease hover:bg-primary h-20 ${className}`}
       >
         <div className="flex justify-center items-center gap-2">
           {icon}
