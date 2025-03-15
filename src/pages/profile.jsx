@@ -21,6 +21,7 @@ import ProfileEdit from "../components/ProfileEdit";
 import { BsPencil } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 function Profile() {
   const [profile, setProfile] = useState();
@@ -42,6 +43,7 @@ function Profile() {
   const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [confirmDelete, toggleConfirmDelete] = useState(false);
+  const {showToast} = useToast();
 
   const handleProfileUpdate = () => {
     setisProfileEdit(!isProfileEdit);
@@ -125,11 +127,13 @@ function Profile() {
           ownerId: user.uid,
         });
       }
+      showToast("Pet added/updated!");
       setNewPet({ name: "", age: "", breed: "", photoUrl: "" });
       setIsAddPetVisible(false);
       setIsEditPetModalOpen(false);
     } catch (error) {
       console.error("Error adding/updating pet:", error);
+      showToast("Error adding/updating pet.");
     }
   };
 
@@ -192,6 +196,7 @@ function Profile() {
     deleteDoc(petRef)
       .then(() => {
         toggleConfirmDelete(!confirmDelete);
+        showToast("Pet Deleted!");
       })
       .catch((error) => {
         console.log("Error deleting document." + error);
@@ -213,6 +218,7 @@ function Profile() {
   }
 
   return (
+    <>
     <div className="flex justify-center flex-col bg-base-200 text-primary-focus min-h-screen p-8 ">
       <div className="w-4/5 max-sm:w-full self-center bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex flex-col items-start text-center mb-5">
@@ -239,10 +245,10 @@ function Profile() {
                 onClick={handleProfileClick}
               />
               <div className="flex flex-col justify-center self-center -translate-y-2">
-                <h1 className="text-center text-2xl font-bold mt-4">
+                <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4">
                   {userData?.name || "loading..."}
                 </h1>
-                <h2 className="text-center text-xl text-primary-focus">
+                <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
                   {"@" + userData?.handle || "loading..."}
                 </h2>
               </div>
@@ -357,6 +363,7 @@ function Profile() {
                       <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
                         {"Delete Pet?"}
                       </h3>
+                      <p className="mb-4">{"This action cannot be undone"}</p>
                       <div className="flex flex-row gap-5">
                         <button className="bg-error py-2 px-3 rounded-xl text-xl" onClick={() => handleDeletePet(pet)}>Yes</button>
                         <button className="border-2 border-error py-2 px-3 rounded-xl text-xl" onClick={confirmDeleteBox}>No</button>
@@ -471,7 +478,7 @@ function Profile() {
       )}
       <div className="w-4/5 max-sm:w-full self-center">
         <div>
-          <h1 className="py-8 text-3xl text-primary">Your Posts:</h1>
+          <h1 className="py-8 text-3xl text-primary">{"Your Posts"}</h1>
         </div>
         <div className="flex flex-col items-center w-full">
           {post.map((post) => (
@@ -496,6 +503,7 @@ function Profile() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

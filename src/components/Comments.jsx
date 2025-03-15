@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   FaRegThumbsDown,
   FaRegThumbsUp,
@@ -17,11 +17,13 @@ import {
   orderBy,
   onSnapshot,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { IoMdClose } from "react-icons/io";
 import { BiCommentDetail } from "react-icons/bi";
 import { auth, db } from "../firebase/firebase";
-import { IoSend } from "react-icons/io5";
+import { IoSend, IoTrashBin } from "react-icons/io5";
+import { useToast } from "../context/ToastContext";
 
 const CommentDisplay = ({
   postID,
@@ -39,6 +41,10 @@ const CommentDisplay = ({
   const [comments, setComments] = useState([]);
   const [commentCount, setCommentCount] = useState(0);
   const [isPostClicked, setIsPostClicked] = useState(false);
+  const [confirmDelete, toggleConfirmDelete] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null); // State to store comment ID
+  const commentInputRef = useRef(null);
+  const { showToast } = useToast();
 
   const handlePost = () => {
     setIsPostClicked(!isPostClicked);
@@ -62,6 +68,7 @@ const CommentDisplay = ({
         createdAt: serverTimestamp(),
       });
       setNewComment("");
+      showToast("Comment added successfully!");
     } catch (error) {
       console.error("Error adding comment:", error);
     }
@@ -128,7 +135,24 @@ const CommentDisplay = ({
   };
 
   const handleCommentTag = (userHandle) => {
-    setNewComment("@"+userHandle+" ");
+    setNewComment("@" + userHandle + " ");
+    commentInputRef.current.focus();
+  };
+
+  const confirmDeleteBox = (commentId) => {
+    setCommentToDelete(commentId); // Store the comment ID
+    toggleConfirmDelete(!confirmDelete);
+  };
+
+  const handleDeletePComment = async () => {
+    const commentRef = doc(db, "posts", postID, "comments", commentToDelete);
+    try {
+      await deleteDoc(commentRef);
+      showToast("Comment deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+    confirmDeleteBox();
   };
 
   const isImageURLPresent = !!imageURL;
@@ -212,19 +236,65 @@ const CommentDisplay = ({
                       <div
                         key={comment.id}
                         className="bg-base-200 w-fit my-4 p-3 rounded-md shadow-lg"
-                        onClick={() => {handleCommentTag(comment.userHandle)}}
                       >
                         <div className="flex justify-between gap-7">
                           <p className="text-sm font-semibold">
                             {comment.userHandle}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            {comment.createdAt?.toDate().toLocaleDateString()}
-                          </p>
+                          <div className="flex flex-row gap-2">
+                            <p className="text-xs text-gray-500">
+                              {comment.createdAt?.toDate().toLocaleDateString()}
+                            </p>
+                            {(comment.userId == auth.currentUser.uid) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
+                          </div>
                         </div>
+                        {confirmDelete && commentToDelete === comment.id && (
+                          <>
+                            <div
+                              className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
+                              onClick={confirmDeleteBox}
+                            />
+                            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+                              <button
+                                className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
+                                onClick={confirmDeleteBox}
+                              >
+                                <IoMdClose />
+                              </button>
+                              <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
+                                {"Delete Comment?"}
+                              </h3>
+                              <p className="mb-4">
+                                {"This action cannot be undone"}
+                              </p>
+                              <div className="flex flex-row gap-5">
+                                <button
+                                  className="bg-error py-2 px-3 rounded-xl text-xl"
+                                  onClick={handleDeletePComment}
+                                >
+                                  Yes
+                                </button>
+                                <button
+                                  className="border-2 border-error py-2 px-3 rounded-xl text-xl"
+                                  onClick={confirmDeleteBox}
+                                >
+                                  No
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
                         <p className="text-gray-700 my-2 text-left">
                           {comment.content}
                         </p>
+                        <button
+                          className="text-sm"
+                          onClick={() => {
+                            handleCommentTag(comment.userHandle);
+                          }}
+                        >
+                          <BiCommentDetail />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -236,23 +306,23 @@ const CommentDisplay = ({
                 <h2 className="text-xl font-bold text-left">{title}</h2>
                 <p className="text-[16px] mt-2 text-left">{content}</p>
                 <div className="flex flex-row mt-4 items-center gap-4">
-                    <button onClick={handleLike}>
-                      {isLiked ? (
-                        <FaThumbsUp className="text-primary" />
-                      ) : (
-                        <FaRegThumbsUp className="text-primary" />
-                      )}
-                    </button>
-                    <span>{likes?.length || 0} likes</span>
-                    <button onClick={handleDislike}>
-                      {isDisliked ? (
-                        <FaThumbsDown className="text-error" />
-                      ) : (
-                        <FaRegThumbsDown className="text-error" />
-                      )}
-                    </button>
-                    <span>{dislikes?.length || 0} dislikes</span>
-                  </div>
+                  <button onClick={handleLike}>
+                    {isLiked ? (
+                      <FaThumbsUp className="text-primary" />
+                    ) : (
+                      <FaRegThumbsUp className="text-primary" />
+                    )}
+                  </button>
+                  <span>{likes?.length || 0} likes</span>
+                  <button onClick={handleDislike}>
+                    {isDisliked ? (
+                      <FaThumbsDown className="text-error" />
+                    ) : (
+                      <FaRegThumbsDown className="text-error" />
+                    )}
+                  </button>
+                  <span>{dislikes?.length || 0} dislikes</span>
+                </div>
                 <div className="flex flex-col pt-5">
                   <form
                     onSubmit={handleAddComment}
@@ -280,19 +350,65 @@ const CommentDisplay = ({
                       <div
                         key={comment.id}
                         className="bg-base-200 w-fit max-sm:w-full my-4 p-3 rounded-md shadow-lg"
-                        onClick={() => {handleCommentTag(comment.userHandle)}}
                       >
                         <div className="flex justify-between gap-7">
                           <p className="text-sm font-semibold">
                             {comment.userHandle}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            {comment.createdAt?.toDate().toLocaleDateString()}
-                          </p>
+                          <div className="flex flex-row gap-2">
+                            <p className="text-xs text-gray-500">
+                              {comment.createdAt?.toDate().toLocaleDateString()}
+                            </p>
+                            {(comment.userId == auth.currentUser.uid) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
+                          </div>
                         </div>
+                        {confirmDelete && commentToDelete === comment.id && (
+                          <>
+                            <div
+                              className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
+                              onClick={confirmDeleteBox}
+                            />
+                            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+                              <button
+                                className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
+                                onClick={confirmDeleteBox}
+                              >
+                                <IoMdClose />
+                              </button>
+                              <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
+                                {"Delete Comment?"}
+                              </h3>
+                              <p className="mb-4">
+                                {"This action cannot be undone"}
+                              </p>
+                              <div className="flex flex-row gap-5">
+                                <button
+                                  className="bg-error py-2 px-3 rounded-xl text-xl"
+                                  onClick={handleDeletePComment}
+                                >
+                                  Yes
+                                </button>
+                                <button
+                                  className="border-2 border-error py-2 px-3 rounded-xl text-xl"
+                                  onClick={confirmDeleteBox}
+                                >
+                                  No
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
                         <p className="text-gray-700 my-2 text-left">
                           {comment.content}
                         </p>
+                        <button
+                          className="text-sm"
+                          onClick={() => {
+                            handleCommentTag(comment.userHandle);
+                          }}
+                        >
+                          <BiCommentDetail />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -300,16 +416,16 @@ const CommentDisplay = ({
               </div>
             )}
           </>
-        ) : 
+        ) : (
           <div>
             <BiCommentDetail />
             <p className="pt-1">{commentCount}</p>
           </div>
-        }
+        )}
       </div>
       {isPostClicked && (
         <div
-          className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-30 top-0 left-0"
+          className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-40 top-0 left-0"
           onClick={handlePost}
         ></div>
       )}

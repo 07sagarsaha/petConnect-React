@@ -11,12 +11,14 @@ import {
 } from "firebase/firestore";
 import { BsPencil } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
+import { useToast } from "../context/ToastContext";
 
 const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
   const [profilePic, setProfilePic] = useState(image);
   const [changeName, setNameChange] = useState(name);
   const [changeHandle, setChangeHandle] = useState(handle);
   const [changeBio, setChangeBio] = useState(bio);
+  const {showToast} = useToast();
   const cloudinaryAccounts = [
     //add more cloudinary accounts here just add the name and and change the url too
     //  https://api.cloudinary.com/v1_1/Put_your_cloud_name_here/image/upload
@@ -75,6 +77,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
           });
         }
       }
+      showToast("Profile Picture Updated!");
     } catch (error) {
       console.error("Error uploading profile picture:", error);
     }
@@ -83,7 +86,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     if (!(changeName.trim() || changeHandle.trim() || changeBio.trim())) {
-      alert("Change Your Name Or Handle!");
+      showToast("Please fill in the fields to update your profile.");
       return;
     }
 
@@ -97,7 +100,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
           handle: changeHandle,
           bio: changeBio,
         });
-        alert("Updated Successfully!");
+        showToast("Profile Updated!");
       } catch (error) {
         console.error(error);
       }
@@ -145,7 +148,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
             <input
               type="file"
               id="profile_image"
-              accept="images/*"
+              accept="image/*"
               className="hidden"
               onChange={handleImageChange}
             />

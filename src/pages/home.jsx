@@ -416,7 +416,7 @@ function Home() {
 
           {/* Pet Facts section - only visible on large screens */}
           <div className="hidden lg:block lg:w-1/3">
-            <div className="bg-base-100 rounded-lg shadow-lg p-6 sticky top-4">
+            <div className="bg-base-100 rounded-lg shadow-lg p-6 sticky top-4 z-0">
               <div className="flex items-center gap-2 mb-4">
                 <AiOutlineInfoCircle className="text-2xl text-primary" />
                 <h2 className="text-xl font-semibold text-primary">
