@@ -1,4 +1,21 @@
 [[redirects]]
-from = "/*"
-to = "/index.html"
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = """
+      default-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.clerk.com https://*.onesignal.com;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.com https://*.googleapis.com https://*.gstatic.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' blob: data: https://*.clerk.com https://*.googleapis.com;
+      connect-src 'self' https://*.clerk.com https://*.googleapis.com https://firebase.googleapis.com https://*.onesignal.com wss://*.onesignal.com blob:;
+      frame-src 'self' https://*.clerk.com;
+      worker-src 'self' blob:;
+      media-src 'self' blob:;
+      object-src 'none';
+    """
 status = 200
