@@ -109,7 +109,7 @@ function Profile() {
 
   const handleAddPet = async () => {
     if (!newPet.name || !newPet.age || !newPet.breed || !newPet.photoUrl) {
-      alert("Please fill in all pet details.");
+      showToast("Please fill in all fields.");
       return;
     }
 
@@ -157,6 +157,7 @@ function Profile() {
 
       if (data.secure_url) {
         setNewPet((prevPet) => ({ ...prevPet, photoUrl: data.secure_url }));
+        showToast("Pet picture uploaded!");
       }
     } catch (error) {
       console.error("Error uploading pet picture:", error);
