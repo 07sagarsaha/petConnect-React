@@ -133,7 +133,7 @@ function Profile() {
       setIsEditPetModalOpen(false);
     } catch (error) {
       console.error("Error adding/updating pet:", error);
-      showToast("Error adding/updating pet.");
+      showToast("Error adding/updating pet");
     }
   };
 
