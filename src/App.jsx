@@ -4,6 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./context/authContext/authContext";
 import "../src/App.css";
 import { ThemeProvider } from "./context/ThemeContext";
+import PetFacts from "./components/UI/PetFacts";
 
 function App() {
   const { userLoggedIn } = useAuth();

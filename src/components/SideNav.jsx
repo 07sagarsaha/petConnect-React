@@ -75,7 +75,7 @@ function SideNav() {
         >
           <IoLogOutOutline
             onClick={handleLogout}
-            className="w-8 h-8 max-lg:hidden cursor-pointer"
+            className="w-8 h-8 max-lg:hidden cursor-pointer text-white"
           />
           <button
             onClick={handleLogout}

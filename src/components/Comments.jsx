@@ -44,10 +44,15 @@ const CommentDisplay = ({
   const [confirmDelete, toggleConfirmDelete] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null); // State to store comment ID
   const commentInputRef = useRef(null);
+  const [isImageClicked, setIsImageClicked] = useState(false);
+  const [maxImageZoom, setImageMaxZoom] = useState(false);
+  const [transformOrigin, setTransformOrigin] = useState("center center");
   const { showToast } = useToast();
 
   const handlePost = () => {
     setIsPostClicked(!isPostClicked);
+    setIsImageClicked(false);
+    setImageMaxZoom(false);
   };
 
   const handleAddComment = async (e) => {
@@ -100,12 +105,14 @@ const CommentDisplay = ({
           dislikes: arrayRemove(auth.currentUser.uid),
           likes: arrayUnion(auth.currentUser.uid),
         });
+        showToast("You liked the post and removed your dislike.");
       } else {
         await updateDoc(postRef, {
           likes: isLiked
             ? arrayRemove(auth.currentUser.uid)
             : arrayUnion(auth.currentUser.uid),
         });
+        showToast(isLiked ? "You unliked the post." : "You liked the post.");
       }
     } catch (error) {
       console.error("Error updating like:", error);
@@ -122,12 +129,14 @@ const CommentDisplay = ({
           likes: arrayRemove(auth.currentUser.uid),
           dislikes: arrayUnion(auth.currentUser.uid),
         });
+        showToast("You disliked the post and removed your like.");
       } else {
         await updateDoc(postRef, {
           dislikes: isDisliked
             ? arrayRemove(auth.currentUser.uid)
             : arrayUnion(auth.currentUser.uid),
         });
+        showToast(isDisliked ? "You removed your dislike." : "You disliked the post.");
       }
     } catch (error) {
       console.error("Error updating dislike:", error);
@@ -154,6 +163,19 @@ const CommentDisplay = ({
     }
     confirmDeleteBox();
   };
+
+  const handleImageClick = () => {
+    setIsImageClicked(!isImageClicked);
+    setImageMaxZoom(false);
+  }
+
+  const handleImageZoom = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setTransformOrigin(`${x}% ${y}%`);
+    setImageMaxZoom(!maxImageZoom);
+  }
 
   const isImageURLPresent = !!imageURL;
 
@@ -182,13 +204,22 @@ const CommentDisplay = ({
                   <span className="text-left"> {handle} posted:</span>
                   <h2 className="text-xl font-bold text-left">{title}</h2>
                   <p className="text-[16px] mt-2 text-left">{content}</p>
-                  <div className="aspect-square w-full h-full max-sm:w-[90%] relative overflow-hidden rounded-xl">
+                  <div className="aspect-square w-full h-full max-sm:w-[90%] relative overflow-hidden rounded-xl" onClick={handleImageClick}>
                     <img
                       src={imageURL}
                       alt="Post"
                       className="absolute w-full h-full rounded-xl object-cover"
                     />
                   </div>
+                  {isImageClicked && imageURL && (
+                            <>
+                              <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
+                              <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
+                                <img src={imageURL} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
+                              </div>
+                              <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
+                            </>
+                  )}
                   <p className="text-base text-gray-600 mt-3">{date}</p>
                   <div className="flex flex-row mt-4 items-center gap-4">
                     <button onClick={handleLike}>
@@ -209,7 +240,7 @@ const CommentDisplay = ({
                     <span>{dislikes?.length || 0} dislikes</span>
                   </div>
                 </div>
-                <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10">
+                <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10 max-sm:mb-20">
                   <form
                     onSubmit={handleAddComment}
                     className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-5 transition-all"
@@ -219,7 +250,7 @@ const CommentDisplay = ({
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="Add a comment..."
-                      className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-base-200 shadow-lg z-0"
+                      className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-base-200 shadow-lg z-0 max-sm:mb-20"
                     />
                     <button
                       type="submit"
@@ -326,7 +357,7 @@ const CommentDisplay = ({
                 <div className="flex flex-col pt-5">
                   <form
                     onSubmit={handleAddComment}
-                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:absolute max-sm:bottom-5"
+                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:absolute max-sm:bottom-5 max-sm:mb-20"
                   >
                     <input
                       type="text"

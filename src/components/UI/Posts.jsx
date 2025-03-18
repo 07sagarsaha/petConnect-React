@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import CommentDisplay from "../Comments";
 import pfp from "../../icons/pfp.png";
 import { useToast } from "../../context/ToastContext"; // Import useToast
+import { IoMdClose } from "react-icons/io";
 
 const Posts = ({
   id,
@@ -40,6 +41,9 @@ const Posts = ({
 
   const isLiked = likes?.includes(auth.currentUser?.uid);
   const isDisliked = dislikes?.includes(auth.currentUser?.uid);
+  const [isImageClicked, setIsImageClicked] = useState(false);
+  const [maxImageZoom, setImageMaxZoom] = useState(false);
+  const [transformOrigin, setTransformOrigin] = useState("center center");
   const navigate = useNavigate();
   const { showToast } = useToast(); // Get showToast from context
 
@@ -93,6 +97,19 @@ const Posts = ({
     }
   };
 
+  const handleImageClick = () => {
+    setIsImageClicked(!isImageClicked);
+    setImageMaxZoom(false);
+  }
+
+  const handleImageZoom = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setTransformOrigin(`${x}% ${y}%`);
+    setImageMaxZoom(!maxImageZoom);
+  }
+
   return (
     <div className="flex justify-center items-center w-full text-base-content bg-base-200">
       {/* Post Content */}
@@ -127,13 +144,23 @@ const Posts = ({
 
         {/* Image */}
         {imageUrl && (
-          <div className="aspect-video w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl">
+          <div className="aspect-video w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl" onClick={handleImageClick}>
             <img
               src={imageUrl}
               alt="Post"
               className="w-full h-full rounded-xl object-cover cursor-pointer"
             />
           </div>
+        )}
+
+        {isImageClicked && imageUrl && (
+          <>
+            <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
+            <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
+              <img src={imageUrl} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
+            </div>
+            <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
+          </>
         )}
 
         {/* Severity Index and Actions */}
