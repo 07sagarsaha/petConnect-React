@@ -8,7 +8,7 @@ const PetFacts = () => {
     const [petFacts, setPetFacts] = useState([]);
     const [isLoadingFacts, setIsLoadingFacts] = useState(true);
     const [error, setError] = useState(null);
-    const ANIMALS_API_KEY = import.meta.env.ANIMALS_API_KEY;
+    const ANIMALS_API_KEY = import.meta.env.VITE_NINJAS_API_KEY;
 
       const petTypes = {
         cat: { icon: FaCat, name: "Cat" },
