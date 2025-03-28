@@ -29,7 +29,9 @@ function Profile() {
   const [userData, setUserData] = useState();
   const [post, setPost] = useState([]);
   const [profilePic, setProfilePic] = useState("/src/icons/pfp.png");
-  const [isPFPClicked, setIsPFPClicked] = useState(false);
+  const [isImageClicked, setIsImageClicked] = useState(false);
+  const [maxImageZoom, setImageMaxZoom] = useState(false);
+  const [transformOrigin, setTransformOrigin] = useState("center center");
   const [isProfileEdit, setisProfileEdit] = useState(false);
   const [pets, setPets] = useState([]);
   const [newPet, setNewPet] = useState({
@@ -43,6 +45,8 @@ function Profile() {
   const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [confirmDelete, toggleConfirmDelete] = useState(false);
+  const [petToDelete, setPetToDelete] = useState(null);
+  const [image, setImage] = useState(null);
   const {showToast} = useToast();
 
   const handleProfileUpdate = () => {
@@ -164,17 +168,6 @@ function Profile() {
     }
   };
 
-  const bgPicChange = (e) => {
-    const bgfile = e.target.files[0];
-    if (bgfile) {
-      setBG(URL.createObjectURL(bgfile));
-    }
-  };
-
-  const handleProfileClick = () => {
-    setIsPFPClicked(!isPFPClicked);
-  };
-
   const toggleAddPetSection = () => {
     setIsAddPetVisible(!isAddPetVisible);
     setEditPetId(null);
@@ -192,8 +185,8 @@ function Profile() {
     setIsEditPetModalOpen(true);
   };
 
-  const handleDeletePet = (pet) => {
-    const petRef = doc(db, "pets", pet.id);
+  const handleDeletePet = () => {
+    const petRef = doc(db, "pets", petToDelete);
     deleteDoc(petRef)
       .then(() => {
         toggleConfirmDelete(!confirmDelete);
@@ -202,9 +195,13 @@ function Profile() {
       .catch((error) => {
         console.log("Error deleting document." + error);
       })
+      .finally(() => {
+        setPetToDelete(null);
+      });
   }
 
-  const confirmDeleteBox = () => {
+  const confirmDeleteBox = (petID) => {
+    setPetToDelete(petID);
     toggleConfirmDelete(!confirmDelete);
   }
 
@@ -218,24 +215,33 @@ function Profile() {
     setIsBioExpanded(!isBioExpanded);
   }
 
+  const handleImageClick = (img) => {
+    setImage(img);
+    setIsImageClicked(!isImageClicked);
+    setImageMaxZoom(false);
+  }
+
+  const handleImageZoom = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setTransformOrigin(`${x}% ${y}%`);
+    setImageMaxZoom(!maxImageZoom);
+  }
+
   return (
     <>
     <div className="flex justify-center flex-col bg-base-200 text-primary-focus min-h-screen p-8 ">
       <div className="w-4/5 max-sm:w-full self-center bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex flex-col items-start text-center mb-5">
-          {isPFPClicked && profilePic && (
-            <div className="h-full w-full left-0 justify-center items-center flex fixed top-0 z-40 transition-colors duration-200">
-              <IoMdClose
-                className="text-5xl fixed z-50 p-2 right-10 top-16 rounded-lg hover:text-error transition-all duration-300"
-                onClick={handleProfileClick}
-              />
-              <img
-                src={profilePic}
-                alt="Image"
-                className="h-4/5 w-fit m-12 object-contain rounded-2xl animate-postAnim1 fixed z-20"
-              />
-              <div className="h-full w-full bg-black opacity-50 fixed z-10" onClick={handleProfileClick}/>
-            </div>
+          {isImageClicked && image && (
+            <>
+              <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
+              <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
+                <img src={image} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
+              </div>
+              <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
+            </>
           )}
           <div className="flex flex-row justify-between w-full gap-5 max-sm:flex-col">
             <div className="flex gap-5 flex-row max-sm:flex-col">
@@ -243,7 +249,7 @@ function Profile() {
                 className="w-36 h-36 rounded-full object-cover max-sm:self-center"
                 src={profilePic}
                 alt="Profile"
-                onClick={handleProfileClick}
+                onClick={() => handleImageClick(profilePic)}
               />
               <div className="flex flex-col justify-center self-center -translate-y-2">
                 <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4">
@@ -326,7 +332,17 @@ function Profile() {
                       className="w-24 h-auto rounded-md object-cover max-sm:w-full"
                       src={pet.photoUrl}
                       alt="Pet"
+                      onClick={() => handleImageClick(pet.photoUrl)}
                     />
+                    {isImageClicked && image && (
+                      <>
+                        <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
+                        <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
+                          <img src={image} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
+                        </div>
+                        <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
+                      </>
+                    )}
                     <div className="flex flex-col items-start justify-center text-neutral gap-2">
                       <p>
                         <strong>{"Name:"}</strong> {pet.name}
@@ -348,7 +364,7 @@ function Profile() {
                     </button>
                     <button
                       className="flex justify-center items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out duration-700"
-                      onClick={confirmDeleteBox}
+                      onClick={() => confirmDeleteBox(pet.id)}
                     >
                       <RiDeleteBin6Line className="size-6 m-2" />
                     </button>
@@ -366,7 +382,7 @@ function Profile() {
                       </h3>
                       <p className="mb-4">{"This action cannot be undone"}</p>
                       <div className="flex flex-row gap-5">
-                        <button className="bg-error py-2 px-3 rounded-xl text-xl" onClick={() => handleDeletePet(pet)}>Yes</button>
+                        <button className="bg-error py-2 px-3 rounded-xl text-xl" onClick={handleDeletePet}>Yes</button>
                         <button className="border-2 border-error py-2 px-3 rounded-xl text-xl" onClick={confirmDeleteBox}>No</button>
                       </div>
                     </div>
