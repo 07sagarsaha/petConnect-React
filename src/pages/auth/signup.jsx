@@ -17,6 +17,9 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [address, setAddress] = useState("");
+  const [rnum, setRnum] = useState("");
+  const [isVet, setIsVet] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -83,6 +86,9 @@ const Register = () => {
           name,
           email,
           handle: username,
+          isVet,
+          address,
+          rnum,
           createdAt: serverTimestamp(),
         });
       }
@@ -102,6 +108,10 @@ const Register = () => {
     return <div>Loading...</div>;
   }
 
+  const handleCheckboxChange = () => {
+    setIsVet(!isVet);
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-100">
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
@@ -113,7 +123,7 @@ const Register = () => {
         </h1>
         
         {!pendingVerification ? (
-          <form className="space-y-4" onSubmit={onSubmit}>
+          <form className="space-y-4 transition-all" onSubmit={onSubmit}>
             <InputFild
               type="text"
               id="name"
@@ -142,6 +152,22 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {isVet && <>
+              <InputFild
+                type="address"
+                id="address"
+                placeholder="Enter Your Clinic Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+              <InputFild
+                type="rnum"
+                id="rnum"
+                placeholder="Enter Vet Registration Number"
+                value={rnum}
+                onChange={(e) => setRnum(e.target.value)}
+              />
+            </>}
             {errorMessage && (
               <span className="text-error font-bold">{errorMessage}</span>
             )}
@@ -152,6 +178,10 @@ const Register = () => {
                 id="register"
                 title={isRegistering ? "Sending verification..." : "Register"}
               />
+            </div>
+            <div className="flex items-center justify-center mt-4">
+              <input type="checkbox" className="" id="isVet" onChange={handleCheckboxChange}/>
+              <label for="isVet" className="ml-3">{"I am a vet"}</label>
             </div>
           </form>
         ) : (
