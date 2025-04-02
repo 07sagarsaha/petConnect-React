@@ -171,7 +171,7 @@ const Posts = ({
             </h2>
           )}
 
-          <div className="flex justify-end gap-7">
+          <div className="flex flex-row justify-end gap-7 max-sm:gap-3">
             {/* Comments */}
             <div className="mb-1 pt-1">
               <CommentDisplay
@@ -189,23 +189,23 @@ const Posts = ({
             {/* Like Button */}
             <div>
               <button
-                className="text-xl text-primary rounded-full flex-row"
+                className={`text-xl max-sm:text-lg text-primary rounded-full btn btn-md btn-circle flex flex-row gap-1 mt-4 btn-ghost`}
                 onClick={handleLike}
               >
                 {isLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
+                {likes?.length || 0}
               </button>
-              <p>{likes?.length || 0}</p>
             </div>
 
             {/* Dislike Button */}
             <div>
               <button
-                className="text-xl text-error rounded-full flex-row"
+                className="text-xl max-sm:text-lg text-primary rounded-full btn btn-md btn-circle flex flex-row gap-1 mt-4 btn-ghost"
                 onClick={handleDislike}
               >
                 {isDisliked ? <FaThumbsDown /> : <FaRegThumbsDown />}
+                {dislikes?.length || 0}
               </button>
-              <p>{dislikes?.length || 0}</p>
             </div>
           </div>
         </div>

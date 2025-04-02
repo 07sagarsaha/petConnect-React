@@ -123,7 +123,7 @@ const AiChat = () => {
         }}
         className="fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[200px] max-lg:ml-0 p-4 bg-base-100 border-t border-base-200"
       >
-        <div className="flex gap-2 max-w-4xl mx-auto">
+        <div className="flex gap-2 w-full justify-between items-center">
           <input
             type="text"
             value={question}
@@ -134,7 +134,7 @@ const AiChat = () => {
           <button
             type="submit"
             disabled={!question.trim() || loading}
-            className="px-6 py-3 bg-primary text-base-100 rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 btn bg-primary text-base-100 rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Send
           </button>

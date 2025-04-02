@@ -98,6 +98,10 @@ const Chat = () => {
     navigate("/in/messages");
   };
 
+  const handleProfileClick = () => {
+    navigate(`/in/profile/${userId}`); // Navigate to the recipient's profile
+  }
+
   return (
     <div className="flex flex-col h-screen bg-base-100 max-lg:h-[100dvh]">
       {/* Header */}
@@ -108,10 +112,12 @@ const Chat = () => {
         >
           <IoArrowBack className="w-6 h-6" />
         </button>
-        <div className="aspect-square w-[50px] h-[30px] max-sm:h-full overflow-hidden rounded-xl"><img src={recipientPfp} alt="Profile" className="w-full h-full rounded-xl object-cover cursor-pointer"/></div>
-        <h2 className="text-xl font-semibold truncate">
-          Chat with {recipientHandle || "User"}
-        </h2>
+        <div onClick={handleProfileClick} className="flex items-center gap-3 cursor-pointer">
+          <div className="aspect-square w-[50px] h-[50px] max-sm:w-[40px] max-sm:h-[40px] overflow-hidden rounded-xl"><img src={recipientPfp} alt="Profile" className="w-full h-full rounded-xl object-cover cursor-pointer"/></div>
+          <h2 className="text-xl font-semibold truncate">
+            Chat with {recipientHandle || "User"}
+          </h2>
+        </div>
       </div>
 
       {/* Messages Container */}
@@ -147,7 +153,7 @@ const Chat = () => {
         onSubmit={sendMessage}
         className="p-4 border-t border-base-200 bg-base-100 fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[200px] max-lg:ml-0"
       >
-        <div className="flex gap-2 max-w-4xl mx-auto">
+        <div className="flex gap-2 w-full justify-between items-center">
           <input
             type="text"
             value={newMessage}

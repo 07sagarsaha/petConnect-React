@@ -53,6 +53,8 @@ const CommentDisplay = ({
     setIsPostClicked(!isPostClicked);
     setIsImageClicked(false);
     setImageMaxZoom(false);
+    toggleConfirmDelete(false);
+    setCommentToDelete(null); 
   };
 
   const handleAddComment = async (e) => {
@@ -182,10 +184,10 @@ const CommentDisplay = ({
   return (
     <>
       <div
-        className={`transition-all max-sm:transition-none duration-[0.625s] ease-in-out rounded-xl ${
+        className={`max-sm:transition-none duration-[0.625s] ease-in-out rounded-xl ${
           isPostClicked
             ? "h-4/5 w-3/5 top-1/2 fixed z-50 transform -translate-x-1/2 -translate-y-1/2 left-1/2 max-sm:h-full max-sm:rounded-none  max-sm:w-full flex-col rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
-            : "h-5 w-5 text-xl text-primary flex-row flex gap-2 justify-center"
+            : "text-xl max-sm:text-lg text-primary rounded-full btn btn-md btn-circle flex flex-row gap-1 mt-4 btn-ghost"
         }`}
         onClick={isPostClicked ? null : handlePost}
       >
@@ -222,19 +224,19 @@ const CommentDisplay = ({
                   )}
                   <p className="text-base text-gray-600 mt-3">{date}</p>
                   <div className="flex flex-row mt-4 items-center gap-4">
-                    <button onClick={handleLike}>
+                    <button onClick={handleLike} className="btn size-sm btn-ghost">
                       {isLiked ? (
-                        <FaThumbsUp className="text-primary" />
+                        <FaThumbsUp className="text-primary text-xl" />
                       ) : (
-                        <FaRegThumbsUp className="text-primary" />
+                        <FaRegThumbsUp className="text-primary text-xl" />
                       )}
                     </button>
                     <span>{likes?.length || 0} likes</span>
-                    <button onClick={handleDislike}>
+                    <button onClick={handleDislike} className="btn size-sm btn-ghost">
                       {isDisliked ? (
-                        <FaThumbsDown className="text-error" />
+                        <FaThumbsDown className="text-error text-xl" />
                       ) : (
-                        <FaRegThumbsDown className="text-error" />
+                        <FaRegThumbsDown className="text-error text-xl" />
                       )}
                     </button>
                     <span>{dislikes?.length || 0} dislikes</span>
@@ -254,7 +256,8 @@ const CommentDisplay = ({
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 w-fit h-12 bg-primary text-base-100 shadow-lg hover:text-primary hover:bg-base-100 ease-in-out duration-300 rounded-md"
+                      className="px-4 py-2 w-fit h-12 btn bg-primary text-base-100 shadow-lg hover:text-primary hover:bg-base-100 ease-in-out duration-300 rounded-md"
+                      disabled={!newComment.trim()}
                     >
                       <IoSend />
                     </button>
@@ -300,13 +303,13 @@ const CommentDisplay = ({
                               </p>
                               <div className="flex flex-row gap-5">
                                 <button
-                                  className="bg-error py-2 px-3 rounded-xl text-xl"
+                                  className="bg-error btn rounded-xl text-xl"
                                   onClick={handleDeletePComment}
                                 >
                                   Yes
                                 </button>
                                 <button
-                                  className="border-2 border-error py-2 px-3 rounded-xl text-xl"
+                                  className="border-2 border-error btn rounded-xl text-xl"
                                   onClick={confirmDeleteBox}
                                 >
                                   No
@@ -337,19 +340,19 @@ const CommentDisplay = ({
                 <h2 className="text-xl font-bold text-left">{title}</h2>
                 <p className="text-[16px] mt-2 text-left">{content}</p>
                 <div className="flex flex-row mt-4 items-center gap-4">
-                  <button onClick={handleLike}>
+                  <button onClick={handleLike} className="btn size-sm btn-ghost">
                     {isLiked ? (
-                      <FaThumbsUp className="text-primary" />
+                      <FaThumbsUp className="text-primary text-xl" />
                     ) : (
-                      <FaRegThumbsUp className="text-primary" />
+                      <FaRegThumbsUp className="text-primary text-xl" />
                     )}
                   </button>
                   <span>{likes?.length || 0} likes</span>
-                  <button onClick={handleDislike}>
+                  <button onClick={handleDislike} className="btn size-sm btn-ghost">
                     {isDisliked ? (
-                      <FaThumbsDown className="text-error" />
+                      <FaThumbsDown className="text-error text-xl" />
                     ) : (
-                      <FaRegThumbsDown className="text-error" />
+                      <FaRegThumbsDown className="text-error text-xl" />
                     )}
                   </button>
                   <span>{dislikes?.length || 0} dislikes</span>
@@ -368,7 +371,8 @@ const CommentDisplay = ({
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 w-fit h-12 bg-primary text-base-100 shadow-lg hover:text-primary hover:bg-base-100 ease-in-out duration-300 rounded-md"
+                      className="px-4 py-2 w-fit h-12 btn bg-primary text-base-100 shadow-lg hover:text-primary hover:bg-base-100 ease-in-out duration-300 rounded-md"
+                      disabled={!newComment.trim()}
                     >
                       <IoSend />
                     </button>
@@ -448,10 +452,10 @@ const CommentDisplay = ({
             )}
           </>
         ) : (
-          <div>
+          <>
             <BiCommentDetail />
-            <p className="pt-1">{commentCount}</p>
-          </div>
+            {commentCount}
+          </>
         )}
       </div>
       {isPostClicked && (

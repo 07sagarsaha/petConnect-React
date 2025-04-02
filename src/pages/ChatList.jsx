@@ -92,16 +92,16 @@ const ChatList = () => {
           <div
             key={chat.otherParticipantId}
             onClick={() => navigateToChat(chat.otherParticipantId)}
-            className="p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors flex-row flex animate-postAnim1"
+            className="p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors flex-row flex justify-between"
           >
             <div className="flex justify-start gap-3 items-center flex-row">
-              <div className="aspect-square w-1/6 h-1/6 max-sm:h-full overflow-hidden rounded-xl"><img src={chat.otherParticipantPfp} alt="Profile" className="w-full h-full rounded-xl object-cover cursor-pointer"/></div>
+              <div className="aspect-square w-[75px] h-[75px] max-sm:h-[50px] max-sm:w-[50px] overflow-hidden rounded-xl"><img src={chat.otherParticipantPfp} alt="Profile" className="w-full h-full rounded-xl object-cover cursor-pointer"/></div>
               <div className="flex flex-col">
                 <h3 className="font-semibold">{"@"+chat.otherParticipantHandle}</h3>
                 <p className="text-sm opacity-75 truncate">{chat.lastMessage}</p>
               </div>
             </div>
-            <span className="text-sm opacity-60 self-end text-right">
+            <span className="text-sm opacity-60">
                   {chat.timestamp?.toDate().toLocaleTimeString()}
             </span>
           </div>

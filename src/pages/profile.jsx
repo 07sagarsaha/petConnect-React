@@ -263,14 +263,14 @@ function Profile() {
             <div className="flex self-center gap-3">
               <button
                 id="profilePicUpload"
-                className="text-2xl p-3 flex justify-end items-center gap-3 rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                className="text-2xl flex justify-end btn items-center gap-3 rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary"
                 onClick={handleProfileUpdate}
               >
                 <p className="text-lg">{"Edit"}</p><BsPencil/>
               </button>
               <NavLink
                 to="/in/settings"
-                className="text-3xl text-base-100 rounded-2xl self-center flex items-center justify-center bg-primary p-3 md:hidden lg:hidden"
+                className="text-3xl text-base-100 btn rounded-2xl self-center flex items-center justify-center bg-primary shadow-lg md:hidden lg:hidden hover:bg-base-100 hover:text-primary"
               >
                 <IoSettingsOutline/>
               </NavLink>
@@ -313,7 +313,7 @@ function Profile() {
               </h3>
               <div className="flex justify-center align-middle">
               <button
-                className="text-lg p-3 my-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                className="text-lg my-2 btn flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out"
                 onClick={toggleAddPetSection}
               >
                 <IoMdAddCircleOutline className="size-7 mr-2"/>
@@ -357,13 +357,13 @@ function Profile() {
                   </div>
                   <div className="flex flex-row gap-3">
                     <button
-                      className="flex justify-center items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                      className="flex btn btn-square justify-center items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out"
                       onClick={() => handleEditPet(pet)}
                     >
                       <BsPencil className="size-6 m-2" />
                     </button>
                     <button
-                      className="flex justify-center items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                      className="flex justify-center btn btn-square items-center rounded-2xl bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out"
                       onClick={() => confirmDeleteBox(pet.id)}
                     >
                       <RiDeleteBin6Line className="size-6 m-2" />
@@ -372,7 +372,7 @@ function Profile() {
                     <div className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0" onClick={confirmDeleteBox}/>
                     <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-1/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
                       <button
-                        className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
+                        className="text-lg p-2 rounded-full bg-primary text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
                         onClick={confirmDeleteBox}
                       >
                         <IoMdClose />
@@ -382,8 +382,8 @@ function Profile() {
                       </h3>
                       <p className="mb-4">{"This action cannot be undone"}</p>
                       <div className="flex flex-row gap-5">
-                        <button className="bg-error py-2 px-3 rounded-xl text-xl" onClick={handleDeletePet}>Yes</button>
-                        <button className="border-2 border-error py-2 px-3 rounded-xl text-xl" onClick={confirmDeleteBox}>No</button>
+                        <button className="bg-primary rounded-xl text-xl btn" onClick={handleDeletePet}>Yes</button>
+                        <button className="border-2 border-primary btn rounded-xl text-xl" onClick={confirmDeleteBox}>No</button>
                       </div>
                     </div>
                     </>}
@@ -436,7 +436,7 @@ function Profile() {
               />
               <button
                 onClick={handleAddPet}
-                className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+                className="text-lg btn m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out"
               >
                 {editPetId ? "Update Pet" : "Add Pet"}
               </button>
@@ -486,9 +486,9 @@ function Profile() {
             />
             <button
               onClick={handleAddPet}
-              className="text-lg p-3 m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+              className="text-lg btn m-2 flex justify-center items-center rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
             >
-              Update Pet
+              {"Update Pet"}
             </button>
         </div>
         </>
