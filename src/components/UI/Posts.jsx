@@ -5,7 +5,7 @@ import {
   FaThumbsDown,
   FaThumbsUp,
 } from "react-icons/fa6";
-import { auth, db } from "../../firebase/firebase";
+import { db } from "../../firebase/firebase";
 import {
   arrayRemove,
   arrayUnion,
@@ -17,6 +17,7 @@ import CommentDisplay from "../Comments";
 import pfp from "../../icons/pfp.png";
 import { useToast } from "../../context/ToastContext"; // Import useToast
 import { IoMdClose } from "react-icons/io";
+import { useUser } from "@clerk/clerk-react";
 
 const Posts = ({
   id,
@@ -39,8 +40,9 @@ const Posts = ({
     5: "😭 (contact vet)",
   };
 
-  const isLiked = likes?.includes(auth.currentUser?.uid);
-  const isDisliked = dislikes?.includes(auth.currentUser?.uid);
+  const { user } = useUser();
+  const isLiked = likes?.includes(user?.id);
+  const isDisliked = dislikes?.includes(user?.id);
   const [isImageClicked, setIsImageClicked] = useState(false);
   const [maxImageZoom, setImageMaxZoom] = useState(false);
   const [transformOrigin, setTransformOrigin] = useState("center center");
@@ -48,21 +50,21 @@ const Posts = ({
   const { showToast } = useToast(); // Get showToast from context
 
   const handleLike = async () => {
-    if (!auth.currentUser) return;
+    if (!user) return;
 
     const postRef = doc(db, "posts", id);
     try {
       if (isDisliked) {
         await updateDoc(postRef, {
-          dislikes: arrayRemove(auth.currentUser.uid),
-          likes: arrayUnion(auth.currentUser.uid),
+          dislikes: arrayRemove(user.id),
+          likes: arrayUnion(user.id),
         });
         showToast("You liked the post and removed your dislike."); // Display toast
       } else {
         await updateDoc(postRef, {
           likes: isLiked
-            ? arrayRemove(auth.currentUser.uid)
-            : arrayUnion(auth.currentUser.uid),
+            ? arrayRemove(user.id)
+            : arrayUnion(user.id),
         });
         showToast(isLiked ? "You unliked the post." : "You liked the post."); // Display toast
       }
@@ -73,21 +75,21 @@ const Posts = ({
   };
 
   const handleDislike = async () => {
-    if (!auth.currentUser) return;
+    if (!user.id) return;
 
     const postRef = doc(db, "posts", id);
     try {
       if (isLiked) {
         await updateDoc(postRef, {
-          likes: arrayRemove(auth.currentUser.uid),
-          dislikes: arrayUnion(auth.currentUser.uid),
+          likes: arrayRemove(user.id),
+          dislikes: arrayUnion(user.id),
         });
         showToast("You disliked the post and removed your like."); // Display toast
       } else {
         await updateDoc(postRef, {
           dislikes: isDisliked
-            ? arrayRemove(auth.currentUser.uid)
-            : arrayUnion(auth.currentUser.uid),
+            ? arrayRemove(user.id)
+            : arrayUnion(user.id),
         });
         showToast(isDisliked ? "You removed your dislike." : "You disliked the post."); // Display toast
       }

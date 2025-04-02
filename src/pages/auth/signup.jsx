@@ -34,13 +34,6 @@ const Register = () => {
       setIsRegistering(true);
       setErrorMessage("");
 
-      // Sign out any existing session before creating new one
-      try {
-        await signOut();
-      } catch (signOutErr) {
-        console.log("No active session to sign out");
-      }
-
       // Start Clerk signup
       await signUp.create({
         emailAddress: email,
@@ -76,12 +69,11 @@ const Register = () => {
         throw new Error("Unable to verify email");
       }
 
-      // Email is verified, now create Firebase user
-      const firebaseUser = await doCreateUserWithEmailAndPassword(email, password);
+      const userId = completeSignUp.createdUserId;
       
       // Create user document in Firestore
-      if (firebaseUser) {
-        const userRef = doc(db, "users", firebaseUser.user.uid);
+      if (userId) {
+        const userRef = doc(db, "users", userId);
         await setDoc(userRef, {
           name,
           email,
@@ -101,6 +93,7 @@ const Register = () => {
       setErrorMessage(err.message || "Error during verification");
     } finally {
       setVerifying(false);
+      Navigate("/in/home", { replace: true });
     }
   };
 
@@ -181,7 +174,7 @@ const Register = () => {
             </div>
             <div className="flex items-center justify-center mt-4">
               <input type="checkbox" className="" id="isVet" onChange={handleCheckboxChange}/>
-              <label for="isVet" className="ml-3">{"I am a vet"}</label>
+              <label htmlFor="isVet" className="ml-3">{"I am a vet"}</label>
             </div>
           </form>
         ) : (

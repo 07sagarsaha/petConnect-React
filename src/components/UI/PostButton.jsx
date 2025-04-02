@@ -5,8 +5,9 @@ import {
   serverTimestamp,
   getDoc,
   doc,
+  setDoc,
 } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useUser } from "@clerk/clerk-react";
 import { db } from "../../firebase/firebase";
 import { CiImageOn } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
@@ -18,13 +19,13 @@ const Button = ({ buttonName, icon, submitName, className }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [sevVal, setSevVal] = useState(3);
-  const [user, setUser] = useState(null);
-  const auth = getAuth();
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isImageClicked, setIsImageClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const loadingBarRef = useRef(null);
+  const { user } = useUser();
+
   const cloudinaryAccounts = [
     {
       name: "Post_Image",
@@ -63,13 +64,6 @@ const Button = ({ buttonName, icon, submitName, className }) => {
     5: "😭 (contact vet)",
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-    return () => unsubscribe;
-  }, []);
-
   function handleClickEvent() {
     setIsClicked(!isClicked);
     if (isClicked) {
@@ -95,7 +89,6 @@ const Button = ({ buttonName, icon, submitName, className }) => {
     formData.append("file", imageFile);
     formData.append("upload_preset", currentAccount.name);
 
-    const user = auth.currentUser;
     let uploadedImageUrl = "";
 
     try {
@@ -109,12 +102,12 @@ const Button = ({ buttonName, icon, submitName, className }) => {
         uploadedImageUrl = data.secure_url;
       }
       if (user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userDoc = await getDoc(doc(db, "users", user.id));
         const userData = userDoc.exists()
           ? userDoc.data()
-          : { handle: "Unknown" };
-        const postRef = collection(db, "posts");
-        await addDoc(postRef, {
+          : { handle: "Unknown", name: "Unknown" };
+        const postRef = doc(db, "posts", user.id);
+        await setDoc(postRef, {
           title,
           content,
           sevVal,
@@ -123,8 +116,8 @@ const Button = ({ buttonName, icon, submitName, className }) => {
           likes: [],
           dislikes: [],
           createdAt: serverTimestamp(),
-          userId: user.uid,
-          author: user.email,
+          userId: user.id,
+          author: user.emailAddresses[0].emailAddress,
         }).then(() => {
           // Clear the form fields after successful submission
           setTitle("");

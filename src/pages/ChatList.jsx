@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth, db } from "../firebase/firebase";
+import { db } from "../firebase/firebase";
 import {
   collection,
   query,
@@ -10,18 +10,23 @@ import {
   doc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import pfp from "../icons/pfp.png"
+import pfp from "../icons/pfp.png";
+import { useUser } from "@clerk/clerk-react";
 
 const ChatList = () => {
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
+  const { user } = useUser();
 
   useEffect(() => {
-    if (!auth.currentUser) return;
+    if (!user) {
+      console.warn("User is not logged in.");
+      return;
+    }
 
     const chatQuery = query(
       collection(db, "chats"),
-      where("participants", "array-contains", auth.currentUser.uid),
+      where("participants", "array-contains", user.id),
       orderBy("timestamp", "asc")
     );
 
@@ -30,7 +35,7 @@ const ChatList = () => {
         snapshot.docs.map(async (docs) => {
           const data = docs.data();
           const otherParticipantId = data.participants.find(
-            (id) => id !== auth.currentUser.uid
+            (id) => id !== user.id
           );
 
           // Debugging: Log otherParticipantId
@@ -42,13 +47,13 @@ const ChatList = () => {
             return null;
           }
 
-          const isCurrentUserSender = data.senderId === auth.currentUser.uid;
-  
+          const isCurrentUserSender = data.senderId === user.id;
+
           // Fetch the other participant's user document
           const userDocRef = doc(db, "users", otherParticipantId);
           const userDoc = await getDoc(userDocRef);
           const userData = userDoc.exists() ? userDoc.data() : {};
-  
+
           return {
             id: docs.id,
             lastMessage: data.text,
@@ -78,7 +83,7 @@ const ChatList = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const navigateToChat = (userId) => {
     navigate(`/in/chat/${userId}`);
@@ -95,14 +100,22 @@ const ChatList = () => {
             className="p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors flex-row flex justify-between"
           >
             <div className="flex justify-start gap-3 items-center flex-row">
-              <div className="aspect-square w-[75px] h-[75px] max-sm:h-[50px] max-sm:w-[50px] overflow-hidden rounded-xl"><img src={chat.otherParticipantPfp} alt="Profile" className="w-full h-full rounded-xl object-cover cursor-pointer"/></div>
+              <div className="aspect-square w-[75px] h-[75px] max-sm:h-[50px] max-sm:w-[50px] overflow-hidden rounded-xl">
+                <img
+                  src={chat.otherParticipantPfp}
+                  alt="Profile"
+                  className="w-full h-full rounded-xl object-cover cursor-pointer"
+                />
+              </div>
               <div className="flex flex-col">
-                <h3 className="font-semibold">{"@"+chat.otherParticipantHandle}</h3>
+                <h3 className="font-semibold">
+                  {"@" + chat.otherParticipantHandle}
+                </h3>
                 <p className="text-sm opacity-75 truncate">{chat.lastMessage}</p>
               </div>
             </div>
             <span className="text-sm opacity-60">
-                  {chat.timestamp?.toDate().toLocaleTimeString()}
+              {chat.timestamp?.toDate().toLocaleTimeString() || "No timestamp"}
             </span>
           </div>
         ))}
