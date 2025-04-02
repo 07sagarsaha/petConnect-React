@@ -8,6 +8,7 @@ import { getAuth } from "firebase/auth";
 import { useToast } from "../context/ToastContext";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
+import sad_puppy  from "../Assets/sad-puppy.jpg"
 import axios from "axios";
 
 const themes = [
@@ -66,8 +67,8 @@ function Settings() {
 
     if (user) {
       try {
-        const userDoc = doc(db, "users", user.uid); // Reference to the user's document in Firestore
-        await deleteDoc(userDoc); // Delete the user's document from Firestore
+        const userDoc = doc(db, "users", user.uid); 
+        await deleteDoc(userDoc); 
 
         // const clerkApiKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY; // Get Clerk API key from environment variables
         // const userEmail = user.email; // Get the user's email from Firebase auth
@@ -173,7 +174,7 @@ function Settings() {
                   <p className="text-center mb-4">
                     {"Do you really want to delete your account? This action cannot be undone. And this puppy will be sad to see you go :("} 
                   </p>
-                  <img src="/src/Assets/sad-puppy.jpg" alt="Sad Puppy" className="w-1/6 h-1/2 mb-4 max-sm:w-1/2"/>
+                  <img src={sad_puppy} alt="Sad Puppy" className="w-1/6 h-1/2 mb-4 max-sm:w-1/2"/>
                   <div className="flex justify-center w-full gap-6">
                     <button
                       className="btn btn-primary w-1/4 mb-4"

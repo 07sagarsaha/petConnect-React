@@ -20,6 +20,7 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [recipientHandle, setRecipientHandle] = useState("");
+  const [recipientPfp, setReceipientPfp] = useState("");
   const messagesEndRef = useRef(null); // Add ref for auto-scroll
 
   // Add scroll to bottom function
@@ -40,6 +41,7 @@ const Chat = () => {
         const userDoc = await getDoc(doc(db, "users", userId));
         if (userDoc.exists()) {
           setRecipientHandle(userDoc.data().handle);
+          setReceipientPfp(userDoc.data().profilePic);
         }
       } catch (error) {
         console.error("Error fetching recipient details:", error);
@@ -106,6 +108,7 @@ const Chat = () => {
         >
           <IoArrowBack className="w-6 h-6" />
         </button>
+        <div className="aspect-square w-[50px] h-[30px] max-sm:h-full overflow-hidden rounded-xl"><img src={recipientPfp} alt="Profile" className="w-full h-full rounded-xl object-cover cursor-pointer"/></div>
         <h2 className="text-xl font-semibold truncate">
           Chat with {recipientHandle || "User"}
         </h2>
@@ -154,10 +157,10 @@ const Chat = () => {
           />
           <button
             type="submit"
-            className="px-6 py-3 bg-primary text-base-100 rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-primary btn text-base-100 rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!newMessage.trim()}
           >
-            Send
+            {"Send"}
           </button>
         </div>
       </form>
