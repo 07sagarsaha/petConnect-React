@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Add useNavigate
-import { auth, db } from "../firebase/firebase";
+import { db } from "../firebase/firebase";
 import {
   collection,
   addDoc,
@@ -13,8 +13,10 @@ import {
   doc,
 } from "firebase/firestore";
 import { IoArrowBack } from "react-icons/io5"; // Import back arrow icon
+import { useUser } from "@clerk/clerk-react";
 
 const Chat = () => {
+  const { user } = useUser();
   const { userId } = useParams();
   const navigate = useNavigate(); // Add navigation
   const [messages, setMessages] = useState([]);
@@ -52,11 +54,11 @@ const Chat = () => {
 
   // Listen to messages - Updated query ordering
   useEffect(() => {
-    if (!auth.currentUser || !userId) return;
+    if (!user || !userId) return;
 
     const chatQuery = query(
       collection(db, "chats"),
-      where("participants", "array-contains", auth.currentUser.uid),
+      where("participants", "array-contains", user.id),
       orderBy("timestamp", "asc") // Changed to "asc" for correct chronological order
     );
 
@@ -66,7 +68,7 @@ const Chat = () => {
         .filter(
           (msg) =>
             msg.participants.includes(userId) &&
-            msg.participants.includes(auth.currentUser.uid)
+            msg.participants.includes(user.id)
         );
       setMessages(messageData);
     });
@@ -76,19 +78,33 @@ const Chat = () => {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !auth.currentUser || !userId) return;
-
+    if (!newMessage.trim() || !user.id || !userId) return;
+  
     try {
+      // Fetch the current user's document
+      const userRef = doc(db, "users", user.id);
+      const userDoc = await getDoc(userRef);
+  
+      // Ensure senderHandle has a fallback value
+      const senderHandle =
+        userDoc.exists() && userDoc.data().name
+          ? userDoc.data().name
+          : userDoc.exists() && userDoc.data().email
+          ? userDoc.data().email
+          : "Unknown User";
+  
+      // Add the message to the "chats" collection
       await addDoc(collection(db, "chats"), {
         text: newMessage,
-        senderId: auth.currentUser.uid,
-        senderHandle: auth.currentUser.displayName || auth.currentUser.email,
+        senderId: user.id,
+        senderHandle, // Use the fallback value if name or email is missing
         recipientId: userId,
         recipientHandle,
-        participants: [auth.currentUser.uid, userId],
+        participants: [user.id, userId],
         timestamp: serverTimestamp(),
       });
-      setNewMessage("");
+  
+      setNewMessage(""); // Clear the input field after sending the message
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -126,14 +142,14 @@ const Chat = () => {
           <div
             key={message.id}
             className={`mb-4 ${
-              message.senderId === auth.currentUser?.uid
+              message.senderId === user?.id
                 ? "flex justify-end"
                 : "flex justify-start"
             }`}
           >
             <div
               className={`max-w-[75%] p-3 rounded-lg ${
-                message.senderId === auth.currentUser?.uid
+                message.senderId === user?.id
                   ? "bg-primary text-base-100"
                   : "bg-base-200"
               }`}

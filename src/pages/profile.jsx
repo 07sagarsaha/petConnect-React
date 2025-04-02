@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button from "../context/authContext/button";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { auth, db } from "../firebase/firebase";
+import { db } from "../firebase/firebase";
 import {
   collection,
   doc,
@@ -22,6 +22,7 @@ import { BsPencil } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
+import { useUser } from "@clerk/clerk-react";
 
 function Profile() {
   const [profile, setProfile] = useState();
@@ -48,18 +49,17 @@ function Profile() {
   const [petToDelete, setPetToDelete] = useState(null);
   const [image, setImage] = useState(null);
   const {showToast} = useToast();
+  const { user } = useUser();
 
   const handleProfileUpdate = () => {
     setisProfileEdit(!isProfileEdit);
   };
 
-  const user = auth.currentUser;
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
         if (user) {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
+          const userDoc = await getDoc(doc(db, "users", user.id));
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setUserData(userData);
@@ -77,7 +77,7 @@ function Profile() {
   useEffect(() => {
     const q = query(
       collection(db, "posts"),
-      where("userId", "==", user.uid),
+      where("userId", "==", user.id),
       orderBy("createdAt", "desc")
     );
 
@@ -98,7 +98,7 @@ function Profile() {
   }, [user]);
 
   useEffect(() => {
-    const q = query(collection(db, "pets"), where("ownerId", "==", user.uid));
+    const q = query(collection(db, "pets"), where("ownerId", "==", user.id));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const petsData = snapshot.docs.map((doc) => ({
@@ -128,7 +128,7 @@ function Profile() {
         // Add new pet
         await addDoc(collection(db, "pets"), {
           ...newPet,
-          ownerId: user.uid,
+          ownerId: user.id,
         });
       }
       showToast("Pet added/updated!");

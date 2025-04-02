@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { auth, db } from "../firebase/firebase";
+import { db } from "../firebase/firebase";
 import {
   collection,
   doc,
@@ -12,12 +12,14 @@ import {
 import { BsPencil } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
 import { useToast } from "../context/ToastContext";
+import { useUser } from "@clerk/clerk-react";
 
 const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
   const [profilePic, setProfilePic] = useState(image);
   const [changeName, setNameChange] = useState(name);
   const [changeHandle, setChangeHandle] = useState(handle);
   const [changeBio, setChangeBio] = useState(bio);
+  const { user } = useUser();
   const {showToast} = useToast();
   const cloudinaryAccounts = [
     //add more cloudinary accounts here just add the name and and change the url too
@@ -71,7 +73,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
 
         // Update user profile in Firestore
         if (auth.currentUser.uid) {
-          const userRef = doc(db, "users", auth.currentUser.uid);
+          const userRef = doc(db, "users", user.id);
           await updateDoc(userRef, {
             profilePic: data.secure_url,
           });
@@ -90,10 +92,9 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
       return;
     }
 
-    const user = auth.currentUser;
 
     if (user) {
-      const userDoc = doc(db, "users", user.uid);
+      const userDoc = doc(db, "users", user.id);
       try {
         await updateDoc(userDoc, {
           name: changeName,
@@ -105,7 +106,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
         console.error(error);
       }
       const postRef = collection(db, "posts");
-      const q = query(postRef, where("userId", "==", user.uid));
+      const q = query(postRef, where("userId", "==", user.id));
       try {
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach(async (doc) => {

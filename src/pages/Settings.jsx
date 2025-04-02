@@ -10,6 +10,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import sad_puppy  from "../Assets/sad-puppy.jpg"
 import axios from "axios";
+import { useClerk, useUser, useSignIn } from "@clerk/clerk-react";
 
 const themes = [
   "light",
@@ -44,58 +45,58 @@ const themes = [
   "sunset",
 ];
 
-const handleLogout = () => {
-  doSignOut().then(() => {
-    navigate("/");
-  });
-};
-
 function Settings() {
+  const { signOut } = useClerk();
+  const { signIn } = useSignIn();
   const { theme, changeTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const { showToast } = useToast(); // Get showToast from context
   const [ deleteAccount, setDeleteAccount ] = useState(false);
+  const [ confirmDelete, setConfirmDelete ] = useState(false);
+  const [email, setEmail] = useState("");
+  const { user } = useUser();
+
+  const handleLogout = async () => {
+    try{
+      await signOut();
+      navigate("/");
+    }
+    catch(err){
+      console.error("Error during sign out:", err);
+    }
+  };
 
   const handleDeletePrompt = () => {
     setDeleteAccount(!deleteAccount);
   };
 
+  const handleConfirmDelete = () => {
+    setConfirmDelete(!confirmDelete);
+    setEmail("");
+  }
+
   const handleDelete = async () => {
-    // Handle account deletion logic here
-    const auth = getAuth();
-    const user = auth.currentUser;
+    if (!email) {
+      showToast("Please enter your email to confirm deletion.");
+      return;
+    }
 
     if (user) {
-      try {
-        const userDoc = doc(db, "users", user.uid); 
-        await deleteDoc(userDoc); 
+        try {
+          if(user.emailAddresses[0].emailAddress !== email) {
+            showToast("Email does not match. Please try again.");
+            return;
+          }
 
-        // const clerkApiKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY; // Get Clerk API key from environment variables
-        // const userEmail = user.email; // Get the user's email from Firebase auth
+          const userDoc = doc(db, "users", user.id); 
+          await deleteDoc(userDoc); 
 
-        // const searchResponse = await axios.get(
-        //   `https://api.clerk.dev/v1/users?email_address=${userEmail}`,
-        //   {
-        //     headers: {
-        //       Authorization: `Bearer ${clerkApiKey}`,
-        //     },
-        //   }
-        // );
-  
-        // const clerkUser = searchResponse.data[0]; // Assuming the first result is the correct user
-  
-        // if (clerkUser && clerkUser.id) {
-        //   // Delete the Clerk user account
-        //   await axios.delete(`https://api.clerk.dev/v1/users/${clerkUser.id}`, {
-        //     headers: {
-        //       Authorization: `Bearer ${clerkApiKey}`,
-        //     },
-        //   });
-        // }
+          const postDoc = doc(db, "posts", user.id);
+          await deleteDoc(postDoc); 
 
-        await user.delete(); // Delete the user account
-        showToast("Account deleted successfully"); // Display success toast
-        handleLogout();// Redirect to home page or login page
+          await user.delete(); // Delete the user account
+          showToast("Account deleted successfully"); // Display success toast
+          handleLogout();// Redirect to home page or login page
 
       } catch (error) {
         console.error("Error deleting account:", error);
@@ -162,7 +163,7 @@ function Settings() {
           <button className="btn btn-error w-1/5 max-sm:w-1/2" onClick={handleDeletePrompt}>
             {"Delete Account"}
           </button>
-          {deleteAccount && (
+          {deleteAccount && !confirmDelete && (
             <div>
               <div
                 className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-40 top-0 left-0"
@@ -178,11 +179,7 @@ function Settings() {
                   <div className="flex justify-center w-full gap-6">
                     <button
                       className="btn btn-primary w-1/4 mb-4"
-                      onClick={() => {
-                        // Handle account deletion logic here
-                        console.log("Account deleted");
-                        handleDelete();
-                      }}
+                      onClick={handleConfirmDelete}
                     >
                       {"Confirm 💔"}
                     </button>
@@ -191,6 +188,48 @@ function Settings() {
                       onClick={handleDeletePrompt}
                     >
                       {"Cancel 👍"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {confirmDelete && (
+            <div>
+              <div
+                className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-40 top-0 left-0"
+                onClick={handleConfirmDelete}
+              ></div>
+              <div className="bg-base-100 fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg shadow-lg w-2/5 h-2/5 max-sm:h-3/5 max-sm:w-4/5">
+                <div className="flex flex-col justify-evenly items-center h-full w-full">
+                  <h1 className="text-2xl font-semibold mb-2 text-primary">{"Confirm Deletion"}</h1>
+                  <p className="text-center mb-4">
+                    {"Are you sure you want to delete your account? This action cannot be undone. "}
+                  </p>
+                  <p className="text-center mb-4 text-bold text-primary">
+                    {"Please enter your email and password to confirm deletion."}
+                  </p>
+                  <form className="flex flex-col gap-4 mb-4">
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      className="input input-bordered w-full max-w-xs"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </form>
+                  <div className="flex justify-center w-full gap-6">
+                    <button
+                      className="btn btn-primary w-1/4 mb-4 max-sm:w-1/3"
+                      onClick={handleDelete}
+                    >
+                      {"Yes, Delete 💔"}
+                    </button>
+                    <button
+                      className="btn btn-neutral w-1/4 max-sm:w-1/3"
+                      onClick={handleConfirmDelete}
+                    >
+                      {"No, Cancel 👍"}
                     </button>
                   </div>
                 </div>

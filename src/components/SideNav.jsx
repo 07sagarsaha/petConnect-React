@@ -13,17 +13,22 @@ import {
   IoChatbubbleOutline,
 } from "react-icons/io5";
 import Nav from "./nav/Nav";
-import { doSignOut } from "../firebase/auth";
+import { useClerk } from "@clerk/clerk-react";
 
 function SideNav() {
   const [showLogout, setshowLogout] = useState(true);
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const { signOut } = useClerk();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    doSignOut().then(() => {
+  const handleLogout = async () => {
+    try{
+      await signOut();
       navigate("/");
-    });
+    }
+    catch(err){
+      console.error("Error during sign out:", err);
+    }
   };
 
   const toggleNav = () => {

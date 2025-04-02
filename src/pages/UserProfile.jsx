@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase/firebase";
+import { db } from "../firebase/firebase";
 import {
   doc,
   getDoc,
@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { IoMdClose, IoMdCloseCircleOutline } from "react-icons/io";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import pfp from "../icons/pfp.png";
+import { useUser } from "@clerk/clerk-react";
 
 function UserProfile() {
   const { userId } = useParams();
@@ -24,6 +25,8 @@ function UserProfile() {
   const [isPFPClicked, setIsPFPClicked] = useState(false);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const navigate = useNavigate();
+
+  const { user } = useUser();
 
   const startChat = () => {
     navigate(`/in/chat/${userId}`);
@@ -110,7 +113,7 @@ function UserProfile() {
             <div className="flex gap-5 flex-row max-sm:flex-col">
               <img
                 className="w-36 h-36 rounded-full object-cover max-sm:self-center"
-                src={userData?.profilePic}
+                src={userData?.profilePic || pfp}
                 alt="Profile"
                 onClick={handleProfileClick}
               />
@@ -123,7 +126,8 @@ function UserProfile() {
                 </h2>
               </div>
             </div>
-            {(auth.currentUser && userData && auth.currentUser.uid !== userData?.userId) &&<div className="flex self-center gap-3">
+            {(user.id === userId) && navigate(`/in/profile`)}
+            <div className="flex self-center gap-3">
               <button
                 onClick={startChat}
                 className="text-lg p-3 m-2 rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 flex items-center justify-center gap-2"
@@ -131,7 +135,7 @@ function UserProfile() {
                 <IoChatbubbleOutline className="text-2xl" />
                 {"Start Chat"}
               </button>
-            </div>}
+            </div>
           </div>
           
           <div className={`flex flex-col gap-5 justify-start items-start w-full p-5 rounded-xl bg-base-200 mt-8 ${isBioExpanded ? `hover:bg-base-200` : `hover:bg-base-300`} transition-all mb-5`} onClick={handleBioExpand}>

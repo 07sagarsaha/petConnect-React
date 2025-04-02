@@ -24,6 +24,7 @@ import { BiCommentDetail } from "react-icons/bi";
 import { auth, db } from "../firebase/firebase";
 import { IoSend, IoTrashBin } from "react-icons/io5";
 import { useToast } from "../context/ToastContext";
+import { useUser } from "@clerk/clerk-react";
 
 const CommentDisplay = ({
   postID,
@@ -35,8 +36,9 @@ const CommentDisplay = ({
   dislikes = [],
   imageURL = false,
 }) => {
-  const isLiked = likes?.includes(auth.currentUser?.uid);
-  const isDisliked = dislikes?.includes(auth.currentUser?.uid);
+  const { user } = useUser();
+  const isLiked = likes?.includes(user?.id);
+  const isDisliked = dislikes?.includes(user?.id);
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
   const [commentCount, setCommentCount] = useState(0);
@@ -59,16 +61,16 @@ const CommentDisplay = ({
 
   const handleAddComment = async (e) => {
     e.preventDefault();
-    if (!newComment.trim() || !auth.currentUser) return;
+    if (!newComment.trim() || !user) return;
 
-    const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+    const userDoc = await getDoc(doc(db, "users", user.id));
     const userData = userDoc.exists() ? userDoc.data() : { handle: "Unknown" };
 
     try {
       const commentsRef = collection(db, "posts", postID, "comments");
       await addDoc(commentsRef, {
         content: newComment,
-        userId: auth.currentUser.uid,
+        userId: user.id,
         userHandle: userData.handle,
         likes: [],
         dislikes: [],
@@ -104,15 +106,15 @@ const CommentDisplay = ({
     try {
       if (isDisliked) {
         await updateDoc(postRef, {
-          dislikes: arrayRemove(auth.currentUser.uid),
-          likes: arrayUnion(auth.currentUser.uid),
+          dislikes: arrayRemove(user.id),
+          likes: arrayUnion(user.id),
         });
         showToast("You liked the post and removed your dislike.");
       } else {
         await updateDoc(postRef, {
           likes: isLiked
-            ? arrayRemove(auth.currentUser.uid)
-            : arrayUnion(auth.currentUser.uid),
+            ? arrayRemove(user.id)
+            : arrayUnion(user.id),
         });
         showToast(isLiked ? "You unliked the post." : "You liked the post.");
       }
@@ -128,15 +130,15 @@ const CommentDisplay = ({
     try {
       if (isLiked) {
         await updateDoc(postRef, {
-          likes: arrayRemove(auth.currentUser.uid),
-          dislikes: arrayUnion(auth.currentUser.uid),
+          likes: arrayRemove(user.id),
+          dislikes: arrayUnion(user.id),
         });
         showToast("You disliked the post and removed your like.");
       } else {
         await updateDoc(postRef, {
           dislikes: isDisliked
-            ? arrayRemove(auth.currentUser.uid)
-            : arrayUnion(auth.currentUser.uid),
+            ? arrayRemove(user.id)
+            : arrayUnion(user.id),
         });
         showToast(isDisliked ? "You removed your dislike." : "You disliked the post.");
       }
@@ -279,7 +281,7 @@ const CommentDisplay = ({
                             <p className="text-xs text-gray-500">
                               {comment.createdAt?.toDate().toLocaleDateString()}
                             </p>
-                            {(comment.userId == auth.currentUser.uid) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
+                            {(comment.userId == user.id) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
                           </div>
                         </div>
                         {confirmDelete && commentToDelete === comment.id && (
@@ -394,7 +396,7 @@ const CommentDisplay = ({
                             <p className="text-xs text-gray-500">
                               {comment.createdAt?.toDate().toLocaleDateString()}
                             </p>
-                            {(comment.userId == auth.currentUser.uid) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
+                            {(comment.userId == user.id) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
                           </div>
                         </div>
                         {confirmDelete && commentToDelete === comment.id && (

@@ -3,14 +3,14 @@ import Header from "../../components/auth/header";
 import InputFild from "../../components/auth/InputFild";
 import { useAuth } from "../../context/authContext/authContext";
 import Button from "../../context/authContext/button";
-import {
-  doGoogleSignIn,
-  doSignInWithEmailAndPassword,
-} from "../../firebase/auth";
+import { useSignIn } from "@clerk/clerk-react";
 import { Navigate, Link } from "react-router-dom";
+import { useClerk } from "@clerk/clerk-react";
 
 function Login() {
   const { userLoggedIn } = useAuth();
+  const { isLoaded, signIn } = useSignIn();
+  const { signOut } = useClerk();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,24 +19,27 @@ function Login() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!isSigningIn) {
+
+    await signOut();
+
+    if (!isSigningIn && isLoaded) {
       setIsSigningIn(true);
-      await doSignInWithEmailAndPassword(email, password).catch((err) => {
+      setErrorMessage("");
+
+      try {
+        await signIn.create({
+          identifier: email,
+          password,
+        });
+      } catch (err) {
+        console.error("Error during sign-in:", err);
+        setErrorMessage(err.message || "Something went wrong during sign-in");
+      } finally {
         setIsSigningIn(false);
-        setErrorMessage(err.message);
-      });
+      }
     }
   };
 
-  const onGoogleSignIn = (e) => {
-    e.preventDefault();
-    if (!isSigningIn) {
-      setIsSigningIn(true);
-      doGoogleSignIn().catch((err) => {
-        setIsSigningIn(false);
-      });
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-100">
