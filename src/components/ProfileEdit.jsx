@@ -61,6 +61,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
     formData.append("file", file);
     formData.append("upload_preset", currentAccount.name);
 
+    //The code is not working for some reason
     try {
       const res = await fetch(currentAccount.url, {
         method: "POST",
@@ -72,7 +73,7 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
         setProfilePic(data.secure_url);
 
         // Update user profile in Firestore
-        if (auth.currentUser.uid) {
+        if (user.id) {
           const userRef = doc(db, "users", user.id);
           await updateDoc(userRef, {
             profilePic: data.secure_url,
