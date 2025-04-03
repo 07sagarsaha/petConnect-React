@@ -106,8 +106,8 @@ const Button = ({ buttonName, icon, submitName, className }) => {
         const userData = userDoc.exists()
           ? userDoc.data()
           : { handle: "Unknown", name: "Unknown" };
-        const postRef = doc(db, "posts", user.id);
-        await setDoc(postRef, {
+        const postRef = collection(db, "posts");
+        await addDoc(postRef, {
           title,
           content,
           sevVal,

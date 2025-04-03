@@ -22,11 +22,11 @@ function App() {
     <ThemeProvider>
       <div>
         {!userLoggedIn && <Navigate to={"/"} replace={true} />}
-        <div className="flex flex-row max-lg:flex-col max-lg:justify-center">
+        <div className="flex flex-row max-lg:flex-col max-lg:justify-center bg-base-200">
           <div className="">
             <SideNav />
           </div>
-          <div className="w-full ml-[200px] max-lg:ml-0 max-lg:mb-24">
+          <div className="w-full lg:ml-[14%] max-lg:ml-0 max-lg:mb-24">
             <Outlet />
           </div>
         </div>

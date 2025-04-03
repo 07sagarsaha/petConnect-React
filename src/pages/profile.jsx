@@ -231,7 +231,7 @@ function Profile() {
 
   return (
     <>
-    <div className="flex justify-center flex-col bg-base-200 text-primary-focus min-h-screen p-8 ">
+    <div className="flex justify-center flex-col bg-base-200 text-primary-focus min-h-screen p-8">
       <div className="w-4/5 max-sm:w-full self-center bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex flex-col items-start text-center mb-5">
           {isImageClicked && image && (
@@ -495,7 +495,7 @@ function Profile() {
       )}
       <div className="w-4/5 max-sm:w-full self-center">
         <div>
-          <h1 className="py-8 text-3xl text-primary">{"Your Posts"}</h1>
+          {(post.length === 0) ? <h1 className="py-8 text-3xl text-primary">{"No post yet!"}</h1> : <h1 className="py-8 text-3xl text-primary">{"Your Posts"}</h1>}
         </div>
         <div className="flex flex-col items-center w-full">
           {post.map((post) => (
@@ -508,6 +508,7 @@ function Profile() {
               sevVal={post.sevVal}
               profilePic={userData?.profilePic || null}
               imageUrl={post.imageUrl}
+              userId={user.id}
               date={
                 post.createdAt
                   ? format(post.createdAt.toDate(), "PPP")

@@ -9,6 +9,7 @@ import { db } from "../../firebase/firebase";
 import {
   arrayRemove,
   arrayUnion,
+  deleteDoc,
   doc,
   updateDoc,
 } from "firebase/firestore";
@@ -18,6 +19,7 @@ import pfp from "../../icons/pfp.png";
 import { useToast } from "../../context/ToastContext"; // Import useToast
 import { IoMdClose } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
+import { IoTrashBin } from "react-icons/io5";
 
 const Posts = ({
   id,
@@ -46,6 +48,8 @@ const Posts = ({
   const [isImageClicked, setIsImageClicked] = useState(false);
   const [maxImageZoom, setImageMaxZoom] = useState(false);
   const [transformOrigin, setTransformOrigin] = useState("center center");
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [confirmDelete, toggleConfirmDelete] = useState(false);
   const navigate = useNavigate();
   const { showToast } = useToast(); // Get showToast from context
 
@@ -112,6 +116,22 @@ const Posts = ({
     setImageMaxZoom(!maxImageZoom);
   }
 
+  const confirmDeleteBox = (postId) => {
+    setPostToDelete(postId); // Store the comment ID
+    toggleConfirmDelete(!confirmDelete);
+  };
+
+  const handleDeletePost = async () => {
+      const postRef = doc(db, "posts", postToDelete);
+      try {
+        await deleteDoc(postRef);
+        showToast("Post deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+      confirmDeleteBox();
+  };
+
   return (
     <div className="flex justify-center items-center w-full text-base-content bg-base-200">
       {/* Post Content */}
@@ -119,24 +139,64 @@ const Posts = ({
         key={id}
         className="w-[100%] sm:w-[100%] text-lg sm:text-xl bg-base-100 p-3 mb-6 sm:p-6 flex-col justify-center items-center shadow-lg h-max sm:min-h-12 rounded-2xl transition-all ease-in-out duration-200"
       >
-        {/* Header */}
-        <div className="flex flex-row gap-2 items-center">
-          <img
-            src={profilePic || pfp}
-            alt="profile pic"
-            className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer"
-            onClick={() => navigate(`/in/profile/${userId}`)}
-          />
-          <div className="flex flex-col items-start justify-center">
-            <p
-              className="text-[18px] max-sm:text-[15px] cursor-pointer"
+        <div className="flex justify-between">
+          {/* Header */}
+          <div className="flex flex-row gap-2 items-center">
+            <img
+              src={profilePic || pfp}
+              alt="profile pic"
+              className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer"
               onClick={() => navigate(`/in/profile/${userId}`)}
-            >
-              {handle} posted:
-            </p>
-            <p className="max-sm:text-sm text-[15px]">{date}</p>
+            />
+            <div className="flex flex-col items-start justify-center">
+              <p
+                className="text-[18px] max-sm:text-[15px] cursor-pointer"
+                onClick={() => navigate(`/in/profile/${userId}`)}
+              >
+                {handle} posted:
+              </p>
+              <p className="max-sm:text-sm text-[15px]">{date}</p>
+            </div>
           </div>
+          {(userId == user.id) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(id)}><IoTrashBin /></button>}
         </div>
+
+        {confirmDelete && postToDelete === id && (
+          <>
+            <div
+              className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
+              onClick={confirmDeleteBox}
+            />
+            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+              <button
+                className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
+                onClick={confirmDeleteBox}
+              >
+                <IoMdClose />
+              </button>
+              <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
+                {"Delete Post?"}
+              </h3>
+              <p className="mb-4">
+                {"This action cannot be undone"}
+              </p>
+              <div className="flex flex-row gap-5">
+                <button
+                  className="bg-error btn rounded-xl text-xl"
+                  onClick={handleDeletePost}
+                >
+                  Yes
+                </button>
+                <button
+                  className="border-2 border-error btn rounded-xl text-xl"
+                  onClick={confirmDeleteBox}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </>
+        )}          
 
         {/* Title and Content */}
         <h1 className="text-[19px] sm:text-[21px] font-bold py-4">{title}</h1>

@@ -92,7 +92,7 @@ function UserProfile() {
   }
 
   return (
-    <div className="flex flex-col justify-center p-4 bg-base-200 text-primary-focus">
+    <div className="flex flex-col justify-center p-4 bg-base-200 text-primary-focus min-h-screen">
       <div className="w-4/5 max-sm:w-full self-center bg-base-100 rounded-lg shadow-lg p-6 ">
         <div className="flex flex-col items-start text-center mb-5">
           {isPFPClicked && userData?.profilePic && (
@@ -194,7 +194,7 @@ function UserProfile() {
         </div>
         <div className="w-4/5 max-sm:w-full self-center">
         <div>
-          <h1 className="py-8 text-3xl text-primary">{"Posts by " + userData?.name}</h1>
+          {(posts.length === 0) ? <h1 className="py-8 text-3xl text-primary">{`No post from ${userData?.name} yet!`}</h1> : <h1 className="py-8 text-3xl text-primary">{"Posts by "+userData?.name}</h1>}
         </div>
         <div className="flex flex-col items-center w-full">
           {posts.map((post) => (

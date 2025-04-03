@@ -90,14 +90,14 @@ const ChatList = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 min-h-screen">
       <h2 className="text-2xl font-bold mb-6">Messages</h2>
       <div className="space-y-4">
         {chats.map((chat) => (
           <div
             key={chat.otherParticipantId}
             onClick={() => navigateToChat(chat.otherParticipantId)}
-            className="p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors flex-row flex justify-between"
+            className="p-4 bg-base-100 rounded-lg cursor-pointer hover:bg-base-300 transition-colors flex-row flex justify-between"
           >
             <div className="flex justify-start gap-3 items-center flex-row">
               <div className="aspect-square w-[75px] h-[75px] max-sm:h-[50px] max-sm:w-[50px] overflow-hidden rounded-xl">

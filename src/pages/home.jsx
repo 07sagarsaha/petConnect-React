@@ -224,10 +224,10 @@ function Home() {
     <>
       <div className="flex flex-col items-center bg-base-200 text-gray-800 min-h-screen p-4 rounded-lg">
         {/* Container for search and new post */}
-        <div className="w-4/6 max-sm:w-full self-start flex lg:flex-row flex-col gap-4 mb-4">
+        <div className="lg:w-4/6 max-sm:w-full max-sm:flex-col self-start flex lg:flex-row gap-4 mb-4 md:flex-row md:w-full max-md:w-full max-md:flex-row">
           {/* Search Container */}
           <div
-            className={`${isSearchModalOpen ? "w-full" : "lg:flex-1"} relative`}
+            className={`${isSearchModalOpen ? "w-full" : "lg:flex-1 md:w-full max-md:w-full"} relative`}
           >
             <form
               onSubmit={handleSearch}
@@ -279,7 +279,7 @@ function Home() {
           </div>
 
           {/* New Post Button Container */}
-          <div className="lg:w-[300px] w-full">
+          <div className="lg:w-[300px] w-full md:w-[300px] max-md:w-[300px] max-sm:w-full">
             <Button
               buttonName="New Post"
               icon={<IoMdAddCircleOutline className="size-7 mr-2" />}

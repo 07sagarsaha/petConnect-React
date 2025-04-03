@@ -167,7 +167,7 @@ const Chat = () => {
       {/* Message Input - Adjusted for desktop, tablet, and mobile */}
       <form
         onSubmit={sendMessage}
-        className="p-4 border-t border-base-200 bg-base-100 fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[200px] max-lg:ml-0"
+        className="p-4 border-t border-base-200 bg-base-100 fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[14%] max-lg:ml-0"
       >
         <div className="flex gap-2 w-full justify-between items-center">
           <input
