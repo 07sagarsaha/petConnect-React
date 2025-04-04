@@ -20,8 +20,6 @@ function Login() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    await signOut();
-
     if (!isSigningIn && isLoaded) {
       setIsSigningIn(true);
       setErrorMessage("");
@@ -31,6 +29,8 @@ function Login() {
           identifier: email,
           password,
         });
+        
+        window.location.reload();
       } catch (err) {
         console.error("Error during sign-in:", err);
         setErrorMessage(err.message || "Something went wrong during sign-in");
