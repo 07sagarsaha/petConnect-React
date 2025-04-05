@@ -26,7 +26,7 @@ function App() {
           <div className="">
             <SideNav />
           </div>
-          <div className="w-full lg:ml-[14%] max-lg:ml-0 max-lg:mb-24">
+          <div className="w-full lg:ml-[16%] max-md:ml-0 md:ml-0 max-sm:ml-0 sm:ml-0 max-lg:ml-[14%] max-lg:mb-24">
             <Outlet />
           </div>
         </div>

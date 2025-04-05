@@ -335,13 +335,15 @@ function Home() {
         )}
 
         {/* Main content container */}
-        <div className="w-full flex lg:flex-row flex-col gap-4">
+        <div className="w-full flex flex-col gap-4">
           {/* Posts section */}
           <div className="lg:w-2/3 w-full z-0">
-            {post.map((post) => (
-              <Posts key={post.id} {...post} profilePic={post.profilePic} />
-            ))}
             <PetFacts/>
+          </div>
+          <div className="lg:w-2/3 w-full z-0 flex flex-col gap-4">
+            {post.map((post) => (
+                <Posts key={post.id} {...post} profilePic={post.profilePic} />
+            ))}
           </div>
         </div>
       </div>

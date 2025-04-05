@@ -21,7 +21,7 @@ import {
 } from "firebase/firestore";
 import { IoMdClose } from "react-icons/io";
 import { BiCommentDetail } from "react-icons/bi";
-import { auth, db } from "../firebase/firebase";
+import { db } from "../firebase/firebase";
 import { IoSend, IoTrashBin } from "react-icons/io5";
 import { useToast } from "../context/ToastContext";
 import { useUser } from "@clerk/clerk-react";
@@ -100,7 +100,10 @@ const CommentDisplay = ({
   }, [postID]);
 
   const handleLike = async () => {
-    if (!auth.currentUser) return;
+    if (!user) {
+      showToast("Please log in to like a post.");
+      return;
+    }
 
     const postRef = doc(db, "posts", postID);
     try {
@@ -124,7 +127,10 @@ const CommentDisplay = ({
   };
 
   const handleDislike = async () => {
-    if (!auth.currentUser) return;
+    if (!user) {
+      showToast("Please log in to dislike a post.");
+      return;
+    }
 
     const postRef = doc(db, "posts", postID);
     try {
@@ -188,7 +194,7 @@ const CommentDisplay = ({
       <div
         className={`max-sm:transition-none duration-[0.625s] ease-in-out rounded-xl ${
           isPostClicked
-            ? "h-4/5 w-3/5 top-1/2 fixed z-50 transform -translate-x-1/2 -translate-y-1/2 left-1/2 max-sm:h-full max-sm:rounded-none  max-sm:w-full flex-col rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
+            ? "h-4/5 w-3/5 top-1/2 fixed z-50 transform -translate-x-1/2 -translate-y-1/2 left-1/2 max-sm:h-full max-md:h-[80%] md:h-[80%] max-sm:rounded-none max-md:w-[70%] md:w-[70%] max-md:ml-[10%] lg:ml-0 max-lg:ml-[10%] max-sm:ml-0 sm:ml-0 max-sm:w-full flex-col rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
             : "text-xl max-sm:text-lg text-primary rounded-full btn btn-md btn-circle flex flex-row gap-1 mt-4 btn-ghost"
         }`}
         onClick={isPostClicked ? null : handlePost}
