@@ -45,58 +45,88 @@ function Home() {
     horse: { icon: FaHorse, name: "Horse" },
   };
 
-  // Create real-time listener
-  useEffect(() => {
-    const fetchInitialPosts = async () => {
+  const fetchPosts = async (isInitial = false) => {
+    if (!isInitial && (!lastDoc || isLoading)) return;
+
+    setIsLoading(true);
+
+    try {
       const q = query(
         collection(db, "posts"),
         orderBy("createdAt", "desc"),
-        limit(postsPerPage)
+        ...(isInitial ? [limit(postsPerPage)] : [startAfter(lastDoc), limit(postsPerPage)])
       );
 
-      const unsubscribe = onSnapshot(q, async (snapshot) => {
-        const postData = await Promise.all(
-          snapshot.docs.map(async (postDoc) => {
-            const postData = postDoc.data();
-            let userProfile = {};
-            if (postData.userId) {
-              const userRef = doc(db, "users", postData.userId);
+      const snapshot = await getDocs(q);
+      const postData = await Promise.all(
+        snapshot.docs.map(async (postDoc) => {
+          const postRef = doc(db, "posts", postDoc.id);
+          const unsubscribe = onSnapshot(postRef, async (postSnapshot) => {
+            if (postSnapshot.exists()) {
+              const updatedPostData = postSnapshot.data();
+              const userRef = doc(db, "users", updatedPostData.userId);
               const userSnap = await getDoc(userRef);
-              if (userSnap.exists()) {
-                userProfile = userSnap.data();
-              }
+              const userProfile = userSnap.exists() ? userSnap.data() : {};
+
+              setPost((prevPosts) => {
+                const updatedPosts = [...prevPosts];
+                const index = updatedPosts.findIndex((p) => p.id === postDoc.id);
+                if (index !== -1) {
+                  updatedPosts[index] = {
+                    id: postDoc.id,
+                    ...updatedPostData,
+                    profilePic: userProfile.profilePic,
+                    userProfile,
+                  };
+                }
+                return updatedPosts;
+              });
             }
-            return {
-              id: postDoc.id,
-              ...postData,
-              profilePic: userProfile.profilePic,
-              userProfile,
-            };
-          })
-        );
-        setPost(postData);
-        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+          });
+
+          scrollListenerRef.current = scrollListenerRef.current || [];
+          scrollListenerRef.current.push(unsubscribe);
+
+          const postData = postDoc.data();
+          let userProfile = {};
+          if (postData.userId) {
+            const userRef = doc(db, "users", postData.userId);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+              userProfile = userSnap.data();
+            }
+          }
+          return {
+            id: postDoc.id,
+            ...postData,
+            profilePic: userProfile.profilePic,
+            userProfile,
+          };
+        })
+      );
+
+      setPost((prevPosts) => {
+        const postMap = new Map(prevPosts.map((post) => [post.id, post]));
+        postData.forEach((newPost) => {
+          postMap.set(newPost.id, newPost);
+        });
+        return Array.from(postMap.values());
       });
 
-      return () => unsubscribe();
+      if (!isInitial) {
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-
-    fetchInitialPosts();
-  }, []);
-
-  const fetchMorePosts = async () => {
-    if (!lastDoc || isLoading) return;
-
-    setIsLoading(true);
-    const q = query(
-      collection(db, "posts"),
-      orderBy("createdAt", "desc"),
-      startAfter(lastDoc),
-      limit(postsPerPage)
-    );
-
-    try {
-      const snapshot = await getDocs(q);
+  
+  useEffect(() => {
+    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(postsPerPage));
+  
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
       const postData = await Promise.all(
         snapshot.docs.map(async (postDoc) => {
           const postData = postDoc.data();
@@ -116,36 +146,46 @@ function Home() {
           };
         })
       );
-      setPost((prevPosts) => [...prevPosts, ...postData]);
+  
+      setPost((prevPosts) => {
+        const postMap = new Map(prevPosts.map((post) => [post.id, post]));
+        postData.forEach((newPost) => {
+          postMap.set(newPost.id, newPost); 
+        });
+        return Array.from(postMap.values()); 
+      });
+  
       setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-    } catch (error) {
-      console.error("Error fetching more posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Add scroll event listener
+    });
+  
+    return () => unsubscribe();
+  }, []);
+  
+  // Load more posts on scroll
   useEffect(() => {
     const handleScroll = debounce(() => {
-      if (isLoading) return; // Prevent fetching if already loading
-      const scrollPosition =
-        window.innerHeight + document.documentElement.scrollTop;
-      const threshold = document.documentElement.offsetHeight - 100; // 100px from the bottom
+      if (isLoading) return;
+      const scrollPosition = window.innerHeight + document.documentElement.scrollTop;
+      const threshold = document.documentElement.offsetHeight - 100; 
       if (scrollPosition >= threshold) {
-        fetchMorePosts();
+        fetchPosts(false); 
       }
-    }, 200); // Adjust debounce delay as needed
+    }, 200);
+  
+    window.addEventListener("scroll", handleScroll);
+  
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastDoc, isLoading]);
 
-    scrollListenerRef.current = handleScroll;
-    window.addEventListener("scroll", scrollListenerRef.current);
-
+  useEffect(() => {
     return () => {
       if (scrollListenerRef.current) {
-        window.removeEventListener("scroll", scrollListenerRef.current);
+        scrollListenerRef.current.forEach((unsubscribe) => unsubscribe());
       }
     };
-  }, [lastDoc, isLoading, fetchMorePosts]);
+  }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
