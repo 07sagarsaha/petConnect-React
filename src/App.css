@@ -1,8 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 body {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  overflow: hidden;
+}
+
+/* Add these animation styles */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
 /* Add these styles to handle mobile and tablet chat view */
@@ -76,9 +101,30 @@ body {
   }
 }
 
+/* Chat container responsive styles */
+.chat-messages-container {
+  height: calc(100vh - 9rem);
+  max-height: calc(100vh - 9rem);
+}
+
+@media (max-width: 1024px) {
+  .chat-messages-container {
+    height: calc(100vh - 12rem);
+    max-height: calc(100vh - 12rem);
+  }
+}
+
+/* Ensure proper spacing for mobile devices with bottom navigation */
+@media (max-width: 768px) {
+  .chat-messages-container {
+    height: calc(100vh - 14rem);
+    max-height: calc(100vh - 14rem);
+  }
+}
+
 /* Safe area insets for modern mobile browsers */
-@supports (padding: max(0px)) {
-  .chat-input-container {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+@supports (padding: env(safe-area-inset-bottom)) {
+  .chat-messages-container {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
 }
