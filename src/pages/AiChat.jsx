@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import axios from "axios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { BsClockHistory } from "react-icons/bs";
@@ -214,7 +215,8 @@ const AiChat = () => {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col bg-base-100 relative overflow-hidden">
+    //in large screen h shuld be screen
+    <div className="w-full lg:h-screen lg: h-[87vh] flex flex-col bg-base-100 relative overflow-hidden ai-chat">
       {/* Floating History/Close Button */}
       <div className="absolute top-4 right-4 z-50">
         <button
@@ -333,7 +335,7 @@ const AiChat = () => {
             e.preventDefault();
             getResponse();
           }}
-          className="absolute bottom-0 max-lg:bottom-20 left-0 right-0 ml-[14%] max-lg:ml-0 p-4 bg-base-100 border-t border-base-200"
+          className="absolute bottom-0  left-0 right-0  max-lg:ml-0 p-4 bg-base-100 border-t border-base-200"
         >
           <div className="flex gap-2 w-full justify-between items-center">
             <input

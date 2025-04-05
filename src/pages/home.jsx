@@ -301,7 +301,7 @@ function Home() {
             {post.map((post) => (
               <Posts key={post.id} {...post} profilePic={post.profilePic} />
             ))}
-            <PetFacts/>
+            <PetFacts />
           </div>
         </div>
       </div>
