@@ -191,14 +191,24 @@ const CommentDisplay = ({
 
   return (
     <>
+    {isImageClicked && imageURL && (
+        <>
+              <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
+                <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
+                <img src={imageURL} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
+              </div>
+            <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
+        </>
+      )}
       <div
         className={`max-sm:transition-none duration-[0.625s] ease-in-out rounded-xl ${
           isPostClicked
-            ? "h-4/5 w-3/5 top-1/2 fixed z-50 transform -translate-x-1/2 -translate-y-1/2 left-1/2 max-sm:h-full max-sm:rounded-none max-md:w-full md:w-full max-md:h-full md:h-full max-lg:w-[70%] lg:w-[60%] lg:h-[80%] max-lg:h-[80%] max-md:ml-[10%] lg:ml-0 max-lg:ml-[10%] max-sm:ml-0 sm:ml-0 max-sm:w-full flex-col rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
+            ? "h-4/5 w-3/5 top-1/2 fixed z-30 transform -translate-x-1/2 -translate-y-1/2 left-1/2 max-sm:h-full max-sm:rounded-none max-md:w-full md:w-full max-md:h-full md:h-full max-lg:w-[70%] lg:w-[60%] lg:h-[80%] max-lg:h-[80%] max-md:ml-[10%] lg:ml-0 max-lg:ml-[10%] max-sm:ml-0 sm:ml-0 max-sm:w-full flex-col rounded-xl bg-base-100 flex shadow-xl overflow-hidden "
             : "text-xl max-sm:text-lg text-primary rounded-full btn btn-md btn-circle flex flex-row gap-1 mt-4 btn-ghost"
         }`}
         onClick={isPostClicked ? null : handlePost}
       >
+        
         {isPostClicked ? (
           <>
             <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100">
@@ -209,7 +219,7 @@ const CommentDisplay = ({
               />
             </div>
             {isImageURLPresent ? (
-              <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto md:overflow-hidden max-md:overflow-hidden max-sm:animate-postAnim1">
+              <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto max-sm:overflow-y-auto md:overflow-hidden max-md:overflow-hidden max-sm:animate-postAnim1">
                 <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
                   <span className="text-left"> {handle} posted:</span>
                   <h2 className="text-xl font-bold text-left">{title}</h2>
@@ -221,15 +231,7 @@ const CommentDisplay = ({
                       className="absolute w-full h-full rounded-xl object-cover"
                     />
                   </div>
-                  {isImageClicked && imageURL && (
-                            <>
-                              <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
-                              <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
-                                <img src={imageURL} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
-                              </div>
-                              <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
-                            </>
-                  )}
+                  
                   <p className="text-base text-gray-600 mt-3">{date}</p>
                   <div className="flex flex-row mt-4 items-center gap-2">
                     <button onClick={handleLike} className="btn btn-lg btn-ghost">
@@ -468,7 +470,7 @@ const CommentDisplay = ({
       </div>
       {isPostClicked && (
         <div
-          className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-40 top-0 left-0"
+          className="h-full w-full justify-center items-center flex bg-black bg-opacity-50 transition-colors duration-200 fixed z-20 top-0 left-0"
           onClick={handlePost}
         ></div>
       )}

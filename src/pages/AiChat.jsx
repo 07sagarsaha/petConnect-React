@@ -335,7 +335,7 @@ const AiChat = () => {
             e.preventDefault();
             getResponse();
           }}
-          className="absolute bottom-0  left-0 right-0  max-lg:ml-0 p-4 bg-base-100 border-t border-base-200"
+          className="absolute bottom-2 left-0 right-0 max-lg:ml-0 p-4 bg-base-100 border-t border-base-200"
         >
           <div className="flex gap-2 w-full justify-between items-center">
             <input
@@ -343,7 +343,7 @@ const AiChat = () => {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask me anything about pets..."
-              className="flex-1 p-3 rounded-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="flex-1 p-3 rounded-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary min-w-[200px]"
               disabled={isGenerating}
             />
             <button
