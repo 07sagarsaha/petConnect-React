@@ -38,7 +38,7 @@ export const ToastProvider = ({ children }) => {
       {children}
       {isToastVisible && (
         <div
-          className={`fixed z-50 bg-base-100 bottom-10 left-10 max-sm:bottom-20 max-sm:left-0 h-fit w-1/6 max-sm:w-full p-5 shadow-xl rounded-2xl transition-all ${
+          className={`fixed z-50 bg-base-100 bottom-10 left-10 max-sm:bottom-20 max-sm:left-0 h-fit lg:w-1/6 max-lg:w-1/6 md:w-2/5 max-md:w-2/5 max-sm:w-full p-5 shadow-xl rounded-2xl transition-all ${
             isFading ? "opacity-0" : "opacity-100 animate-postAnim3"
           }`}
         >
