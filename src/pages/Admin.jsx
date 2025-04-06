@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 const Admin = () => {
   const [vetUsers, setVetUsers] = useState([]);
   const [users, setUsers] = useState([]);
+  const [isVetTableOpen, setIsVetTableOpen] = useState(true);
+  const [isUserTableOpen, setIsUserTableOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast(); 
   const [isAdmin , setIsAdmin] = useState(false); 
@@ -50,11 +52,14 @@ const Admin = () => {
       });
 
       // Update local state
-      setUsers(users.map(user => 
+      const updatedUsers = users.map(user => 
       (user.id === userId && user.isVet === true) 
           ? { ...user, isVetVerified: isApproved }
           : user
-      ));
+      );
+
+      setUsers(updatedUsers);
+      setVetUsers(updatedUsers.filter(user => user.isVet));
       showToast(`Vet ${isApproved ? 'approved' : 'denied'} successfully`);
     } catch (error) {
       console.error('Error updating verification:', error);
@@ -97,115 +102,132 @@ const Admin = () => {
     <div className="p-4">
       {isAdmin && user &&
       <>
-      <h1 className="text-2xl font-bold mb-4">Vet Verification Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
       <button className='btn btn-secondary text-base-content py-4 my-4' onClick={() => Navigate(`/in/home`)}>{"Go to home"}</button>
-      <table className='w-full'>
-        <thead className='bg-gray-800 text-white w-full'>
-          <tr>
-            <th className='p-4 text-start'>User ID</th>
-            <th className='p-4 text-start'>Email</th>
-            <th className='p-4 text-start'>Name</th>
-            <th className='p-4 text-start'>Vet RN</th>
-            <th className='p-4 text-start'>isVet</th>
-            <th className='p-4 text-start'>isVetVerified</th>
-            <th className='p-4 text-start'>Status</th>
-            <th className='p-4 text-start'>Actions</th>
-          </tr>
-        </thead>
-        <tbody className='bg-gray-200 w-full'>
-          {vetUsers.map(user => (
-            <tr key={user.id} className="border-b">
-              <td className='p-4'>{user.id}</td>
-              <td className='p-4'>{user.email}</td>
-              <td className='p-4'>{user.name}</td>
-              <td className='p-4'>{user.rnum}</td>
-              <td className='p-4'>{user.isVet ? 'User is vet' : 'User is not vet'}</td>
-              <td className='p-4'>{user.isVetVerified ? 'User is verified vet' : 'User is not verified vet'}</td>
-              <td className='p-4'>
-                {user.isVetVerified === true && 'Approved'}
-                {user.isVetVerified === false && 'Denied'}
-                {user.isVetVerified === undefined && 'Pending'}
-              </td>
-              <td className='p-4 space-x-2'>
-                {!user.isVetVerified && (
-                  <>
-                    <button
-                      onClick={() => handleVerification(user.id, true)}
-                      className="bg-green-500 text-white px-3 py-1 rounded"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleVerification(user.id, false)}
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                    >
-                      Deny
-                    </button>
-                  </>
-                )}
-                {user.isVetVerified && (
-                  <button
-                    onClick={() => handleVerification(user.id, false)}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                  >
-                    Deny
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">User Management</h2>
+      <div 
+        className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
+        onClick={() => setIsVetTableOpen(!isVetTableOpen)}
+      >
+        <h1 className="text-2xl font-bold">Vet Verification Dashboard</h1>
+        <span className="ml-2">{isVetTableOpen ? '▼' : '▶'}</span>
+      </div>
+      <div className={`transition-all duration-300 ${isVetTableOpen ? 'max-h-[2000px]' : 'max-h-0 overflow-hidden'}`}>
         <table className='w-full'>
           <thead className='bg-gray-800 text-white w-full'>
             <tr>
               <th className='p-4 text-start'>User ID</th>
               <th className='p-4 text-start'>Email</th>
               <th className='p-4 text-start'>Name</th>
-              <th className='p-4 text-start'>is using Clerk</th>
-              <th className='p-4 text-start'>Is Admin</th>
-              <th className='p-4 text-start'>Is Vet</th>
+              <th className='p-4 text-start'>Vet RN</th>
+              <th className='p-4 text-start'>isVet</th>
+              <th className='p-4 text-start'>isVetVerified</th>
+              <th className='p-4 text-start'>Status</th>
               <th className='p-4 text-start'>Actions</th>
             </tr>
           </thead>
           <tbody className='bg-gray-200 w-full'>
-            {users.map(u => (
-              <tr key={u.id} className="border-b">
-                <td className='p-4'>{u.id}</td>
-                <td className='p-4'>{u.email}</td>
-                <td className='p-4'>{u.name}</td>
-                <td className='p-4'>{isClerkId(u.id) ? 'using Clerk' : 'using Firebase'}</td>
-                <td className='p-4'>{u.isAdmin ? 'Admin' : 'Normal User'}</td>
-                <td className='p-4'>{u.isVetVerified ? 'Vet' : 'Not Vet'}</td>
+            {vetUsers.map(user => (
+              <tr key={user.id} className="border-b">
+                <td className='p-4'>{user.id}</td>
+                <td className='p-4'>{user.email}</td>
+                <td className='p-4'>{user.name}</td>
+                <td className='p-4'>{user.rnum}</td>
+                <td className='p-4'>{user.isVet ? 'User is vet' : 'User is not vet'}</td>
+                <td className='p-4'>{user.isVetVerified ? 'User is verified vet' : 'User is not verified vet'}</td>
+                <td className='p-4'>
+                  {user.isVetVerified === true && 'Approved'}
+                  {user.isVetVerified === false && 'Denied'}
+                  {user.isVetVerified === undefined && 'Pending'}
+                </td>
                 <td className='p-4 space-x-2'>
-                  {u.id !== user.id ? ( 
+                  {!user.isVetVerified && (
                     <>
-                      {!u.isAdmin ? (
-                        <button
-                          onClick={() => handleAdminStatus(u.id, true)}
-                          className="bg-blue-500 text-white px-3 py-1 rounded w-52"
-                        >
-                          Make Admin
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleAdminStatus(u.id, false)}
-                          className="bg-orange-500 text-white px-3 py-1 rounded w-52"
-                        >
-                          Remove Admin
-                        </button>
-                      )}
+                      <button
+                        onClick={() => handleVerification(user.id, true)}
+                        className="bg-green-500 text-white px-3 py-1 rounded"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleVerification(user.id, false)}
+                        className="bg-red-500 text-white px-3 py-1 rounded"
+                      >
+                        Deny
+                      </button>
                     </>
-                  ): (
-                    <span className="text-gray-500">You</span>
+                  )}
+                  {user.isVetVerified && (
+                    <button
+                      onClick={() => handleVerification(user.id, false)}
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                    >
+                      Deny
+                    </button>
                   )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="mt-8">
+        <div 
+          className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
+          onClick={() => setIsUserTableOpen(!isUserTableOpen)}
+        >
+          <h2 className="text-2xl font-bold">User Management</h2>
+          <span className="ml-2">{isUserTableOpen ? '▼' : '▶'}</span>
+        </div>
+        <div className={`transition-all duration-300 ${isUserTableOpen ? 'max-h-[2000px]' : 'max-h-0 overflow-hidden'}`}>
+          <table className='w-full'>
+            <thead className='bg-gray-800 text-white w-full'>
+              <tr>
+                <th className='p-4 text-start'>User ID</th>
+                <th className='p-4 text-start'>Email</th>
+                <th className='p-4 text-start'>Name</th>
+                <th className='p-4 text-start'>is using Clerk</th>
+                <th className='p-4 text-start'>Is Admin</th>
+                <th className='p-4 text-start'>Is Vet</th>
+                <th className='p-4 text-start'>Actions</th>
+              </tr>
+            </thead>
+            <tbody className='bg-gray-200 w-full'>
+              {users.map(u => (
+                <tr key={u.id} className="border-b">
+                  <td className='p-4'>{u.id}</td>
+                  <td className='p-4'>{u.email}</td>
+                  <td className='p-4'>{u.name}</td>
+                  <td className='p-4'>{isClerkId(u.id) ? 'using Clerk' : 'using Firebase'}</td>
+                  <td className='p-4'>{u.isAdmin ? 'Admin' : 'Normal User'}</td>
+                  <td className='p-4'>{u.isVetVerified ? 'Vet' : 'Not Vet'}</td>
+                  <td className='p-4 space-x-2'>
+                    {u.id !== user.id ? (
+                      <>
+                        {!u.isAdmin ? (
+                          <button
+                            onClick={() => handleAdminStatus(u.id, true)}
+                            className="bg-blue-500 text-white px-3 py-1 rounded w-52"
+                          >
+                            Make Admin
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleAdminStatus(u.id, false)}
+                            className="bg-orange-500 text-white px-3 py-1 rounded w-52"
+                          >
+                            Remove Admin
+                          </button>
+                        )}
+                      </>
+                    ): (
+                      <span className="text-gray-500">You</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       </>
       }
