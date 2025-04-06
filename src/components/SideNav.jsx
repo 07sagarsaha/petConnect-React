@@ -57,7 +57,7 @@ function SideNav() {
             to="/in/messages"
           />
           <Nav
-            title="Ai Chat"
+            title="AI Chat"
             icon={<AiOutlineRobot className="w-8 h-8" />}
             to="/in/ai-chat"
           />

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaRegThumbsDown,
   FaRegThumbsUp,
   FaThumbsDown,
   FaThumbsUp,
+  FaUserDoctor,
 } from "react-icons/fa6";
 import { db } from "../../firebase/firebase";
 import {
@@ -33,6 +34,7 @@ const Posts = ({
   profilePic,
   imageUrl = null,
   userId,
+  isVetVerified,
 }) => {
   const severityEmojis = {
     1: "😃 (very good)",
@@ -52,6 +54,7 @@ const Posts = ({
   const [confirmDelete, toggleConfirmDelete] = useState(false);
   const navigate = useNavigate();
   const { showToast } = useToast(); // Get showToast from context
+  const [blurredImageUrl, setBlurredImageUrl] = useState(null);
 
   const handleLike = async () => {
     if (!user) return;
@@ -132,6 +135,45 @@ const Posts = ({
       confirmDeleteBox();
   };
 
+  //blur image
+
+  useEffect(() => {
+    if (imageUrl) {
+      generateBlurredImage(imageUrl);
+    }
+  }, [imageUrl]); // Dependency array ensures this runs when imageUrl changes
+
+  const generateBlurredImage = async (imageUrl) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.crossOrigin = "Anonymous";  // Handle CORS issues
+      img.onload = () => {
+        // Set canvas size to a smaller dimension for blur effect
+        canvas.width = img.width / 4;
+        canvas.height = img.height / 4;
+
+        // Draw and blur the image
+        ctx.filter = 'blur(10px)';
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Convert to base64 and resolve
+        const blurredUrl = canvas.toDataURL('image/jpeg', 0.5);
+        setBlurredImageUrl(blurredUrl);
+        resolve(blurredUrl);
+      };
+
+      img.onerror = (error) => {
+        console.error("Error loading image:", error);
+        resolve(null); // Resolve with null or a default value
+      };
+
+      img.src = imageUrl;
+    });
+  };
+
   return (
     <div className="flex justify-center items-center w-full text-base-content bg-base-200">
       {/* Post Content */}
@@ -149,16 +191,21 @@ const Posts = ({
               onClick={() => navigate(`/in/profile/${userId}`)}
             />
             <div className="flex flex-col items-start justify-center">
-              <p
-                className="text-[18px] max-sm:text-[15px] cursor-pointer"
-                onClick={() => navigate(`/in/profile/${userId}`)}
-              >
-                {handle} posted:
-              </p>
+              <div className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}>
+                <p
+                  className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
+                  onClick={() => navigate(`/in/profile/${userId}`)}
+                >
+                  {handle}{isVetVerified && <span className="text-primary text-xl size-3 text-center translate-y-1">
+                    <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
+                  </span>}
+                </p>
+                <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
+              </div>
               <p className="max-sm:text-sm text-[15px]">{date}</p>
             </div>
           </div>
-          {(userId == user.id) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(id)}><IoTrashBin /></button>}
+          {(userId == user.id) && <button className="text-lg self-start" onClick={() => confirmDeleteBox(id)}><IoTrashBin /></button>}
         </div>
 
         {confirmDelete && postToDelete === id && (
@@ -167,7 +214,7 @@ const Posts = ({
               className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
               onClick={confirmDeleteBox}
             />
-            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-1/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
               <button
                 className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
                 onClick={confirmDeleteBox}
@@ -206,13 +253,22 @@ const Posts = ({
 
         {/* Image */}
         {imageUrl && (
-          <div className="aspect-video w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl" onClick={handleImageClick}>
-            <img
-              src={imageUrl}
-              alt="Post"
-              className="w-full h-full rounded-xl object-cover cursor-pointer"
-            />
-          </div>
+          <>
+            <div className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl" 
+              onClick={handleImageClick}
+              style={{
+                backgroundImage: `url(${blurredImageUrl || imageUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}>
+                <img
+                src={imageUrl}
+                alt="Post"
+                className="h-full rounded-none object-contain cursor-pointer "
+              />
+            </div>
+          </>
         )}
 
         {isImageClicked && imageUrl && (
@@ -245,6 +301,9 @@ const Posts = ({
                 likes={likes}
                 dislikes={dislikes}
                 imageURL={imageUrl}
+                profilePic={profilePic}
+                isVetVerified={isVetVerified}
+                userId={userId}
               />
             </div>
 

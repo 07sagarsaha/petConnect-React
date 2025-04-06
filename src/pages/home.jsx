@@ -20,6 +20,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import { FaCat, FaDog, FaFish, FaDove, FaHorse } from "react-icons/fa";
 import { GiRabbit } from "react-icons/gi";
 import PetFacts from "../components/UI/PetFacts";
+import { format } from "date-fns";
 
 function Home() {
   const [post, setPost] = useState([]);
@@ -100,6 +101,7 @@ function Home() {
             id: postDoc.id,
             ...postData,
             profilePic: userProfile.profilePic,
+            isVetVerified: userProfile.isVetVerified,
             userProfile,
           };
         })
@@ -131,6 +133,7 @@ function Home() {
         snapshot.docs.map(async (postDoc) => {
           const postData = postDoc.data();
           let userProfile = {};
+          
           if (postData.userId) {
             const userRef = doc(db, "users", postData.userId);
             const userSnap = await getDoc(userRef);
@@ -138,22 +141,18 @@ function Home() {
               userProfile = userSnap.data();
             }
           }
+  
           return {
             id: postDoc.id,
             ...postData,
             profilePic: userProfile.profilePic,
+            isVetVerified: userProfile.isVetVerified,
             userProfile,
           };
         })
       );
   
-      setPost((prevPosts) => {
-        const postMap = new Map(prevPosts.map((post) => [post.id, post]));
-        postData.forEach((newPost) => {
-          postMap.set(newPost.id, newPost); 
-        });
-        return Array.from(postMap.values()); 
-      });
+      setPost(postData);
   
       setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
     });
@@ -342,7 +341,12 @@ function Home() {
           </div>
           <div className="lg:w-2/3 w-full z-0 flex flex-col gap-4">
             {post.map((post) => (
-                <Posts key={post.id} {...post} profilePic={post.profilePic} />
+                <Posts key={post.id} {...post} profilePic={post.profilePic} date={
+                  post.createdAt
+                    ? format(post.createdAt.toDate(), "PPP")
+                    : "No date" 
+                }
+                isVetVerified ={post.isVetVerified} />
             ))}
           </div>
         </div>

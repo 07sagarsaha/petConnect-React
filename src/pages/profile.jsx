@@ -23,6 +23,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
 import { useUser } from "@clerk/clerk-react";
+import { FaUserDoctor } from "react-icons/fa6";
 
 function Profile() {
   const [profile, setProfile] = useState();
@@ -252,8 +253,10 @@ function Profile() {
                 onClick={() => handleImageClick(profilePic)}
               />
               <div className="flex flex-col justify-center self-center -translate-y-2">
-                <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4">
-                  {userData?.name || "loading..."}
+                <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4 flex flex-row gap-2">
+                  {userData?.name || "loading..."}{userData?.isVetVerified && <span className="text-primary text-2xl size-3 text-center translate-y-1">
+                    <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
+                  </span>}
                 </h1>
                 <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
                   {"@" + userData?.handle || "loading..."}

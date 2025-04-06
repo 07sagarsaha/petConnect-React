@@ -4,6 +4,7 @@ import {
   FaRegThumbsUp,
   FaThumbsDown,
   FaThumbsUp,
+  FaUserDoctor,
 } from "react-icons/fa6";
 import {
   arrayRemove,
@@ -25,6 +26,8 @@ import { db } from "../firebase/firebase";
 import { IoSend, IoTrashBin } from "react-icons/io5";
 import { useToast } from "../context/ToastContext";
 import { useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
+import pfp from "../icons/pfp.png";
 
 const CommentDisplay = ({
   postID,
@@ -35,6 +38,9 @@ const CommentDisplay = ({
   likes = [],
   dislikes = [],
   imageURL = false,
+  isVetVerified,
+  profilePic,
+  userId,
 }) => {
   const { user } = useUser();
   const isLiked = likes?.includes(user?.id);
@@ -49,6 +55,8 @@ const CommentDisplay = ({
   const [isImageClicked, setIsImageClicked] = useState(false);
   const [maxImageZoom, setImageMaxZoom] = useState(false);
   const [transformOrigin, setTransformOrigin] = useState("center center");
+  const [blurredImageUrl, setBlurredImageUrl] = useState(null);
+  const  navigate  = useNavigate();
   const { showToast } = useToast();
 
   const handlePost = () => {
@@ -189,6 +197,43 @@ const CommentDisplay = ({
 
   const isImageURLPresent = !!imageURL;
 
+  useEffect(() => {
+      if (imageURL) {
+        generateBlurredImage(imageURL);
+      }
+    }, [imageURL]); // Dependency array ensures this runs when imageUrl changes
+  
+    const generateBlurredImage = async (imageUrl) => {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+  
+        img.crossOrigin = "Anonymous";  // Handle CORS issues
+        img.onload = () => {
+          // Set canvas size to a smaller dimension for blur effect
+          canvas.width = img.width / 4;
+          canvas.height = img.height / 4;
+  
+          // Draw and blur the image
+          ctx.filter = 'blur(10px)';
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  
+          // Convert to base64 and resolve
+          const blurredUrl = canvas.toDataURL('image/jpeg', 0.5);
+          setBlurredImageUrl(blurredUrl);
+          resolve(blurredUrl);
+        };
+  
+        img.onerror = (error) => {
+          console.error("Error loading image:", error);
+          resolve(null); // Resolve with null or a default value
+        };
+  
+        img.src = imageUrl;
+      });
+    };
+
   return (
     <>
     {isImageClicked && imageURL && (
@@ -221,14 +266,34 @@ const CommentDisplay = ({
             {isImageURLPresent ? (
               <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto max-sm:overflow-y-auto md:overflow-hidden max-md:overflow-hidden max-sm:animate-postAnim1">
                 <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
-                  <span className="text-left"> {handle} posted:</span>
+                  <div className="flex flex-row gap-2 items-center py-2">
+                    <img src={profilePic || pfp} className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer" onClick={() => navigate(`/in/profile/${userId}`)}/>
+                    <div className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}>
+                      <p
+                        className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
+                        onClick={() => navigate(`/in/profile/${userId}`)}
+                      >
+                        {handle}{isVetVerified && <span className="text-primary text-xl size-3 text-center translate-y-1">
+                        <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
+                        </span>}
+                      </p>
+                      <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
+                    </div>
+                  </div>
                   <h2 className="text-xl font-bold text-left">{title}</h2>
                   <p className="text-[16px] mt-2 text-left">{content}</p>
-                  <div className="aspect-square w-full h-full max-sm:w-[90%] relative overflow-hidden rounded-xl" onClick={handleImageClick}>
-                    <img
+                  <div className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl" 
+                    onClick={handleImageClick}
+                    style={{
+                      backgroundImage: `url(${blurredImageUrl || imageURL})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}>
+                      <img
                       src={imageURL}
                       alt="Post"
-                      className="absolute w-full h-full rounded-xl object-cover"
+                      className="h-full rounded-none object-contain cursor-pointer "
                     />
                   </div>
                   
@@ -346,7 +411,20 @@ const CommentDisplay = ({
               </div>
             ) : (
               <div className="flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-auto animate-postAnim1">
-                <span className="text-left"> {handle} posted:</span>
+                <div className="flex flex-row gap-2 items-center py-2">
+                    <img src={profilePic || pfp} className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer" onClick={() => navigate(`/in/profile/${userId}`)}/>
+                    <div className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}>
+                      <p
+                        className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
+                        onClick={() => navigate(`/in/profile/${userId}`)}
+                      >
+                        {handle}{isVetVerified && <span className="text-primary text-xl size-3 text-center translate-y-1">
+                        <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
+                        </span>}
+                      </p>
+                      <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
+                    </div>
+                  </div>
                 <h2 className="text-xl font-bold text-left">{title}</h2>
                 <p className="text-[16px] mt-2 text-left">{content}</p>
                 <div className="flex flex-row mt-4 items-center gap-4">
