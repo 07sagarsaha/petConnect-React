@@ -18,8 +18,8 @@ import Settings from "./pages/Settings.jsx";
 import Register from "./pages/auth/signup.jsx";
 import Landing from "./pages/landing/landing.jsx";
 import Login from "./pages/auth/login.jsx";
-import UserProfile from "./pages/UserProfile";
-import Admin from "./pages/admin.jsx";
+import UserProfile from "./pages/UserProfile.jsx";
+import Admin from "./pages/Admin.jsx";
 import { AuthProvider } from "./context/authContext/authContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ClerkProvider } from "@clerk/clerk-react";
@@ -50,7 +50,7 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Landing />} />
-      <Route path="/admin" element={<Admin/>}/>
+      <Route path="/admin" element={<Admin />} />
     </>
   )
 );
