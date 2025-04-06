@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { MdAdminPanelSettings } from "react-icons/md";
 import ThemeContext from "../context/ThemeContext";
 import { IoLogOut } from "react-icons/io5";
 import { doSignOut } from "../firebase/auth";
@@ -6,7 +7,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { useToast } from "../context/ToastContext";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import sad_puppy  from "../Assets/sad-puppy.jpg"
 import axios from "axios";
@@ -53,6 +54,7 @@ function Settings() {
   const { showToast } = useToast(); // Get showToast from context
   const [ deleteAccount, setDeleteAccount ] = useState(false);
   const [ confirmDelete, setConfirmDelete ] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState("");
   const { user } = useUser();
 
@@ -74,7 +76,28 @@ function Settings() {
     setConfirmDelete(!confirmDelete);
     setEmail("");
   }
-
+  useEffect(() => {
+    if(user) {
+      handleIsAdmin();
+    } 
+  }, [user]);
+    
+  const handleIsAdmin = async () => {
+    try {
+      const userRef = doc(db, "users", user.id);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        console.log("User data:", userData.isAdmin);
+        setIsAdmin(userData.isAdmin);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error getting document:", error);
+    }
+  };
+  
   const handleDelete = async () => {
     if (!email) {
       showToast("Please enter your email to confirm deletion.");
@@ -124,11 +147,18 @@ function Settings() {
             Logout
           </button>
         </div>
-        <NavLink
-          to="/in/about"
-          className="text-xl gap-2 w-[50%] text-semibold text-base-100 rounded-2xl self-start my-4 flex items-center justify-center bg-primary p-3 md:hidden lg:hidden">
-            <AiOutlineInfoCircle className="text-2xl"/>{"About us"}
-        </NavLink>
+        <div className="flex flex-row items-center mb-6 gap-2">
+          <NavLink
+            to="/in/about"
+            className="text-xl gap-2 w-[50%] text-semibold text-base-100 rounded-2xl self-start my-4 flex items-center justify-center bg-primary p-3 md:hidden lg:hidden">
+              <AiOutlineInfoCircle className="text-2xl"/>{"About us"}
+          </NavLink>
+          {isAdmin && <NavLink
+            to="/admin"
+            className="text-xl gap-2 max-sm:w-1/2 w-fit text-semibold text-base-100 rounded-2xl self-start my-4 flex items-center justify-center bg-primary p-3">
+              <MdAdminPanelSettings className="text-2xl"/>{"Admin"}
+          </NavLink>}
+        </div>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">
             Theme Switcher

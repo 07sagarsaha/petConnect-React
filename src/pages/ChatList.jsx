@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import pfp from "../icons/pfp.png";
 import { useUser } from "@clerk/clerk-react";
+import { FaUserDoctor } from "react-icons/fa6";
 
 const ChatList = () => {
   const [chats, setChats] = useState([]);
@@ -61,6 +62,7 @@ const ChatList = () => {
             otherParticipantId,
             otherParticipantHandle: userData.handle || "Unknown", // Add handle
             otherParticipantPfp: userData.profilePic || pfp, // Add PFP link
+            receipientVerified: userData.isVetVerified || false, // Add verification status
           };
         })
       );
@@ -108,9 +110,14 @@ const ChatList = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <h3 className="font-semibold">
-                  {"@" + chat.otherParticipantHandle}
-                </h3>
+                <div className="flex flex-row gap-2">
+                  <h3 className="font-semibold">
+                    {"@" + chat.otherParticipantHandle}
+                  </h3>
+                  {chat.receipientVerified && <span className="text-primary text-xl size-3 text-center">
+                    <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
+                  </span>}
+                </div>
                 <p className="text-sm opacity-75 truncate">{chat.lastMessage}</p>
               </div>
             </div>

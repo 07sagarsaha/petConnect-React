@@ -16,6 +16,7 @@ import { IoMdClose, IoMdCloseCircleOutline } from "react-icons/io";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import pfp from "../icons/pfp.png";
 import { useUser } from "@clerk/clerk-react";
+import { FaUserDoctor } from "react-icons/fa6";
 
 function UserProfile() {
   const { userId } = useParams();
@@ -118,19 +119,21 @@ function UserProfile() {
                 onClick={handleProfileClick}
               />
               <div className="flex flex-col justify-center self-center -translate-y-2">
-                <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4">
-                  {userData?.name || "loading..."}
-                </h1>
-                <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
-                  {"@" + userData?.handle || "loading..."}
-                </h2>
-              </div>
+                  <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4 flex flex-row gap-2">
+                    {userData?.name || "loading..."}{userData?.isVetVerified && <span className="text-primary text-2xl size-3 text-center translate-y-1">
+                    <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
+                  </span>}
+                  </h1>
+                  <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
+                    {"@" + userData?.handle || "loading..."}
+                  </h2>
+                </div>
             </div>
             {(user.id === userId) && navigate(`/in/profile`)}
             <div className="flex self-center gap-3">
               <button
                 onClick={startChat}
-                className="text-lg p-3 m-2 rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 flex items-center justify-center gap-2"
+                className="text-lg m-2 rounded-2xl btn bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 flex items-center justify-center gap-2"
               >
                 <IoChatbubbleOutline className="text-2xl" />
                 {"Start Chat"}

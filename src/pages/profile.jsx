@@ -24,6 +24,7 @@ import { NavLink } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
 import { useUser } from "@clerk/clerk-react";
 import { FaUserDoctor } from "react-icons/fa6";
+import pfp from "../icons/pfp.png";
 
 function Profile() {
   const [profile, setProfile] = useState();
@@ -51,6 +52,7 @@ function Profile() {
   const [image, setImage] = useState(null);
   const {showToast} = useToast();
   const { user } = useUser();
+
 
   const handleProfileUpdate = () => {
     setisProfileEdit(!isProfileEdit);
@@ -248,7 +250,7 @@ function Profile() {
             <div className="flex gap-5 flex-row max-sm:flex-col">
               <img
                 className="w-36 h-36 rounded-full object-cover max-sm:self-center"
-                src={profilePic}
+                src={profilePic || pfp}
                 alt="Profile"
                 onClick={() => handleImageClick(profilePic)}
               />
