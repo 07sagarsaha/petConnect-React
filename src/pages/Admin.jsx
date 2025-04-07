@@ -4,12 +4,15 @@ import { db } from '../firebase/firebase';
 import { useToast } from '../context/ToastContext';
 import { useUser } from "@clerk/clerk-react"
 import { useNavigate } from 'react-router-dom';
+import { IoMdClose } from 'react-icons/io';
 
 const Admin = () => {
   const [vetUsers, setVetUsers] = useState([]);
   const [users, setUsers] = useState([]);
   const [isVetTableOpen, setIsVetTableOpen] = useState(true);
   const [isUserTableOpen, setIsUserTableOpen] = useState(false);
+  const [confirmBox, setConfirmBox] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast(); 
   const [isAdmin , setIsAdmin] = useState(false); 
@@ -81,7 +84,8 @@ const Admin = () => {
           : user
       ));
 
-      showToast(`User ${makeAdmin ? 'made admin' : 'removed from admin'} successfully`);
+      setConfirmBox(false);
+      showToast(`${selectedUserId.name} ${makeAdmin ? 'made admin' : 'removed from admin'} successfully`);
     } catch (error) {
       console.error('Error updating admin status:', error);
       showToast('Failed to update admin status');
@@ -111,7 +115,7 @@ const Admin = () => {
         <h1 className="text-2xl font-bold">Vet Verification Dashboard</h1>
         <span className="ml-2">{isVetTableOpen ? '▼' : '▶'}</span>
       </div>
-      <div className={`transition-all duration-300 ${isVetTableOpen ? 'max-h-[2000px]' : 'max-h-0 overflow-hidden'}`}>
+      <div className={`transition-all duration-300 ${isVetTableOpen ? 'max-h-[2000px] overflow-auto' : 'max-h-0 overflow-hidden'}`}>
         <table className='w-full'>
           <thead className='bg-gray-800 text-white w-full'>
             <tr>
@@ -178,7 +182,7 @@ const Admin = () => {
           <h2 className="text-2xl font-bold">User Management</h2>
           <span className="ml-2">{isUserTableOpen ? '▼' : '▶'}</span>
         </div>
-        <div className={`transition-all duration-300 ${isUserTableOpen ? 'max-h-[2000px]' : 'max-h-0 overflow-hidden'}`}>
+        <div className={`transition-all duration-300 w-full ${isUserTableOpen ? 'max-h-[2000px] overflow-auto' : 'max-h-0 overflow-hidden'}`}>
           <table className='w-full'>
             <thead className='bg-gray-800 text-white w-full'>
               <tr>
@@ -204,12 +208,17 @@ const Admin = () => {
                     {u.id !== user.id ? (
                       <>
                         {!u.isAdmin ? (
-                          <button
-                            onClick={() => handleAdminStatus(u.id, true)}
-                            className="bg-blue-500 text-white px-3 py-1 rounded w-52"
-                          >
-                            Make Admin
-                          </button>
+                          <>
+                            <button
+                              onClick={() => {
+                                setSelectedUserId(u);
+                                setConfirmBox(!confirmBox);
+                              }}
+                              className="bg-blue-500 text-white px-3 py-1 rounded w-52"
+                            >
+                              Make Admin
+                            </button>
+                          </>
                         ) : (
                           <button
                             onClick={() => handleAdminStatus(u.id, false)}
@@ -238,6 +247,26 @@ const Admin = () => {
       <p>Please contact an admin for more information.</p>
       <button className='btn btn-secondary text-base-content py-4 my-4' onClick={() => Navigate(`/in/home`)}>{"Go to home"}</button>
       </div>}
+
+    {confirmBox && <>
+      <div className="fixed z-20 bg-black opacity-70 w-full h-full left-0 top-0" onClick={() => setConfirmBox(!confirmBox)}/>
+      <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-2/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+        <button
+          className="text-lg p-2 rounded-full bg-primary text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
+          onClick={() => setConfirmBox(!confirmBox)}
+        >
+          <IoMdClose />
+        </button>
+        <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
+          {"Are you sure?"}
+        </h3>
+        <p className="mb-4">{`You want to make ${selectedUserId.name} an Admin?`}</p>
+        <div className="flex flex-row gap-5">
+          <button className="bg-primary rounded-xl text-xl btn" onClick={() => handleAdminStatus(selectedUserId.id, true)}>Yes</button>
+          <button className="border-2 border-primary btn rounded-xl text-xl" onClick={() => setConfirmBox(!confirmBox)}>No</button>
+        </div>
+      </div>
+      </>}
     </>
   );
 };
