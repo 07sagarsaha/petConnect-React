@@ -143,7 +143,7 @@ const Admin = () => {
                   {user.isVetVerified === false && 'Denied'}
                   {user.isVetVerified === undefined && 'Pending'}
                 </td>
-                <td className='p-4 space-x-2'>
+                <td className='p-4 space-x-2 flex'>
                   {!user.isVetVerified && (
                     <>
                       <button

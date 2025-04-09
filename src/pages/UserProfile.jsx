@@ -143,21 +143,21 @@ function UserProfile() {
           
           <div className={`flex flex-col gap-5 justify-start items-start w-full p-5 rounded-xl bg-base-200 mt-8 ${isBioExpanded ? `hover:bg-base-200` : `hover:bg-base-300`} transition-all mb-5`} onClick={handleBioExpand}>
             <p className="self-start w-full flex items-start">{userData?.bio || "Bio is Empty"}</p>
-            {isBioExpanded && 
+            {isBioExpanded && userData.isVetVerified &&
             <div className="flex flex-col text-start items-start justify-between w-full">
               <div>
                 <h2 className="text-2xl font-bold mb-2 text-primary">
                   {"Basic info"}
                 </h2>
                 <p className="mb-2">
-                  <strong>{"Location:"}</strong> {userData?.location || "No Location Added"}
+                  <strong>{"Location:"}</strong> {userData?.address || "No Location Added"}
                 </p>
                 <p className="mb-2 max-sm:text-sm">
                   <strong>{"Email:"}</strong> {userData?.email}
                 </p>
               </div>
             </div>}
-            <p className="self-start">{"Show "}{isBioExpanded ? "Less" : 'More'}{"..."}</p>
+            {userData?.isVetVerified && <p className="self-start">{"Show "}{isBioExpanded ? "Less" : 'More'}{"..."}</p>}
           </div>
         <div className="mb-5 w-full bg-base-200 p-5 rounded-xl">
             <div className="flex flex-row justify-between">
