@@ -107,7 +107,7 @@ const Admin = () => {
       {isAdmin && user &&
       <>
       <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
-      <button className='btn btn-secondary text-base-content py-4 my-4' onClick={() => Navigate(`/in/home`)}>{"Go to home"}</button>
+      <button className='btn btn-secondary py-4 my-4' onClick={() => Navigate(`/in/home`)}>{"Go to home"}</button>
       <div 
         className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
         onClick={() => setIsVetTableOpen(!isVetTableOpen)}
@@ -117,7 +117,7 @@ const Admin = () => {
       </div>
       <div className={`transition-all duration-300 ${isVetTableOpen ? 'max-h-[2000px] overflow-auto' : 'max-h-0 overflow-hidden'}`}>
         <table className='w-full'>
-          <thead className='bg-gray-800 text-white w-full'>
+          <thead className='bg-base-300 w-full'>
             <tr>
               <th className='p-4 text-start'>User ID</th>
               <th className='p-4 text-start'>Email</th>
@@ -129,15 +129,16 @@ const Admin = () => {
               <th className='p-4 text-start'>Actions</th>
             </tr>
           </thead>
-          <tbody className='bg-gray-200 w-full'>
+          <tbody className='text-base-content w-full'>
             {vetUsers.map(user => (
-              <tr key={user.id} className="border-b">
-                <td className='p-4'>{user.id}</td>
+              <>
+              <tr key={user.id} className={`border-b bg-base-200`}>
+                <td className='p-4 flex flex-row gap-3'>{(user.isVetVerified === undefined) && <div className='w-4 h-4 self-center rounded-full bg-red-500'/>}{user.id}</td>
                 <td className='p-4'>{user.email}</td>
                 <td className='p-4'>{user.name}</td>
                 <td className='p-4'>{user.rnum}</td>
                 <td className='p-4'>{user.isVet ? 'User is vet' : 'User is not vet'}</td>
-                <td className='p-4'>{user.isVetVerified ? 'User is verified vet' : 'User is not verified vet'}</td>
+                <td className='p-4'>{user.isVetVerified ? 'User is verified vet' : (user.isVetVerified === undefined) ? "User vet is pending" : "User is Not Vet Verified"}</td>
                 <td className='p-4'>
                   {user.isVetVerified === true && 'Approved'}
                   {user.isVetVerified === false && 'Denied'}
@@ -170,6 +171,7 @@ const Admin = () => {
                   )}
                 </td>
               </tr>
+              </>
             ))}
           </tbody>
         </table>

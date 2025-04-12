@@ -317,17 +317,17 @@ const CommentDisplay = ({
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10 max-sm:mb-20">
+                <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10">
                   <form
                     onSubmit={handleAddComment}
-                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-5 transition-all"
+                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-10 transition-all"
                   >
                     <input
                       type="text"
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="Add a comment..."
-                      className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-base-200 shadow-lg z-0 max-sm:mb-20"
+                      className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-base-200 shadow-lg z-0"
                     />
                     <button
                       type="submit"
@@ -410,7 +410,7 @@ const CommentDisplay = ({
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-auto animate-postAnim1">
+              <div className="flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-y-auto animate-postAnim1">
                 <div className="flex flex-row gap-2 items-center py-2">
                     <img src={profilePic || pfp} className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer" onClick={() => navigate(`/in/profile/${userId}`)}/>
                     <div className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}>
@@ -445,10 +445,10 @@ const CommentDisplay = ({
                   </button>
                   <span>{dislikes?.length || 0} dislikes</span>
                 </div>
-                <div className="flex flex-col pt-5">
+                <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col py-5">
                   <form
                     onSubmit={handleAddComment}
-                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:absolute max-sm:bottom-5 max-sm:mb-20"
+                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-10 transition-all"
                   >
                     <input
                       type="text"
@@ -468,11 +468,11 @@ const CommentDisplay = ({
                   <h3 className="text-lg font-bold mt-3 text-left">
                     Comments: {commentCount}
                   </h3>
-                  <div className="comments-section my-3 flex flex-col items-start overflow-y-auto">
+                  <div className="comments-section my-3 flex flex-col items-start pb-11 max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto">
                     {comments.map((comment) => (
                       <div
                         key={comment.id}
-                        className="bg-base-200 w-fit max-sm:w-full my-4 p-3 rounded-md shadow-lg"
+                        className="bg-base-200 w-fit my-4 p-3 rounded-md shadow-lg"
                       >
                         <div className="flex justify-between gap-7">
                           <p className="text-sm font-semibold">
@@ -506,13 +506,13 @@ const CommentDisplay = ({
                               </p>
                               <div className="flex flex-row gap-5">
                                 <button
-                                  className="bg-error py-2 px-3 rounded-xl text-xl"
+                                  className="bg-error btn rounded-xl text-xl"
                                   onClick={handleDeletePComment}
                                 >
                                   Yes
                                 </button>
                                 <button
-                                  className="border-2 border-error py-2 px-3 rounded-xl text-xl"
+                                  className="border-2 border-error btn rounded-xl text-xl"
                                   onClick={confirmDeleteBox}
                                 >
                                   No

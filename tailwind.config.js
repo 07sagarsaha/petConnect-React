@@ -4,6 +4,14 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      transitionTimingFunction: {
+        'in-expo': 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+        'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
+      },
+      transitionDuration: {
+        '1500': '1500ms',
+        '2000': '2000ms',
+      },
       boxShadow: {
         Uni: "0 0 15px 5px rgba(128, 128, 128, 0.485)",
         UniCol: "0 4px 15px 0 pink, 0 0 25px 0 purple",
@@ -25,13 +33,18 @@ export default {
         fadeOut: {
           "100%": { opacity: "0" },
         },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
       },
       animation: {
         postButtonAnim1: "postAnim 1s ease",
         postButtonAnim2: "postAnim2 1s ease",
         postAnim3: "postAnim3 0.75s ease-in-out",
-        postAnim1: "postAnim4 0.5s ease",
+        postAnim1: "postAnim 0.5s ease",
         fadeOut: "fadeOut 0.5s ease-in-out",
+        fadeIn: 'fadeIn 1s ease-in',
       },
     },
   },

@@ -261,7 +261,7 @@ function Home() {
 
   return (
     <>
-      <div className="flex flex-col items-center bg-base-200 text-gray-800 min-h-screen p-4 rounded-lg">
+      <div className="flex flex-col items-center bg-base-200 text-gray-800 p-4 rounded-lg">
         {/* Container for search and new post */}
         <div className="lg:w-4/6 max-sm:w-full max-sm:flex-col self-start flex lg:flex-row gap-4 mb-4 md:flex-row md:w-full max-md:w-full max-md:flex-row">
           {/* Search Container */}
@@ -339,17 +339,17 @@ function Home() {
           <div className="lg:w-2/3 w-full z-0">
             <PetFacts/>
           </div>
-          <div className="lg:w-2/3 w-full z-0 flex flex-col gap-4">
-            {post.map((post) => (
-                <Posts key={post.id} {...post} profilePic={post.profilePic} date={
-                  post.createdAt
-                    ? format(post.createdAt.toDate(), "PPP")
-                    : "No date" 
-                }
-                isVetVerified ={post.isVetVerified} />
-            ))}
-          </div>
         </div>
+      </div>
+      <div className="lg:w-2/3 w-full z-0 flex flex-col gap-0 px-4">
+        {post.map((post) => (
+            <Posts key={post.id} {...post} profilePic={post.profilePic} date={
+              post.createdAt
+                ? format(post.createdAt.toDate(), "PPP")
+                : "No date" 
+            }
+            isVetVerified ={post.isVetVerified} />
+        ))}
       </div>
     </>
   );

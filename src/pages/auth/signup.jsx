@@ -107,11 +107,10 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-100">
+    <div className="rounded-xl flex items-center justify-center bg-base-100">
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
 
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
-        <Header />
+      <div className="w-full p-8 space-y-8 backdrop-blur-md rounded-lg shadow-lg">
         <h1 className="text-4xl font-bold text-center text-primary">
           Register
         </h1>
