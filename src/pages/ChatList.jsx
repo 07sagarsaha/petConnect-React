@@ -39,9 +39,6 @@ const ChatList = () => {
             (id) => id !== user.id
           );
 
-          // Debugging: Log otherParticipantId
-          console.log("Other Participant ID:", otherParticipantId);
-
           // Skip if otherParticipantId is undefined
           if (!otherParticipantId) {
             console.warn("Skipping chat due to missing otherParticipantId");
@@ -101,7 +98,7 @@ const ChatList = () => {
             onClick={() => navigateToChat(chat.otherParticipantId)}
             className="p-4 bg-base-100 rounded-lg cursor-pointer hover:bg-base-300 transition-colors flex-row flex justify-between"
           >
-            <div className="flex justify-start gap-3 items-center flex-row">
+            <div className="flex justify-start gap-3 items-center flex-row w-3/4">
               <div className="aspect-square w-[75px] h-[75px] max-sm:h-[50px] max-sm:w-[50px] overflow-hidden rounded-xl">
                 <img
                   src={chat.otherParticipantPfp}
@@ -109,7 +106,7 @@ const ChatList = () => {
                   className="w-full h-full rounded-xl object-cover cursor-pointer"
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col w-3/4"> 
                 <div className="flex flex-row gap-2">
                   <h3 className="font-semibold">
                     {"@" + chat.otherParticipantHandle}
@@ -118,7 +115,7 @@ const ChatList = () => {
                     <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
                   </span>}
                 </div>
-                <p className="text-sm opacity-75 truncate">{chat.lastMessage}</p>
+                <p className="text-sm opacity-75 truncate w-4/5">{chat.lastMessage}</p>
               </div>
             </div>
             <span className="text-sm opacity-60">
