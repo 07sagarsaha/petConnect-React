@@ -22,8 +22,8 @@ const PetModel = ({ isAnimating, showCanvas, register, login }) => {
   const moveUpProgress = useRef(0);
   const moveProgress = useRef(0);
   const [viewport, setViewport] = React.useState({
-    width: window.innerWidth,
-    height: window.innerHeight
+    width: typeof window !== 'undefined' ? window.innerWidth : 768,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800
   });
   
   React.useEffect(() => {
@@ -374,8 +374,8 @@ const Landing = () => {
           <Canvas
             className="w-full h-full"
             camera={{
-              position: [0, 2, viewport?.width <= 768 ? 7 : 5], // Increased distance on mobile
-              fov: viewport?.width <= 768 ? 60 : 50, // Wider field of view on mobile
+              position: [0, 2, viewport.width <= 768 ? 7 : 5],
+              fov: viewport.width <= 768 ? 60 : 50,
               near: 0.1,
               far: 1000
             }}
