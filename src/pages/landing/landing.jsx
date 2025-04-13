@@ -21,10 +21,7 @@ const PetModel = ({ isAnimating, showCanvas, register, login }) => {
   const initialRotationY = useRef(degreesToRadians(-50));
   const moveUpProgress = useRef(0);
   const moveProgress = useRef(0);
-  const [viewport, setViewport] = React.useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 768,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800
-  });
+  const isMobile = useRef(window.innerWidth <= 768);
   
   React.useEffect(() => {
     const handleResize = () => {
@@ -100,8 +97,8 @@ const PetModel = ({ isAnimating, showCanvas, register, login }) => {
         const easeProgress = easeInOutCubic(Math.min(moveProgress.current, 1));
         
         // Responsive position calculation
-        const targetX = viewport.width <= 768 ? 1 : 2; // Less movement on mobile
-        
+        const targetX = isMobile.current ? 1 : 2;
+      
         modelRef.current.position.x = THREE.MathUtils.lerp(
           modelRef.current.position.x,
           targetX,
@@ -126,7 +123,7 @@ const PetModel = ({ isAnimating, showCanvas, register, login }) => {
         const easeProgress = easeInOutCubic(Math.min(moveProgress.current, 1));
         
         // Responsive position calculation
-        const targetX = viewport.width <= 768 ? -1 : -2; // Less movement on mobile
+        const targetX = isMobile.current ? -1 : -2; // Less movement on mobile
         
         modelRef.current.position.x = THREE.MathUtils.lerp(
           modelRef.current.position.x,
@@ -374,8 +371,8 @@ const Landing = () => {
           <Canvas
             className="w-full h-full"
             camera={{
-              position: [0, 2, viewport.width <= 768 ? 7 : 5],
-              fov: viewport.width <= 768 ? 60 : 50,
+              position: [0, 2, window.innerWidth <= 768 ? 7 : 5],
+              fov: window.innerWidth <= 768 ? 60 : 50,
               near: 0.1,
               far: 1000
             }}
@@ -417,7 +414,7 @@ const Landing = () => {
             {/* Register Section */}
             {register && (
               <div className="fixed inset-y-0 left-15 top-52 w-1/2 h-fit max-sm:w-full z-30 flex items-center justify-center">
-                <div className="w-full max-w-md px-6 py-8 animate-postButtonAnim2 duration-500 backdrop-blur-md shadow-lg rounded-2xl">
+                <div className="w-full max-w-md px-6 py-8 animate-postButtonAnim2 duration-500 backdrop-blur-md shadow-lg rounded-2xl border-2 border-base-200 mx-4">
                   <Register />
                   <div className="text-center mt-4">
                     <button className="text-primary underline" onClick={handleShowLogin}>
@@ -430,7 +427,7 @@ const Landing = () => {
             {/* Login Section */}
             {login && (
               <div className="fixed inset-y-0 right-0 top-52 w-1/2 h-fit max-sm:w-full z-30 flex items-center justify-center">
-                <div className="w-full max-w-md px-6 py-8 backdrop-blur-md shadow-lg rounded-2xl animate-postAnim4 duration-500">
+                <div className="w-full max-w-md px-6 py-8 backdrop-blur-md shadow-lg rounded-2xl animate-postAnim4 duration-500 border-2 border-base-200 mx-4">
                   <Login />
                   <div className="text-center mt-4">
                     <button className="text-primary underline" onClick={handleShowRegister}>
