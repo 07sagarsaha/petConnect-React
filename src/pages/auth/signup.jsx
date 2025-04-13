@@ -107,10 +107,10 @@ const Register = () => {
   }
 
   return (
-    <div className="rounded-xl flex items-center justify-center bg-base-100">
+    <div className="rounded-xl flex items-center justify-center">
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
 
-      <div className="w-full p-8 space-y-8 backdrop-blur-md rounded-lg shadow-lg">
+      <div className="w-full p-8 space-y-8 rounded-lg">
         <h1 className="text-4xl font-bold text-center text-primary">
           Register
         </h1>
@@ -220,14 +220,6 @@ const Register = () => {
             </div>
           </form>
         )}
-
-        <div className="text-center mt-4">
-          <Link to="/login">
-            <button className="text-primary underline">
-              Already A User? Login
-            </button>
-          </Link>
-        </div>
       </div>
     </div>
   );

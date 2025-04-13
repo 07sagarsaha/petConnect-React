@@ -66,7 +66,7 @@ const Chat = () => {
       orderBy("timestamp", "asc") // Changed to "asc" for correct chronological order
     );
 
-    const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
+      const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
       const messageData = snapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter(
@@ -76,7 +76,7 @@ const Chat = () => {
         );
       setMessages(messageData);
     });
-
+  
     return () => unsubscribe();
   }, [userId]);
 
@@ -125,7 +125,7 @@ const Chat = () => {
   return (
     <div className="flex flex-col h-screen bg-base-100 max-lg:h-[100dvh]">
       {/* Header */}
-      <div className="bg-primary text-base-100 p-4 flex items-center gap-3 sticky top-0 z-10 shadow-md">
+      <div className="bg-primary text-base-100 p-4 flex items-center gap-3 sticky top-0 z-0 shadow-md">
         <button
           onClick={handleBack}
           className="p-2 rounded-full hover:bg-primary-focus transition-colors"
@@ -176,7 +176,7 @@ const Chat = () => {
       {/* Message Input - Adjusted for desktop, tablet, and mobile */}
       <form
         onSubmit={sendMessage}
-        className="p-4 border-t border-base-200 bg-base-100 fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[14%] max-lg:ml-0"
+        className="p-4 border-t border-base-200 bg-base-100 fixed bottom-0 max-lg:bottom-20 left-0 right-0 ml-[16%] max-lg:ml-0"
       >
         <div className="flex gap-2 w-full justify-between items-center">
           <input

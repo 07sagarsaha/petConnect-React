@@ -179,7 +179,7 @@ const Posts = ({
       {/* Post Content */}
       <div
         key={id}
-        className="w-[100%] sm:w-[100%] text-lg sm:text-xl bg-base-100 p-3 mb-6 sm:p-6 flex-col justify-center items-center shadow-lg h-max sm:min-h-12 rounded-2xl transition-all ease-in-out duration-200"
+        className="w-[100%] sm:w-[100%] text-lg sm:text-xl bg-base-100 p-3 mb-6 sm:p-6 flex-col justify-center items-center shadow-lg h-max sm:min-h-12 rounded-xl transition-all ease-in-out duration-200"
       >
         <div className="flex justify-between">
           {/* Header */}

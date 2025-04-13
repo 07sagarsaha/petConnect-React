@@ -27,6 +27,7 @@ import { FaUserDoctor } from "react-icons/fa6";
 import pfp from "../icons/pfp.png";
 
 function Profile() {
+  const [contentLoaded, setContentLoaded] = useState(false);
   const [profile, setProfile] = useState();
   const [bg, setBG] = useState("/src/Assets/background.jpg");
   const [userData, setUserData] = useState();
@@ -59,6 +60,7 @@ function Profile() {
   };
 
   useEffect(() => {
+    setContentLoaded(false);
     const fetchUser = async () => {
       try {
         if (user) {
@@ -71,6 +73,9 @@ function Profile() {
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
+      }
+      finally {
+        setContentLoaded(true);
       }
     };
 
@@ -234,6 +239,91 @@ function Profile() {
 
   return (
     <>
+    {!contentLoaded ? (
+      <div className="flex flex-col items-center w-full p-4">
+      {/* Profile Header Skeleton */}
+      <div className="w-4/5 max-sm:w-full self-center bg-base-100 rounded-lg shadow-lg p-6">
+        <div className="flex flex-col">
+          {/* Profile Info Skeleton */}
+          <div className="flex flex-row justify-between w-full gap-5 max-sm:flex-col">
+            <div className="flex gap-5 flex-row max-sm:flex-col">
+              {/* Profile Picture Skeleton */}
+              <div className="w-36 h-36 rounded-full bg-base-300 animate-pulse max-sm:self-center" />
+              {/* Name and Handle Skeleton */}
+              <div className="flex flex-col justify-center gap-2">
+                <div className="h-8 w-48 bg-base-300 rounded animate-pulse" />
+                <div className="h-6 w-32 bg-base-300 rounded animate-pulse" />
+              </div>
+            </div>
+            {/* Edit Button Skeleton */}
+            <div className="flex self-center gap-3">
+              <div className="h-12 w-24 bg-base-300 rounded-2xl animate-pulse" />
+            </div>
+          </div>
+  
+          {/* Bio Section Skeleton */}
+          <div className="flex flex-col gap-5 w-full p-5 rounded-xl bg-base-200 mt-8 mb-5">
+            <div className="h-20 bg-base-300 rounded animate-pulse" />
+          </div>
+  
+          {/* Pets Section Skeleton */}
+          <div className="mb-5 w-full bg-base-200 p-5 rounded-xl">
+            <div className="flex flex-row justify-between mb-4">
+              <div className="h-8 w-32 bg-base-300 rounded animate-pulse" />
+              <div className="h-12 w-32 bg-base-300 rounded-2xl animate-pulse" />
+            </div>
+            {/* Pet Cards Skeleton */}
+            {[1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex flex-row max-sm:flex-col gap-2 items-center justify-between bg-base-300 mt-2 p-4 rounded-lg animate-pulse"
+              >
+                <div className="flex flex-row gap-2 max-sm:flex-col w-full">
+                  {/* Pet Image Skeleton */}
+                  <div className="w-24 h-24 bg-base-200 rounded-md" />
+                  {/* Pet Info Skeleton */}
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="h-4 w-1/4 bg-base-200 rounded" />
+                    <div className="h-4 w-1/6 bg-base-200 rounded" />
+                    <div className="h-4 w-1/3 bg-base-200 rounded" />
+                  </div>
+                  {/* Action Buttons Skeleton */}
+                  <div className="flex gap-2">
+                    <div className="h-10 w-10 bg-base-200 rounded-2xl" />
+                    <div className="h-10 w-10 bg-base-200 rounded-2xl" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+  
+      {/* Posts Section Skeleton */}
+      <div className="w-4/5 max-sm:w-full self-center mt-8">
+        <div className="h-10 w-48 bg-base-300 rounded animate-pulse mb-8" />
+        <div className="flex flex-col gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-base-100 p-6 rounded-lg shadow-lg animate-pulse">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-base-300 rounded-full" />
+                <div className="flex-1">
+                  <div className="h-4 bg-base-300 rounded w-1/4 mb-2" />
+                  <div className="h-3 bg-base-300 rounded w-1/6" />
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-4 bg-base-300 rounded w-full" />
+                <div className="h-4 bg-base-300 rounded w-5/6" />
+                <div className="h-4 bg-base-300 rounded w-4/6" />
+              </div>
+              <div className="mt-4 h-48 bg-base-300 rounded-lg w-full" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    ) : (
     <div className="flex flex-col justify-center p-4 bg-base-200 text-primary-focus min-h-screen">
       <div className="w-4/5 max-sm:w-full self-center bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex flex-col items-start text-center mb-5">
@@ -526,6 +616,7 @@ function Profile() {
         </div>
       </div>
     </div>
+    )}
     </>
   );
 }

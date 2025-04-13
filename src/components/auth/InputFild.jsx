@@ -8,7 +8,7 @@ function InputFild({ type, id, placeholder, value, onChange }) {
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className="w-full p-2 border border-gray-300 rounded-md"
+      className="w-full p-2 border border-base-300 rounded-md"
       required
     />
   );

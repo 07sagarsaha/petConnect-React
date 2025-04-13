@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 
 function Header() {
   return (
-    <div className="flex items-center justify-start p-4 bg-base-100 shadow-md overflow-hidden">
-      <img src={logo} alt="Logo" className="h-20" id="logoImg" />
-      <Link to="/" className="font-bold text-xl">
-        Pet Connect
+    <div className="flex items-center justify-start overflow-hidden">
+      <Link to="/" className="font-bold text-xl flex flex-row items-center">
+        <img src={logo} alt="Logo" className="h-16 mr-8 rounded-full" id="logoImg" />
+          Pet Connect
       </Link>
     </div>
   );

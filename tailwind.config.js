@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import daisyui from "daisyui";
+import { Color } from "three";
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -23,24 +24,35 @@ export default {
           "100%": { transform: "scale(100%)", opacity: "1" },
         },
         postAnim2: {
-          "0%": { transform: "translateX(-1000%)", opacity: "0" },
-          "100%": { transform: "translateX(0%)", opacity: "1" },
+          "0%": { transform: "translateX(-5px)", opacity: "0" },
+          "100%": { transform: "translateX(0px)", opacity: "1" },
         },
         postAnim3: {
           "0%": { transform: "translateY(100%)", opacity: "0" },
           "100%": { transform: "translateY(0%)", opacity: "1" },
         },
+        postAnim4: {
+          "0%": { opacity: "0", transform: "translateX(5px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
         fadeOut: {
           "100%": { opacity: "0" },
         },
         fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+          '0%': { 
+            opacity: '1',
+            backgroundColor: 'rgba(0, 0, 0, 1)'
+          },
+          '100%': { 
+            opacity: '1',
+            backgroundColor: 'rgba(0, 0, 0, 0)'
+          },
         },
       },
       animation: {
         postButtonAnim1: "postAnim 1s ease",
-        postButtonAnim2: "postAnim2 1s ease",
+        postButtonAnim2: "postAnim2 1.5s ease-in-out",
+        postAnim4: "postAnim4 1s ease-in-out",
         postAnim3: "postAnim3 0.75s ease-in-out",
         postAnim1: "postAnim 0.5s ease",
         fadeOut: "fadeOut 0.5s ease-in-out",

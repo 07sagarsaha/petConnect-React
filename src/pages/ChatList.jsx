@@ -15,6 +15,7 @@ import { useUser } from "@clerk/clerk-react";
 import { FaUserDoctor } from "react-icons/fa6";
 
 const ChatList = () => {
+  const [contentLoaded, setContentLoaded] = useState(false);
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
   const { user } = useUser();
@@ -24,6 +25,8 @@ const ChatList = () => {
       console.warn("User is not logged in.");
       return;
     }
+
+    setContentLoaded(false);
 
     const chatQuery = query(
       collection(db, "chats"),
@@ -51,6 +54,7 @@ const ChatList = () => {
           const userDocRef = doc(db, "users", otherParticipantId);
           const userDoc = await getDoc(userDocRef);
           const userData = userDoc.exists() ? userDoc.data() : {};
+          setContentLoaded(true);
 
           return {
             id: docs.id,
@@ -89,7 +93,41 @@ const ChatList = () => {
   };
 
   return (
-    <div className="p-4 min-h-screen">
+    <>
+    {!contentLoaded ? (
+      <div className="p-6 min-h-screen items-start">
+      {/* Header Skeleton */}
+      <div className="h-8 w-32 bg-base-300 rounded animate-pulse mb-6" />
+      
+      {/* Chat List Skeleton */}
+      <div className="space-y-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div 
+            key={i} 
+            className="p-4 bg-base-100 rounded-lg flex justify-between animate-pulse"
+          >
+            {/* Left side with profile pic and message */}
+            <div className="flex justify-start gap-3 items-center flex-row w-3/4">
+              {/* Profile Picture Skeleton */}
+              <div className="w-[75px] h-[75px] max-sm:h-[50px] max-sm:w-[50px] bg-base-300 rounded-xl" />
+              
+              {/* Chat Info Skeleton */}
+              <div className="flex flex-col w-3/4">
+                <div className="flex flex-row gap-2 mb-2">
+                  <div className="h-5 w-32 bg-base-300 rounded" />
+                </div>
+                <div className="h-4 w-4/5 bg-base-300 rounded" />
+              </div>
+            </div>
+  
+            {/* Timestamp Skeleton */}
+            <div className="h-4 w-16 bg-base-300 rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
+    ) : (
+    <div className="p-6 min-h-screen items-start">
       <h2 className="text-2xl font-bold mb-6">Messages</h2>
       <div className="space-y-4">
         {chats.map((chat) => (
@@ -125,6 +163,8 @@ const ChatList = () => {
         ))}
       </div>
     </div>
+    )}
+    </>
   );
 };
 

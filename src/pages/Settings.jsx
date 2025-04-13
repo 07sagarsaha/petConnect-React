@@ -135,7 +135,7 @@ function Settings() {
   }
 
   return (
-    <div className="flex flex-col justify-center p-8 bg-base-200  min-h-screen">
+    <div className="flex flex-col justify-center p-4 bg-base-200  min-h-screen">
       <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>

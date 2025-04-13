@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Navigate, NavLink, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext/authContext";
 import landingimg from "../../assets/landingPage.jpg";
 import dog3d from "../../assets/voxel_dog.glb";
@@ -10,9 +10,10 @@ import { OrbitControls, useGLTF } from "@react-three/drei";
 import { IoPawSharp } from "react-icons/io5";
 import { FaCat } from "react-icons/fa";
 import Register from "../auth/signup";
+import Login from "../auth/login";
 
 const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
-const PetModel = ({ isAnimating, showCanvas, register }) => {
+const PetModel = ({ isAnimating, showCanvas, register, login }) => {
   const modelRef = useRef();
   const { scene } = useGLTF(dog3d);
   const rotationProgress = useRef(0);
@@ -20,6 +21,22 @@ const PetModel = ({ isAnimating, showCanvas, register }) => {
   const initialRotationY = useRef(degreesToRadians(-50));
   const moveUpProgress = useRef(0);
   const moveProgress = useRef(0);
+  const [viewport, setViewport] = React.useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+  
+  React.useEffect(() => {
+    const handleResize = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+  
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   useFrame((state, delta) => {
     if (!modelRef.current) return;
@@ -78,30 +95,56 @@ const PetModel = ({ isAnimating, showCanvas, register }) => {
         );
       }
 
-      if(register && moveUpProgress.current >= 1) {
+      if(register) {
         moveProgress.current += delta * 0.25;
-          const easeProgress = easeInOutCubic(Math.min(moveProgress.current, 1));
-          
-          // Move position to the right and adjust pivot point
-          modelRef.current.position.x = THREE.MathUtils.lerp(
-            0,
-            2, // Changed to positive 2 to move right
-            easeProgress
-          );
-
-          // Rotate to face the center (adjusted for right side)
-          modelRef.current.rotation.y = THREE.MathUtils.lerp(
-            modelRef.current.rotation.y,
-            degreesToRadians(-130), // Adjusted angle to face center from right side
-            easeProgress
-          );
-
-          // Adjust Z position for depth while maintaining center pivot
-          modelRef.current.position.z = THREE.MathUtils.lerp(
-            0,
-            1, // Changed to positive 1 for right side perspective
-            easeProgress
-          );
+        const easeProgress = easeInOutCubic(Math.min(moveProgress.current, 1));
+        
+        // Responsive position calculation
+        const targetX = viewport.width <= 768 ? 1 : 2; // Less movement on mobile
+        
+        modelRef.current.position.x = THREE.MathUtils.lerp(
+          modelRef.current.position.x,
+          targetX,
+          easeProgress * 0.05
+        );
+      
+        modelRef.current.rotation.y = THREE.MathUtils.lerp(
+          modelRef.current.rotation.y,
+          degreesToRadians(-45), // Reduced angle for better visibility
+          easeProgress * 0.05
+        );
+      
+        modelRef.current.position.z = THREE.MathUtils.lerp(
+          modelRef.current.position.z,
+          0.5, // Reduced depth
+          easeProgress * 0.05
+        );
+      }
+      
+      if(login) {
+        moveProgress.current += delta * 0.25;
+        const easeProgress = easeInOutCubic(Math.min(moveProgress.current, 1));
+        
+        // Responsive position calculation
+        const targetX = viewport.width <= 768 ? -1 : -2; // Less movement on mobile
+        
+        modelRef.current.position.x = THREE.MathUtils.lerp(
+          modelRef.current.position.x,
+          targetX,
+          easeProgress * 0.05
+        );
+      
+        modelRef.current.rotation.y = THREE.MathUtils.lerp(
+          modelRef.current.rotation.y,
+          degreesToRadians(45),
+          easeProgress * 0.05
+        );
+      
+        modelRef.current.position.z = THREE.MathUtils.lerp(
+          modelRef.current.position.z,
+          0.5, // Reduced depth
+          easeProgress * 0.05
+        );
       }
     }
   });
@@ -200,6 +243,7 @@ const Landing = () => {
   const [isAnimating, setIsAnimating] = React.useState(false);
   const [secondSection, setSecondSection] = React.useState(false); // State to control the second section
   const [register, showRegister] = React.useState(false);
+  const [login, showLogin] = React.useState(false); 
   const navigate = useNavigate();
 
   const mainRef = useRef(null);
@@ -257,29 +301,57 @@ const Landing = () => {
 
   const handleShowRegister = () => {
     showRegister(true);
+    showLogin(false);
     setSecondSection(false);
   }
 
+  const handleShowLogin = () => {
+    showRegister(false);
+    showLogin(true);
+    setSecondSection(false);
+  }
+
+  const handleDirectShowLogin = () => {
+    // Trigger the initial animation sequence
+    setIsAnimating(true);
+    setShowCanvas(true);
+  
+    // Sequential timing for animations
+    setTimeout(() => {
+      setSecondSection(false);
+      // After the model moves up, trigger login form
+      setTimeout(() => {
+        showRegister(false);
+        showLogin(true);
+        setSecondSection(false);
+      }, 100); // Adjust timing as needed
+    }, 100); // Matches your original animation timing
+  };
+
   return (
     <>
-    <div className="overflow-hidden">
-      <Header />
-    </div>
     <div 
       ref={mainRef}
       className="flex flex-col h-screen animate-fadeIn overflow-y-scroll scroll-smooth"
       style={{ scroll: "smooth" }}>
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
+      <div className="fixed z-50 w-fit backdrop-blur-md p-4 shadow-lg rounded-r-full" onClick={() => 
+        window.location.reload()}>
+        <Header />
+      </div>
+      <button className="btn btn-primary text-base-100 fixed w-fit top-4 right-8 z-50" onClick={handleDirectShowLogin}>
+        {"Login"}
+      </button>
       <div className="flex flex-col bg-base-100 relative min-h-[200vh]">
         <BackgroundPaws isAnimating={isAnimating} showCanvas={showCanvas}/>
 
         {/* Welcome Section 1 */}
-        <div className={`flex items-start my-3 justify-center px-8 flex-grow relative z-20 pointer-events-none transition-transform duration-1000 ease-in-out ${showCanvas ? '-translate-y-[2000px]' : ''}`}>
+        <div className={`flex items-start my-32 justify-center px-8 flex-grow relative z-20 pointer-events-none transition-transform duration-1000 ease-in-out ${showCanvas ? '-translate-y-[2000px]' : ''}`}>
           <div className="w-full max-w-2xl px-4 py-16 rounded-xl animate-postButtonAnim1 backdrop-blur-md bg-base-100/50 shadow-lg pointer-events-auto">
             <h1 className="text-4xl text-center font-bold mb-4 text-primary">
               {"Ever wished, there was a space for your pets?"}
             </h1>
-            <p className="text-lg mb-4 text-neutral text-center">
+            <p className="text-lg mb-4 text-center">
               {"Where you can share their stories, connect with other pet lovers, and find a community that understands the joy and challenges of pet ownership."}
             </p>
             <p className="text-lg mb-4 text-center italic">
@@ -299,18 +371,18 @@ const Landing = () => {
         {/* Background Canvas */}
         <div className="flex flex-col">
           <div className="fixed inset-0 z-0 overflow-hidden pointer-events-auto">
-            <Canvas
-              className="w-full h-full"
-              camera={{
-                position: [0, 2, 5],
-                fov: 50,
-                near: 0.1,
-                far: 1000
-              }}
-            >
+          <Canvas
+            className="w-full h-full"
+            camera={{
+              position: [0, 2, viewport?.width <= 768 ? 7 : 5], // Increased distance on mobile
+              fov: viewport?.width <= 768 ? 60 : 50, // Wider field of view on mobile
+              near: 0.1,
+              far: 1000
+            }}
+          >
               <ambientLight intensity={0.5} />
               <directionalLight position={[0, 5, 5]} />
-              <PetModel isAnimating={isAnimating} showCanvas={showCanvas} register={register} />
+              <PetModel isAnimating={isAnimating} showCanvas={showCanvas} register={register} login={login} />
               <OrbitControls
                 ref={controlsRef}
                 enableZoom={false}
@@ -328,7 +400,7 @@ const Landing = () => {
                   <h1 className="text-4xl text-center font-bold mb-4 text-primary">
                     {"Welcome to PetConnect!"}
                   </h1>
-                  <p className="text-lg mb-4 text-neutral text-center">
+                  <p className="text-lg mb-4 text-center">
                     {"A place where you can share your pet's stories, share your thoughts, and connect with other pet lovers like you."}
                   </p>
                   <div className="flex justify-center items-center">
@@ -344,9 +416,27 @@ const Landing = () => {
             )}
             {/* Register Section */}
             {register && (
-              <div className="fixed inset-y-0 left-0 w-1/2 max-sm:w-full z-30 flex items-center justify-center">
-                <div className="w-full max-w-md px-6 py-8">
+              <div className="fixed inset-y-0 left-15 top-52 w-1/2 h-fit max-sm:w-full z-30 flex items-center justify-center">
+                <div className="w-full max-w-md px-6 py-8 animate-postButtonAnim2 duration-500 backdrop-blur-md shadow-lg rounded-2xl">
                   <Register />
+                  <div className="text-center mt-4">
+                    <button className="text-primary underline" onClick={handleShowLogin}>
+                      Already A User? Login
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Login Section */}
+            {login && (
+              <div className="fixed inset-y-0 right-0 top-52 w-1/2 h-fit max-sm:w-full z-30 flex items-center justify-center">
+                <div className="w-full max-w-md px-6 py-8 backdrop-blur-md shadow-lg rounded-2xl animate-postAnim4 duration-500">
+                  <Login />
+                  <div className="text-center mt-4">
+                    <button className="text-primary underline" onClick={handleShowRegister}>
+                      New User? Register
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

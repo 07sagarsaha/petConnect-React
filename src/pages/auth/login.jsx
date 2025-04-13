@@ -102,11 +102,10 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-100">
+    <div className="flex items-center justify-center">
       {userLoggedIn && <Navigate to={"/in/home"} replace={true} />}
 
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
-        <Header />
+      <div className="w-full max-w-md p-8 space-y-8">
         {!isResettingPassword && <h1 className="text-4xl flex items-center justify-center font-bold text-center text-primary">
           Login
         </h1>}
@@ -209,14 +208,6 @@ function Login() {
               </button>
           </div>
         {/* Sign up link */}
-
-        <div className="text-center mt-4">
-          <Link to="/signup">
-            <button className="text-primary underline">
-              Don't have an account? Sign up
-            </button>
-          </Link>
-        </div>
       </div>
     </div>
   );
