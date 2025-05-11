@@ -16,6 +16,7 @@ import { IoArrowBack } from "react-icons/io5"; // Import back arrow icon
 import { useUser } from "@clerk/clerk-react";
 import pfp from "../icons/pfp.png"; // Default profile picture
 import { FaUserDoctor } from "react-icons/fa6";
+import { useToast } from "../context/ToastContext";
 
 const Chat = () => {
   const { user } = useUser();
@@ -27,6 +28,7 @@ const Chat = () => {
   const [receipientVerified, setReceipientVerified] = useState(false);
   const [recipientPfp, setReceipientPfp] = useState("");
   const messagesEndRef = useRef(null); // Add ref for auto-scroll
+  const { showToast } = useToast();
 
   // Add scroll to bottom function
   const scrollToBottom = () => {
@@ -66,7 +68,7 @@ const Chat = () => {
       orderBy("timestamp", "asc") // Changed to "asc" for correct chronological order
     );
 
-      const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
+    const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
       const messageData = snapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter(
@@ -76,27 +78,27 @@ const Chat = () => {
         );
       setMessages(messageData);
     });
-  
+
     return () => unsubscribe();
   }, [userId]);
 
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !user.id || !userId) return;
-  
+
     try {
       // Fetch the current user's document
       const userRef = doc(db, "users", user.id);
       const userDoc = await getDoc(userRef);
-  
+
       // Ensure senderHandle has a fallback value
       const senderHandle =
         userDoc.exists() && userDoc.data().name
           ? userDoc.data().name
           : userDoc.exists() && userDoc.data().email
-          ? userDoc.data().email
-          : "Unknown User";
-  
+            ? userDoc.data().email
+            : "Unknown User";
+
       // Add the message to the "chats" collection
       await addDoc(collection(db, "chats"), {
         text: newMessage,
@@ -107,10 +109,11 @@ const Chat = () => {
         participants: [user.id, userId],
         timestamp: serverTimestamp(),
       });
-  
+
       setNewMessage(""); // Clear the input field after sending the message
     } catch (error) {
       console.error("Error sending message:", error);
+      showToast("Something went wrong.");
     }
   };
 
@@ -120,7 +123,7 @@ const Chat = () => {
 
   const handleProfileClick = () => {
     navigate(`/in/profile/${userId}`); // Navigate to the recipient's profile
-  }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-base-100 max-lg:h-[100dvh]">
@@ -132,16 +135,27 @@ const Chat = () => {
         >
           <IoArrowBack className="w-6 h-6" />
         </button>
-        <div onClick={handleProfileClick} className="flex items-center gap-3 cursor-pointer">
-          <div className="aspect-square w-[50px] h-[50px] max-sm:w-[40px] max-sm:h-[40px] overflow-hidden rounded-xl"><img src={recipientPfp || pfp} alt="Profile" className="w-full h-full rounded-xl object-cover cursor-pointer"/></div>
-            <div className="flex flex-row gap-2">
-              <h2 className="text-xl font-semibold max-sm:truncate flex flex-row gap-2">
-                Chat with {recipientHandle || "User"}
-              </h2>
-              {receipientVerified && <span className="text-secondary text-2xl size-3 text-center translate-y-1">
-                  <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
-              </span>}
-            </div>
+        <div
+          onClick={handleProfileClick}
+          className="flex items-center gap-3 cursor-pointer"
+        >
+          <div className="aspect-square w-[50px] h-[50px] max-sm:w-[40px] max-sm:h-[40px] overflow-hidden rounded-xl">
+            <img
+              src={recipientPfp || pfp}
+              alt="Profile"
+              className="w-full h-full rounded-xl object-cover cursor-pointer"
+            />
+          </div>
+          <div className="flex flex-row gap-2">
+            <h2 className="text-xl font-semibold max-sm:truncate flex flex-row gap-2">
+              Chat with {recipientHandle || "User"}
+            </h2>
+            {receipientVerified && (
+              <span className="text-secondary text-2xl size-3 text-center translate-y-1">
+                <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full" />
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

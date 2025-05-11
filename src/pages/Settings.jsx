@@ -9,9 +9,10 @@ import { getAuth } from "firebase/auth";
 import { useToast } from "../context/ToastContext";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import sad_puppy  from "../Assets/sad-puppy.jpg"
+import sad_puppy from "../Assets/sad-puppy.jpg";
 import axios from "axios";
 import { useClerk, useUser, useSignIn } from "@clerk/clerk-react";
+import Feedback from "../components/Feedback";
 
 const themes = [
   "light",
@@ -52,18 +53,17 @@ function Settings() {
   const { theme, changeTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const { showToast } = useToast(); // Get showToast from context
-  const [ deleteAccount, setDeleteAccount ] = useState(false);
-  const [ confirmDelete, setConfirmDelete ] = useState(false);
+  const [deleteAccount, setDeleteAccount] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState("");
   const { user } = useUser();
 
   const handleLogout = async () => {
-    try{
+    try {
       await signOut();
       navigate("/");
-    }
-    catch(err){
+    } catch (err) {
       console.error("Error during sign out:", err);
     }
   };
@@ -75,13 +75,13 @@ function Settings() {
   const handleConfirmDelete = () => {
     setConfirmDelete(!confirmDelete);
     setEmail("");
-  }
+  };
   useEffect(() => {
-    if(user) {
+    if (user) {
       handleIsAdmin();
-    } 
+    }
   }, [user]);
-    
+
   const handleIsAdmin = async () => {
     try {
       const userRef = doc(db, "users", user.id);
@@ -97,7 +97,7 @@ function Settings() {
       console.error("Error getting document:", error);
     }
   };
-  
+
   const handleDelete = async () => {
     if (!email) {
       showToast("Please enter your email to confirm deletion.");
@@ -105,34 +105,30 @@ function Settings() {
     }
 
     if (user) {
-        try {
-          if(user.emailAddresses[0].emailAddress !== email) {
-            showToast("Email does not match. Please try again.");
-            return;
-          }
+      try {
+        if (user.emailAddresses[0].emailAddress !== email) {
+          showToast("Email does not match. Please try again.");
+          return;
+        }
 
-          const userDoc = doc(db, "users", user.id); 
-          await deleteDoc(userDoc); 
+        const userDoc = doc(db, "users", user.id);
+        await deleteDoc(userDoc);
 
-          const postDoc = doc(db, "posts", user.id);
-          await deleteDoc(postDoc); 
+        const postDoc = doc(db, "posts", user.id);
+        await deleteDoc(postDoc);
 
-          await user.delete(); // Delete the user account
-          showToast("Account deleted successfully"); // Display success toast
-          handleLogout();// Redirect to home page or login page
-
+        await user.delete(); // Delete the user account
+        showToast("Account deleted successfully"); // Display success toast
+        handleLogout(); // Redirect to home page or login page
       } catch (error) {
         console.error("Error deleting account:", error);
         showToast("Error deleting account. Please try again."); // Display error toast
-
       }
     } else {
-
       console.error("No user is currently signed in.");
       showToast("No user is currently signed in."); // Display error toast
-
     }
-  }
+  };
 
   return (
     <div className="flex flex-col justify-center p-4 bg-base-200  min-h-screen">
@@ -147,17 +143,24 @@ function Settings() {
             Logout
           </button>
         </div>
-        <div className="flex flex-row items-center mb-6 gap-2">
+        <div className="flex flex-row max-sm:flex-col max-sm:gap-2 items-center mb-6 gap-2">
           <NavLink
             to="/in/about"
-            className="text-xl gap-2 w-[50%] text-semibold text-base-100 rounded-2xl self-start my-4 flex items-center justify-center bg-primary p-3 md:hidden lg:hidden">
-              <AiOutlineInfoCircle className="text-2xl"/>{"About us"}
+            className="text-xl btn gap-2 w-[50%] max-sm:w-full text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center bg-primary md:hidden lg:hidden"
+          >
+            <AiOutlineInfoCircle className="text-2xl" />
+            {"About us"}
           </NavLink>
-          {isAdmin && <NavLink
-            to="/admin"
-            className="text-xl gap-2 max-sm:w-1/2 w-fit text-semibold text-base-100 rounded-2xl self-start my-4 flex items-center justify-center bg-primary p-3">
-              <MdAdminPanelSettings className="text-2xl"/>{"Admin"}
-          </NavLink>}
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className="text-xl btn gap-2 max-sm:w-full w-fit text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center bg-primary"
+            >
+              <MdAdminPanelSettings className="text-2xl" />
+              {"Admin"}
+            </NavLink>
+          )}
+          <Feedback />
         </div>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">
@@ -188,9 +191,14 @@ function Settings() {
           </div>
         </section>
         <div className="flex flex-col justtify-center items-center mb-6">
-          <h1 className="text-2xl font-semibold mb-2 text-red-500">{"Danger Zone"}</h1>
+          <h1 className="text-2xl font-semibold mb-2 text-red-500">
+            {"Danger Zone"}
+          </h1>
           {/*Delete Account Code*/}
-          <button className="btn btn-error w-1/5 max-sm:w-1/2" onClick={handleDeletePrompt}>
+          <button
+            className="btn btn-error w-1/5 max-sm:w-1/2"
+            onClick={handleDeletePrompt}
+          >
             {"Delete Account"}
           </button>
           {deleteAccount && !confirmDelete && (
@@ -201,11 +209,19 @@ function Settings() {
               ></div>
               <div className="bg-base-100 fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg shadow-lg w-2/5 h-2/5 max-sm:h-3/5 max-sm:w-4/5">
                 <div className="flex flex-col justify-evenly items-center h-full w-full">
-                  <h1 className="text-2xl font-semibold mb-2 text-primary">{"Delete Account"}</h1>
+                  <h1 className="text-2xl font-semibold mb-2 text-primary">
+                    {"Delete Account"}
+                  </h1>
                   <p className="text-center mb-4">
-                    {"Do you really want to delete your account? This action cannot be undone. And this puppy will be sad to see you go :("} 
+                    {
+                      "Do you really want to delete your account? This action cannot be undone. And this puppy will be sad to see you go :("
+                    }
                   </p>
-                  <img src={sad_puppy} alt="Sad Puppy" className="w-1/6 h-1/2 mb-4 max-sm:w-1/2"/>
+                  <img
+                    src={sad_puppy}
+                    alt="Sad Puppy"
+                    className="w-1/6 h-1/2 mb-4 max-sm:w-1/2"
+                  />
                   <div className="flex justify-center w-full gap-6">
                     <button
                       className="btn btn-primary w-1/4 mb-4"
@@ -232,12 +248,18 @@ function Settings() {
               ></div>
               <div className="bg-base-100 fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg shadow-lg w-2/5 h-2/5 max-sm:h-3/5 max-sm:w-4/5">
                 <div className="flex flex-col justify-evenly items-center h-full w-full">
-                  <h1 className="text-2xl font-semibold mb-2 text-primary">{"Confirm Deletion"}</h1>
+                  <h1 className="text-2xl font-semibold mb-2 text-primary">
+                    {"Confirm Deletion"}
+                  </h1>
                   <p className="text-center mb-4">
-                    {"Are you sure you want to delete your account? This action cannot be undone. "}
+                    {
+                      "Are you sure you want to delete your account? This action cannot be undone. "
+                    }
                   </p>
                   <p className="text-center mb-4 text-bold text-primary">
-                    {"Please enter your email and password to confirm deletion."}
+                    {
+                      "Please enter your email and password to confirm deletion."
+                    }
                   </p>
                   <form className="flex flex-col gap-4 mb-4">
                     <input
