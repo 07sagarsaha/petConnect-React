@@ -340,30 +340,6 @@ function Settings() {
               <AiOutlineInfoCircle className="text-2xl" />
               Get a General Tour
             </button>
-            
-            <button
-              className="btn btn-secondary gap-2 text-base-100"
-              onClick={handleStartMessagingTour}
-            >
-              <AiOutlineInfoCircle className="text-2xl" />
-              How to Send Messages
-            </button>
-            
-            <button
-              className="btn btn-accent gap-2 text-base-100"
-              onClick={handleStartPostingTour}
-            >
-              <AiOutlineInfoCircle className="text-2xl" />
-              How to Create Posts
-            </button>
-            
-            <button
-              className="btn btn-info gap-2 text-base-100"
-              onClick={handleStartProfileTour}
-            >
-              <AiOutlineInfoCircle className="text-2xl" />
-              How to Edit Your Profile
-            </button>
           </div>
         </div>
       </div>

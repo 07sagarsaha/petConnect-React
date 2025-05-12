@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaCat, FaDog } from 'react-icons/fa';
 import { useTour } from '../context/TourContext';
 
+
 const InteractiveTour = ({ onClose, tourType = 'general' }) => {
   // Use useRef for values that shouldn't trigger re-renders
   const [currentStep, setCurrentStep] = useState(0);
@@ -81,8 +82,12 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
 
   // Memoize tour steps to prevent unnecessary re-renders
   const tourSteps = React.useMemo(() => {
-    return tourType === 'general' ? generalTourSteps : generalTourSteps;
-  }, [tourType, generalTourSteps]);
+    switch (tourType) {
+      case 'general':
+      default:
+        return generalTourSteps;
+    }
+  }, [tourType]);
 
   // Navigate to the correct route for each step
   useEffect(() => {
@@ -94,7 +99,6 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       
       // Only navigate if we're not already on the correct route
       if (currentPath !== targetRoute) {
-        console.log("Navigating to:", targetRoute);
         navigate(targetRoute);
       }
     }
@@ -117,8 +121,6 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
         setHighlightPosition(null);
         return;
       }
-
-      console.log("Looking for element with selector:", step.targetSelector);
       
       // Try multiple selectors (comma-separated)
       const selectors = step.targetSelector.split(', ');
@@ -166,35 +168,35 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       
       // Special case handling for specific steps
       if (!targetElement) {
-        if (currentStep === 1) { // Home Feed
-          // Try to find the posts container
-          targetElement = document.querySelector('.lg\\:w-2\\/3.w-full.z-0.flex.flex-col') || 
-                          document.querySelector('div[class*="flex flex-col gap-0"]');
-        } else if (currentStep === 2) { // New Post button
-          // Find button with "New Post" text
-          const buttons = document.querySelectorAll('button');
-          for (let i = 0; i < buttons.length; i++) {
-            if (buttons[i].textContent.includes('New Post')) {
-              targetElement = buttons[i];
-              break;
+        if (tourType === 'general') {
+          if (currentStep === 1) { // Home Feed
+            // Try to find the posts container
+            targetElement = document.querySelector('.lg\\:w-2\\/3.w-full.z-0.flex.flex-col') || 
+                            document.querySelector('div[class*="flex flex-col gap-0"]');
+          } else if (currentStep === 2) { // New Post button
+            // Find button with "New Post" text
+            const buttons = document.querySelectorAll('button');
+            for (let i = 0; i < buttons.length; i++) {
+              if (buttons[i].textContent.includes('New Post')) {
+                targetElement = buttons[i];
+                break;
+              }
             }
+          } else if (currentStep === 4) { // Navigation Menu
+            // Find the side navigation
+            targetElement = document.querySelector('.fixed.z-10') || 
+                            document.querySelector('div[class*="fixed z-10"]');
           }
-        } else if (currentStep === 4) { // Navigation Menu
-          // Find the side navigation
-          targetElement = document.querySelector('.fixed.z-10') || 
-                          document.querySelector('div[class*="fixed z-10"]');
         }
       }
       
       if (targetElement && isMounted) {
-        console.log("Found target element:", targetElement);
         const rect = targetElement.getBoundingClientRect();
-        console.log("Element position:", rect);
         
         // Only update if we have valid dimensions
         if (rect.width > 0 && rect.height > 0) {
           // For the side nav, adjust the highlight to prevent bouncing
-          if (currentStep === 4) {
+          if (tourType === 'general' && currentStep === 4) {
             setHighlightPosition({
               top: rect.top,
               left: rect.left,
@@ -218,11 +220,9 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
             intervalId = null;
           }
         } else {
-          console.log("Element has zero dimensions");
           if (isMounted) setHighlightPosition(null);
         }
       } else {
-        console.log("Target element not found");
         if (isMounted) setHighlightPosition(null);
       }
     };
@@ -242,7 +242,7 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
     };
-  }, [currentStep, tourSteps]);
+  }, [currentStep, tourSteps, tourType]);
 
   // Position the tooltip based on the highlighted element
   useEffect(() => {
@@ -276,8 +276,8 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       // Keep the tooltip on screen horizontally
       left = Math.max(20, Math.min(left, windowWidth - tooltipRect.width - 20));
       
-      // For the side nav (step 4), position the tooltip to the right of the nav
-      if (currentStep === 4) {
+      // For the side nav (step 4 in general tour), position the tooltip to the right of the nav
+      if (tourType === 'general' && currentStep === 4) {
         left = highlightPosition.left + highlightPosition.width + 20;
         top = Math.min(windowHeight - tooltipRect.height - 20, 
                       highlightPosition.top + (highlightPosition.height / 2) - (tooltipRect.height / 2));
@@ -294,11 +294,9 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       tooltip.style.transform = 'translate(-50%, -50%)';
     }
     
-    // Only run this effect when highlightPosition or currentStep changes
-  }, [highlightPosition, currentStep]);
+  }, [highlightPosition, currentStep, tourType]);
 
   const handleNext = () => {
-    console.log("Next clicked, current step:", currentStep);
     if (currentStep < tourSteps.length - 1) {
       setCurrentStep(currentStep + 1);
       setActionCompleted(false);
@@ -331,10 +329,65 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
 
   return (
     <div className="fixed inset-0 z-[9999] pointer-events-none">
-      {/* Semi-transparent overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 pointer-events-auto" />
+      {/* Create multiple overlay sections to darken everything except the highlighted element */}
+      {highlightPosition && (
+        <>
+          {/* Top section */}
+          <div 
+            className="absolute bg-black/70 pointer-events-auto"
+            style={{
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: highlightPosition.top + 'px',
+              zIndex: 10000
+            }}
+          />
+          
+          {/* Left section */}
+          <div 
+            className="absolute bg-black/70 pointer-events-auto"
+            style={{
+              top: highlightPosition.top + 'px',
+              left: 0,
+              width: highlightPosition.left + 'px',
+              height: highlightPosition.height + 'px',
+              zIndex: 10000
+            }}
+          />
+          
+          {/* Right section */}
+          <div 
+            className="absolute bg-black/70 pointer-events-auto"
+            style={{
+              top: highlightPosition.top + 'px',
+              left: (highlightPosition.left + highlightPosition.width) + 'px',
+              width: `calc(100% - ${highlightPosition.left + highlightPosition.width}px)`,
+              height: highlightPosition.height + 'px',
+              zIndex: 10000
+            }}
+          />
+          
+          {/* Bottom section */}
+          <div 
+            className="absolute bg-black/70 pointer-events-auto"
+            style={{
+              top: (highlightPosition.top + highlightPosition.height) + 'px',
+              left: 0,
+              width: '100%',
+              height: `calc(100% - ${highlightPosition.top + highlightPosition.height}px)`,
+              zIndex: 10000
+            }}
+          />
+        </>
+      )}
       
-      {/* Highlight for the target element */}
+      {/* If no element is highlighted, darken the entire screen */}
+      {!highlightPosition && (
+        <div className="absolute inset-0 bg-black/70 pointer-events-auto" style={{ zIndex: 10000 }} />
+      )}
+      
+      {/* Highlight border for the target element */}
       {highlightPosition && (
         <div 
           className="border-4 border-primary rounded-lg pointer-events-none"
@@ -344,8 +397,25 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
             left: highlightPosition.left + 'px',
             width: highlightPosition.width + 'px',
             height: highlightPosition.height + 'px',
-            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 15px 5px rgba(147, 51, 234, 0.7)',
-            zIndex: 10000
+            boxShadow: 'var(--shadow-tourHighlight, 0 0 15px 5px rgba(147, 51, 234, 0.7), 0 0 30px 10px rgba(147, 51, 234, 0.4))',
+            zIndex: 10001,
+            backgroundColor: 'transparent'
+          }}
+        />
+      )}
+      
+      {/* Create a "hole" in the overlay to allow interaction with the highlighted element */}
+      {highlightPosition && (
+        <div 
+          className="pointer-events-auto"
+          style={{
+            position: highlightPosition.fixed ? 'fixed' : 'absolute',
+            top: highlightPosition.top + 'px',
+            left: highlightPosition.left + 'px',
+            width: highlightPosition.width + 'px',
+            height: highlightPosition.height + 'px',
+            zIndex: 10002,
+            backgroundColor: 'transparent'
           }}
         />
       )}
@@ -356,7 +426,7 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
         className="fixed bg-base-100 p-6 rounded-xl shadow-xl max-w-md pointer-events-auto"
         style={{
           position: 'fixed',
-          zIndex: 10000,
+          zIndex: 10003,
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)'

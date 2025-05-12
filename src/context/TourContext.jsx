@@ -63,6 +63,10 @@ export const TourProvider = ({ children }) => {
   };
 
   const startTour = (type = 'general') => {
+    // Only allow general tour
+    if (type !== 'general') {
+      type = 'general';
+    }
     setCurrentStep(0);
     setTourType(type);
     setShowTour(true);
