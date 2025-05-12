@@ -80,9 +80,55 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
     }
   ];
 
+  // Add messaging tour steps
+  const messagingTourSteps = [
+    {
+      title: "Welcome to Messaging!",
+      description: "Let's learn how to connect with other pet owners through our messaging feature.",
+      location: "center",
+      image: "cat",
+      route: "/in/messages",
+      targetSelector: null
+    },
+    {
+      title: "Your Conversations",
+      description: "Here you can see all your conversations with other pet owners.",
+      location: "messages",
+      image: "dog",
+      route: "/in/messages",
+      targetSelector: ".messages-container, div[class*='messages']"
+    },
+    {
+      title: "Start a New Chat",
+      description: "Click on any user to start a new conversation or continue an existing one.",
+      location: "chat",
+      image: "cat",
+      route: "/in/messages",
+      targetSelector: ".user-list-item, div[class*='user-item']"
+    },
+    {
+      title: "Send Messages",
+      description: "Type your message here and press send to connect with other pet owners!",
+      location: "input",
+      image: "dog",
+      route: "/in/chat/sample-user-id",
+      targetSelector: ".message-input, input[type='text'], textarea"
+    },
+    {
+      title: "That's it!",
+      description: "Now you're ready to connect with the pet community! Happy chatting!",
+      location: "center",
+      image: "cat",
+      route: "/in/messages",
+      targetSelector: null
+    }
+  ];
+
   // Memoize tour steps to prevent unnecessary re-renders
   const tourSteps = React.useMemo(() => {
     switch (tourType) {
+      case 'messaging':
+        return messagingTourSteps;
       case 'general':
       default:
         return generalTourSteps;

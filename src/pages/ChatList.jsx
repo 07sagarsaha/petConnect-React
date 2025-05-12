@@ -8,17 +8,20 @@ import {
   onSnapshot,
   getDoc,
   doc,
+  setDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import pfp from "../icons/pfp.png";
 import { useUser } from "@clerk/clerk-react";
 import { FaUserDoctor } from "react-icons/fa6";
+import { useTour } from "../context/TourContext";
 
 const ChatList = () => {
   const [contentLoaded, setContentLoaded] = useState(false);
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
   const { user } = useUser();
+  const { startTour, hasTourBeenCompleted } = useTour();
 
   useEffect(() => {
     if (!user) {
@@ -87,6 +90,35 @@ const ChatList = () => {
 
     return () => unsubscribe();
   }, [user]);
+
+  // Check if it's the user's first time viewing messages
+  useEffect(() => {
+    const checkFirstTimeMessaging = async () => {
+      if (user) {
+        try {
+          const userRef = doc(db, "users", user.id);
+          const userDoc = await getDoc(userRef);
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // If the user has never used messaging and hasn't completed the messaging tour
+            if ((userData.hasUsedMessaging === undefined || userData.hasUsedMessaging === false) && 
+                !hasTourBeenCompleted('messaging')) {
+              startTour('messaging');
+              
+              // Update the user document to indicate they've used messaging
+              await setDoc(userRef, { ...userData, hasUsedMessaging: true }, { merge: true });
+            }
+          }
+        } catch (error) {
+          console.error("Error checking first-time messaging:", error);
+        }
+      }
+    };
+    
+    checkFirstTimeMessaging();
+  }, [user, hasTourBeenCompleted, startTour]);
 
   const navigateToChat = (userId) => {
     navigate(`/in/chat/${userId}`);

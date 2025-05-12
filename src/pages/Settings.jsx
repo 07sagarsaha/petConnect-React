@@ -15,6 +15,7 @@ import { useClerk, useUser, useSignIn } from "@clerk/clerk-react";
 import Feedback from "../components/Feedback";
 import InteractiveTour from "../components/InteractiveTour";
 import { useTour } from "../context/TourContext";
+import { FaComments } from "react-icons/fa";
 
 const themes = [
   "light",
@@ -340,6 +341,14 @@ function Settings() {
               <AiOutlineInfoCircle className="text-2xl" />
               Get a General Tour
             </button>
+            <button
+              className="btn btn-primary gap-2 text-base-100"
+              onClick={handleStartMessagingTour}
+            >
+              <FaComments className="text-2xl" />
+              Messaging Tour
+            </button>
+
           </div>
         </div>
       </div>
