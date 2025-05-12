@@ -14,6 +14,7 @@ import { IoMdClose } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import LoadingBar from "react-top-loading-bar";
 import { useTour } from "../../context/TourContext";
+import { IoMdAddCircleOutline, IoMdImage } from "react-icons/io";
 
 const Button = ({ buttonName, icon, submitName, className }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -26,7 +27,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
   const [isLoading, setIsLoading] = useState(false);
   const loadingBarRef = useRef(null);
   const { user } = useUser();
-  const { startTour } = useTour();
+  const { startTour, hasTourBeenCompleted } = useTour();
 
   const cloudinaryAccounts = [
     {
@@ -76,8 +77,9 @@ const Button = ({ buttonName, icon, submitName, className }) => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           
-          // If the user has never posted before, show the tour
-          if (userData.hasPostedBefore === undefined || userData.hasPostedBefore === false) {
+          // If the user has never posted before and hasn't completed the posting tour
+          if ((userData.hasPostedBefore === undefined || userData.hasPostedBefore === false) && 
+              !hasTourBeenCompleted('posting')) {
             startTour('posting');
             
             // Update the user document to indicate they've posted before
@@ -191,135 +193,118 @@ const Button = ({ buttonName, icon, submitName, className }) => {
   };
 
   return (
-    <>
-      {/* Button */}
-      <div
-        onClick={handleClickEvent}
-        className={`flex text-primary hover:text-base-100 bg-base-100 p-2 justify-center items-center transition-all duration-[0.85s] shadow-lg rounded-lg ease hover:bg-primary h-20 ${className}`}
+    <div className="flex flex-col items-center justify-center">
+      <button
+        onClick={() => setIsClicked(!isClicked)}
+        className="new-post-button btn btn-primary text-base-100 shadow-lg flex items-center justify-center gap-2 mb-4"
       >
-        <div className="flex justify-center items-center gap-2">
-          {icon}
-          <span>{buttonName}</span>
-        </div>
-      </div>
-
-      {/* Modal for desktop / Full screen for mobile */}
+        <IoMdAddCircleOutline className="text-xl" />
+        New Post
+      </button>
+      
       {isClicked && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={handleClickEvent}
-          />
-
-          {/* Modal/Form Container */}
-          <div
-            className={`fixed z-50 transform transition-all duration-500 ease-in-out
-            max-sm:inset-0 max-sm:w-full max-sm:h-full
-            sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[600px] sm:max-h-[80vh]
-            bg-base-100 rounded-xl overflow-hidden shadow-xl`}
-          >
-            {/* Header */}
-            <div className="flex justify-between items-center bg-primary text-base-100 p-4">
-              <h2 className="text-xl font-bold">Create New Post</h2>
-              <IoMdClose
-                className="text-2xl cursor-pointer hover:text-error transition-colors"
-                onClick={handleClickEvent}
+        <div className="w-full max-w-2xl bg-base-100 rounded-xl shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold mb-4 text-primary">Create a Post</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="post-title-input w-full p-2 border rounded-lg focus:ring focus:ring-primary/20"
+                placeholder="Give your post a title"
+                required
               />
             </div>
-
-            {/* Form Content */}
-            <div className="p-6 overflow-y-auto max-h-[calc(80vh-4rem)]">
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <input
-                  type="text"
-                  placeholder="What's on your mind?"
-                  value={title}
-                  className="w-full rounded-lg px-4 py-2 text-xl text-gray-600 border border-gray-200"
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-
-                <textarea
-                  placeholder="Describe some more..."
-                  value={content}
-                  className="w-full rounded-lg px-4 py-2 text-lg text-gray-600 border border-gray-200 min-h-[100px]"
-                  onChange={(e) => setContent(e.target.value)}
-                />
-
-                {/* Updated Severity Slider Section */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-gray-600">Severity:</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min={1}
-                      max={5}
-                      value={sevVal}
-                      className="w-56"
-                      onChange={(e) => setSevVal(parseInt(e.target.value))}
-                    />
-                    <span className="text-xl min-w-[200px]">
-                      {severityEmojis[sevVal]}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Image Preview */}
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Content</label>
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="post-content-input w-full p-2 border rounded-lg h-32 focus:ring focus:ring-primary/20"
+                placeholder="What's on your mind?"
+                required
+              />
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Image (Optional)</label>
+              <div className="post-image-upload flex items-center space-x-2">
+                <label className="cursor-pointer bg-base-200 hover:bg-base-300 p-2 rounded-lg flex items-center">
+                  <IoMdImage className="mr-2" />
+                  Upload Image
+                  <input
+                    type="file"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                </label>
                 {imagePreview && (
                   <div className="relative">
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      className="w-full h-auto rounded-lg"
+                      className="h-16 w-16 object-cover rounded-lg"
                     />
                     <button
                       type="button"
                       onClick={removeImage}
-                      className="absolute top-2 right-2 p-1 bg-error text-white rounded-full"
+                      className="absolute -top-2 -right-2 bg-error text-white rounded-full p-1"
                     >
-                      <IoMdClose />
+                      <IoMdClose size={14} />
                     </button>
                   </div>
                 )}
-
-                {/* Image Upload */}
-                <div className="flex items-center gap-4">
-                  <label
-                    htmlFor="image-upload"
-                    className="cursor-pointer text-3xl text-primary hover:text-primary-focus"
-                  >
-                    <CiImageOn />
-                  </label>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className="bg-primary text-base-100 py-2 px-4 rounded-lg hover:bg-primary-focus transition-colors"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <AiOutlineLoading3Quarters className="animate-spin mx-auto" />
-                  ) : (
-                    "Post"
-                  )}
-                </button>
-              </form>
+              </div>
             </div>
-          </div>
-        </>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-1">
+                Severity (for help requests)
+              </label>
+              <div className="post-severity-slider flex items-center space-x-4">
+                <span>Low</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  value={sevVal}
+                  onChange={(e) => setSevVal(parseInt(e.target.value))}
+                  className="range range-primary"
+                />
+                <span>High</span>
+                <span className="ml-2 font-medium">{sevVal}</span>
+              </div>
+            </div>
+            
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsClicked(false)}
+                className="btn btn-outline mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="post-submit-button btn btn-primary text-base-100"
+              >
+                {isLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  "Post"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
-
-      {/* Loading Bar */}
-      <LoadingBar color="#f11946" ref={loadingBarRef} />
-    </>
+      <LoadingBar color="#8B5CF6" ref={loadingBarRef} />
+    </div>
   );
 };
 

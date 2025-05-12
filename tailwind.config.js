@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 import daisyui from "daisyui";
-import { Color } from "three";
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -17,6 +16,7 @@ export default {
         Uni: "0 0 15px 5px rgba(128, 128, 128, 0.485)",
         UniCol: "0 4px 15px 0 pink, 0 0 25px 0 purple",
         skew: "5px 5px 15px 5px rgba(128, 128, 128, 0.485), -5px 5px 15px 0 rgb(255, 255, 255)",
+        tourHighlight: "0 0 15px 5px rgba(147, 51, 234, 0.7), 0 0 30px 10px rgba(147, 51, 234, 0.4)",
       },
       keyframes: {
         postAnim: {
@@ -48,6 +48,10 @@ export default {
             backgroundColor: 'rgba(0, 0, 0, 0)'
           },
         },
+        tourPulse: {
+          '0%, 100%': { boxShadow: '0 0 15px 5px rgba(147, 51, 234, 0.4)' },
+          '50%': { boxShadow: '0 0 25px 10px rgba(147, 51, 234, 0.7)' },
+        }
       },
       animation: {
         postButtonAnim1: "postAnim 1s ease",
@@ -57,6 +61,8 @@ export default {
         postAnim1: "postAnim 0.5s ease",
         fadeOut: "fadeOut 0.5s ease-in-out",
         fadeIn: 'fadeIn 1s ease-in',
+        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        tourPulse: 'tourPulse 2s ease-in-out infinite',
       },
     },
   },

@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import cat from "../Assets/cat.png";
-import dog from "../Assets/dog.png";
-import { useTour } from "../context/TourContext";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaCat, FaDog } from 'react-icons/fa';
+import { useTour } from '../context/TourContext';
 
-const InteractiveTour = ({ onClose, tourType = "general" }) => {
-  const { currentStep, setCurrentStep, endTour } = useTour();
+const InteractiveTour = ({ onClose, tourType = 'general' }) => {
+  const { currentStep, setCurrentStep, nextStep, prevStep } = useTour();
+  const [highlightPosition, setHighlightPosition] = useState(null);
+  const [waitingForAction, setWaitingForAction] = useState(false);
+  const [actionCompleted, setActionCompleted] = useState(false);
   const navigate = useNavigate();
   const tooltipRef = useRef(null);
-  const [highlightPosition, setHighlightPosition] = useState(null);
-  
+
   // Define different tour steps based on tour type
   const generalTourSteps = [
     {
@@ -22,19 +23,19 @@ const InteractiveTour = ({ onClose, tourType = "general" }) => {
     },
     {
       title: "Home Feed",
-      description: "This is your home feed where you can see posts from other pet owners. You can like, comment, and interact with the community here!",
+      description: "This is your home feed where you can see posts from other pet owners. Try scrolling through the posts!",
       location: "feed",
       image: "dog",
       route: "/in/home",
-      targetSelector: ".post-feed-container"
+      targetSelector: ".posts-container, div[class*='w-full flex flex-col gap-0']" // Target the posts container
     },
     {
       title: "Create a Post",
-      description: "Share your pet's adventures by creating posts! Click the 'New Post' button to share photos and stories.",
+      description: "Share your pet's adventures by creating posts! Click the 'New Post' button to try it out.",
       location: "post",
       image: "cat",
       route: "/in/home",
-      targetSelector: ".new-post-button"
+      targetSelector: ".new-post-button, button:has(.IoMdAddCircleOutline), button:contains('New Post')"
     },
     {
       title: "Your Profile",
@@ -42,31 +43,31 @@ const InteractiveTour = ({ onClose, tourType = "general" }) => {
       location: "profile",
       image: "dog",
       route: "/in/profile",
-      targetSelector: ".profile-container"
+      targetSelector: ".profile-container, div[class*='profile']"
     },
     {
-      title: "Add Your Pets",
-      description: "Don't forget to add your furry friends to your profile! Click 'Add Pet' to get started.",
-      location: "pets",
+      title: "Navigation Menu",
+      description: "Use this menu to navigate between different sections of PetConnect.",
+      location: "nav",
       image: "cat",
       route: "/in/profile",
-      targetSelector: ".add-pet-button"
+      targetSelector: "nav, .sidenav, div[class*='fixed z-10']"
     },
     {
       title: "Messages",
-      description: "Connect with other pet owners through our messaging feature!",
+      description: "Connect with other pet owners through our messaging feature! Click to explore.",
       location: "messages",
       image: "dog",
       route: "/in/messages",
-      targetSelector: ".messages-container"
+      targetSelector: ".messages-container, div[class*='messages']"
     },
     {
       title: "AI Chat",
-      description: "Have questions about pet care? Our AI assistant is here to help!",
+      description: "Have questions about pet care? Our AI assistant is here to help! Click to try it out.",
       location: "ai",
       image: "cat",
       route: "/in/ai-chat",
-      targetSelector: ".ai-chat-container"
+      targetSelector: ".ai-chat-container, div[class*='ai-chat']"
     },
     {
       title: "That's it!",
@@ -78,366 +79,297 @@ const InteractiveTour = ({ onClose, tourType = "general" }) => {
     }
   ];
 
-  const messagingTourSteps = [
-    {
-      title: "Sending Your First Message",
-      description: "Let me show you how to connect with other pet owners through messages!",
-      location: "center",
-      image: "cat",
-      route: "/in/messages",
-      targetSelector: null
-    },
-    {
-      title: "Start a Conversation",
-      description: "Click the 'Start a Conversation' button to begin messaging another pet owner.",
-      location: "messages-new",
-      image: "dog",
-      route: "/in/messages",
-      targetSelector: ".start-conversation-button"
-    },
-    {
-      title: "Find a User",
-      description: "Search for users by name or handle to start a conversation with them.",
-      location: "messages-search",
-      image: "cat",
-      route: "/in/messages",
-      targetSelector: ".user-search-input"
-    },
-    {
-      title: "Send a Message",
-      description: "Type your message and hit send to start the conversation!",
-      location: "messages-send",
-      image: "dog",
-      route: "/in/messages",
-      targetSelector: ".message-input"
-    }
-  ];
+  // Select the appropriate tour steps based on the tour type
+  const tourSteps = tourType === 'general' ? generalTourSteps : generalTourSteps;
 
-  const postingTourSteps = [
-    {
-      title: "Creating Your First Post",
-      description: "Let me show you how to share your pet's adventures with the community!",
-      location: "center",
-      image: "dog",
-      route: "/in/home",
-      targetSelector: null
-    },
-    {
-      title: "New Post Button",
-      description: "Click the 'New Post' button to start creating your post.",
-      location: "post-button",
-      image: "cat",
-      route: "/in/home",
-      targetSelector: ".new-post-button"
-    },
-    {
-      title: "Add a Title",
-      description: "Give your post a catchy title that describes what you're sharing.",
-      location: "post-title",
-      image: "dog",
-      route: "/in/home",
-      targetSelector: ".post-title-input"
-    },
-    {
-      title: "Write Content",
-      description: "Share your story or experience in the content area.",
-      location: "post-content",
-      image: "cat",
-      route: "/in/home",
-      targetSelector: ".post-content-input"
-    },
-    {
-      title: "Add an Image",
-      description: "Click the image icon to upload a photo of your pet.",
-      location: "post-image",
-      image: "dog",
-      route: "/in/home",
-      targetSelector: ".post-image-upload"
-    },
-    {
-      title: "Set Severity",
-      description: "If you're asking for help, set the severity level to indicate urgency.",
-      location: "post-severity",
-      image: "cat",
-      route: "/in/home",
-      targetSelector: ".post-severity-slider"
-    },
-    {
-      title: "Submit Post",
-      description: "Click 'Post' to share your content with the community!",
-      location: "post-submit",
-      image: "dog",
-      route: "/in/home",
-      targetSelector: ".post-submit-button"
-    }
-  ];
-
-  const profileEditTourSteps = [
-    {
-      title: "Editing Your Profile",
-      description: "Let me show you how to personalize your profile!",
-      location: "center",
-      image: "cat",
-      route: "/in/profile",
-      targetSelector: null
-    },
-    {
-      title: "Edit Profile Button",
-      description: "Click the 'Edit Profile' button to start making changes.",
-      location: "profile-edit-button",
-      image: "dog",
-      route: "/in/profile",
-      targetSelector: ".edit-profile-button"
-    },
-    {
-      title: "Update Your Name",
-      description: "Change your display name to what you'd like others to see.",
-      location: "profile-name",
-      image: "cat",
-      route: "/in/profile",
-      targetSelector: ".profile-name-input"
-    },
-    {
-      title: "Set Your Handle",
-      description: "Your handle is your unique username on PetConnect.",
-      location: "profile-handle",
-      image: "dog",
-      route: "/in/profile",
-      targetSelector: ".profile-handle-input"
-    },
-    {
-      title: "Write Your Bio",
-      description: "Tell the community about yourself and your pets!",
-      location: "profile-bio",
-      image: "cat",
-      route: "/in/profile",
-      targetSelector: ".profile-bio-input"
-    },
-    {
-      title: "Change Profile Picture",
-      description: "Upload a new profile picture by clicking on your current photo.",
-      location: "profile-picture",
-      image: "dog",
-      route: "/in/profile",
-      targetSelector: ".profile-picture-container"
-    },
-    {
-      title: "Save Changes",
-      description: "Don't forget to save your changes when you're done!",
-      location: "profile-save",
-      image: "cat",
-      route: "/in/profile",
-      targetSelector: ".profile-save-button"
-    }
-  ];
-
-  // Select the appropriate tour steps based on tour type
-  const getTourSteps = () => {
-    switch(tourType) {
-      case "messaging":
-        return messagingTourSteps;
-      case "posting":
-        return postingTourSteps;
-      case "profile":
-        return profileEditTourSteps;
-      default:
-        return generalTourSteps;
-    }
-  };
-
-  const tourSteps = getTourSteps();
-
-  // Handle navigation when step changes
+  // Navigate to the correct route for each step
   useEffect(() => {
-    const goToRoute = () => {
-      const targetRoute = tourSteps[currentStep].route;
-      console.log("Navigating to:", targetRoute);
-      navigate(targetRoute);
-    };
-    
-    // Use setTimeout to ensure the navigation happens after render
-    const timer = setTimeout(goToRoute, 100);
-    return () => clearTimeout(timer);
+    if (tourSteps[currentStep]?.route) {
+      console.log("Navigating to:", tourSteps[currentStep].route);
+      navigate(tourSteps[currentStep].route);
+    }
   }, [currentStep, navigate, tourSteps]);
 
   // Find and highlight the target element
   useEffect(() => {
     const findTargetElement = () => {
-      const targetSelector = tourSteps[currentStep].targetSelector;
-      if (!targetSelector) {
+      const step = tourSteps[currentStep];
+      if (!step || !step.targetSelector) {
         setHighlightPosition(null);
         return;
       }
 
-      const targetElement = document.querySelector(targetSelector);
-      if (targetElement) {
-        const rect = targetElement.getBoundingClientRect();
-        setHighlightPosition({
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height
-        });
-
-        // Position the tooltip relative to the target element
-        if (tooltipRef.current) {
-          const tooltipRect = tooltipRef.current.getBoundingClientRect();
-          const windowWidth = window.innerWidth;
-          const windowHeight = window.innerHeight;
-          
-          // Calculate optimal position
-          let tooltipTop, tooltipLeft;
-          
-          // Try to position below the element first
-          if (rect.bottom + tooltipRect.height + 20 < windowHeight) {
-            tooltipTop = rect.bottom + 10;
-            tooltipLeft = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-          } 
-          // Otherwise try above
-          else if (rect.top - tooltipRect.height - 20 > 0) {
-            tooltipTop = rect.top - tooltipRect.height - 10;
-            tooltipLeft = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-          }
-          // Otherwise position to the side
-          else {
-            tooltipTop = Math.max(10, rect.top);
-            if (rect.right + tooltipRect.width + 20 < windowWidth) {
-              tooltipLeft = rect.right + 10;
-            } else {
-              tooltipLeft = rect.left - tooltipRect.width - 10;
+      console.log("Looking for element with selector:", step.targetSelector);
+      
+      // Try multiple selectors (comma-separated)
+      const selectors = step.targetSelector.split(', ');
+      let targetElement = null;
+      
+      // Try each selector until we find a matching element
+      for (const selector of selectors) {
+        if (selector.includes(':contains(')) {
+          // Handle custom :contains() selector
+          const match = selector.match(/:contains\('(.+?)'\)/);
+          if (match) {
+            const textToFind = match[1];
+            const elements = document.querySelectorAll('button, a, div, span, h1, h2, h3, h4, h5, h6, p');
+            for (let i = 0; i < elements.length; i++) {
+              if (elements[i].textContent.includes(textToFind)) {
+                targetElement = elements[i];
+                break;
+              }
             }
           }
-          
-          // Ensure tooltip stays within viewport
-          tooltipLeft = Math.max(10, Math.min(windowWidth - tooltipRect.width - 10, tooltipLeft));
-          tooltipTop = Math.max(10, Math.min(windowHeight - tooltipRect.height - 10, tooltipTop));
-          
-          tooltipRef.current.style.top = `${tooltipTop}px`;
-          tooltipRef.current.style.left = `${tooltipLeft}px`;
-          tooltipRef.current.style.position = 'fixed';
-          tooltipRef.current.style.transform = 'none';
+        } else if (selector.includes(':has(')) {
+          // Handle custom :has() selector
+          const match = selector.match(/:has\((.+?)\)/);
+          if (match) {
+            const iconClass = match[1];
+            const elements = document.querySelectorAll('button, a, div');
+            for (let i = 0; i < elements.length; i++) {
+              if (elements[i].querySelector(iconClass)) {
+                targetElement = elements[i];
+                break;
+              }
+            }
+          }
+        } else {
+          // Standard selector
+          const element = document.querySelector(selector);
+          if (element) {
+            targetElement = element;
+            break;
+          }
+        }
+        
+        if (targetElement) break;
+      }
+      
+      // Special case handling for specific steps
+      if (!targetElement) {
+        if (currentStep === 1) { // Home Feed
+          // Try to find the posts container
+          targetElement = document.querySelector('.lg\\:w-2\\/3.w-full.z-0.flex.flex-col') || 
+                          document.querySelector('div[class*="flex flex-col gap-0"]');
+        } else if (currentStep === 2) { // New Post button
+          // Find button with "New Post" text
+          const buttons = document.querySelectorAll('button');
+          for (let i = 0; i < buttons.length; i++) {
+            if (buttons[i].textContent.includes('New Post')) {
+              targetElement = buttons[i];
+              break;
+            }
+          }
+        } else if (currentStep === 4) { // Navigation Menu
+          // Find the side navigation
+          targetElement = document.querySelector('.fixed.z-10') || 
+                          document.querySelector('div[class*="fixed z-10"]');
+        }
+      }
+      
+      if (targetElement) {
+        console.log("Found target element:", targetElement);
+        const rect = targetElement.getBoundingClientRect();
+        console.log("Element position:", rect);
+        
+        // Only update if we have valid dimensions
+        if (rect.width > 0 && rect.height > 0) {
+          // For the side nav, adjust the highlight to prevent bouncing
+          if (currentStep === 4) {
+            setHighlightPosition({
+              top: rect.top + window.scrollY,
+              left: rect.left,
+              width: rect.width,
+              height: Math.min(rect.height, window.innerHeight - 100), // Limit height to prevent overflow
+              fixed: true // Mark as fixed position
+            });
+          } else {
+            setHighlightPosition({
+              top: rect.top + window.scrollY,
+              left: rect.left,
+              width: rect.width,
+              height: rect.height,
+              fixed: false
+            });
+          }
+        } else {
+          console.log("Element has zero dimensions");
+          setHighlightPosition(null);
         }
       } else {
+        console.log("Target element not found");
         setHighlightPosition(null);
       }
     };
 
-    // Wait for the DOM to update after navigation
-    const timer = setTimeout(findTargetElement, 500);
+    // Initial check
+    findTargetElement();
     
-    // Set up a periodic check for the target element
+    // Check periodically in case the element appears later
     const interval = setInterval(findTargetElement, 1000);
     
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [currentStep, tourSteps]);
+
+  // Position the tooltip based on the highlighted element
+  useEffect(() => {
+    if (!tooltipRef.current) return;
+    
+    const tooltip = tooltipRef.current;
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    
+    // If there's a highlighted element, position relative to it
+    if (highlightPosition) {
+      // Calculate the center of the highlighted element
+      const elementCenterX = highlightPosition.left + (highlightPosition.width / 2);
+      const elementCenterY = highlightPosition.top + (highlightPosition.height / 2);
+      
+      // Determine the best position for the tooltip
+      let top, left;
+      
+      // Try to position below the element first
+      top = highlightPosition.top + highlightPosition.height + 20;
+      
+      // If that would go off the bottom of the screen, position above
+      if (top + tooltipRect.height > windowHeight - 20) {
+        top = Math.max(20, highlightPosition.top - tooltipRect.height - 20);
+      }
+      
+      // Center horizontally relative to the element
+      left = elementCenterX - (tooltipRect.width / 2);
+      
+      // Keep the tooltip on screen horizontally
+      left = Math.max(20, Math.min(left, windowWidth - tooltipRect.width - 20));
+      
+      // For the side nav (step 4), position the tooltip to the right of the nav
+      if (currentStep === 4) {
+        left = highlightPosition.left + highlightPosition.width + 20;
+        top = Math.min(windowHeight - tooltipRect.height - 20, 
+                      highlightPosition.top + (highlightPosition.height / 2) - (tooltipRect.height / 2));
+      }
+      
+      tooltip.style.top = `${top}px`;
+      tooltip.style.left = `${left}px`;
+      tooltip.style.transform = 'none'; // Remove the default transform
+    } else {
+      // If no element is highlighted, center the tooltip
+      tooltip.style.top = '50%';
+      tooltip.style.left = '50%';
+      tooltip.style.transform = 'translate(-50%, -50%)';
+    }
+  }, [highlightPosition, currentStep]);
 
   const handleNext = () => {
     console.log("Next clicked, current step:", currentStep);
     if (currentStep < tourSteps.length - 1) {
       setCurrentStep(currentStep + 1);
+      setActionCompleted(false);
     } else {
-      endTour();
       onClose();
     }
   };
 
-  const handlePrevious = () => {
-    console.log("Previous clicked, current step:", currentStep);
+  const handlePrev = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      setActionCompleted(false);
     }
   };
 
   const handleSkip = () => {
-    console.log("Skip clicked");
-    endTour();
     onClose();
   };
 
-  // Determine which mascot image to show
-  const renderMascot = () => {
-    const { image } = tourSteps[currentStep];
-    
-    if (image === "cat") {
-      return <img src={cat} alt="Cat mascot" className="w-16 h-16 object-contain" />;
-    } else {
-      return <img src={dog} alt="Dog mascot" className="w-16 h-16 object-contain" />;
+  // Render the appropriate image based on the step
+  const renderImage = () => {
+    const image = tourSteps[currentStep]?.image;
+    if (image === 'cat') {
+      return <FaCat className="text-4xl text-primary" />;
+    } else if (image === 'dog') {
+      return <FaDog className="text-4xl text-primary" />;
     }
+    return null;
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] pointer-events-auto">
+    <div className="fixed inset-0 z-[9999] pointer-events-none">
+      {/* Semi-transparent overlay */}
+      <div className="absolute inset-0 bg-black bg-opacity-50 pointer-events-auto" />
+      
       {/* Highlight for the target element */}
       {highlightPosition && (
         <div 
-          className="absolute border-4 border-primary rounded-lg pointer-events-none z-[10000] animate-pulse"
+          className="border-4 border-primary rounded-lg pointer-events-none"
           style={{
+            position: highlightPosition.fixed ? 'fixed' : 'absolute',
             top: highlightPosition.top + 'px',
             left: highlightPosition.left + 'px',
             width: highlightPosition.width + 'px',
             height: highlightPosition.height + 'px',
-            position: 'fixed'
+            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 15px 5px rgba(147, 51, 234, 0.7)',
+            zIndex: 10000
           }}
         />
       )}
       
-      {/* Tour popup */}
+      {/* Tooltip */}
       <div 
         ref={tooltipRef}
-        className={`bg-base-100 p-6 rounded-xl shadow-xl w-80 max-w-[90vw] transition-all duration-500 ease-in-out ${!highlightPosition ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : ''}`}
-        style={{ zIndex: 10001 }}
+        className="fixed bg-base-100 p-6 rounded-xl shadow-xl max-w-md pointer-events-auto"
+        style={{
+          position: 'fixed',
+          zIndex: 10000,
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-primary">{tourSteps[currentStep].title}</h3>
-          <button 
-            className="text-gray-500 hover:text-gray-700"
-            onClick={handleSkip}
-          >
-            ✕
-          </button>
-        </div>
-        
         <div className="flex items-center mb-4">
-          {renderMascot()}
-          <p className="ml-4 text-sm">{tourSteps[currentStep].description}</p>
+          {renderImage()}
+          <h3 className="text-xl font-bold ml-2">{tourSteps[currentStep]?.title}</h3>
         </div>
         
-        <div className="flex justify-between mt-4">
-          <button 
-            className="btn btn-sm btn-outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 0}
-          >
-            Previous
-          </button>
+        <p className="mb-6">{tourSteps[currentStep]?.description}</p>
+        
+        <div className="flex justify-between items-center">
+          <div>
+            {currentStep > 0 && (
+              <button 
+                onClick={handlePrev}
+                className="btn btn-outline btn-sm mr-2 pointer-events-auto"
+              >
+                Back
+              </button>
+            )}
+          </div>
+          
+          <div className="flex-1 flex justify-center">
+            {/* Progress indicators */}
+            <div className="flex space-x-1">
+              {tourSteps.map((_, index) => (
+                <div 
+                  key={index} 
+                  className={`w-2 h-2 rounded-full ${index === currentStep ? 'bg-primary' : 'bg-gray-300'}`}
+                />
+              ))}
+            </div>
+          </div>
           
           <div>
             <button 
-              className="btn btn-sm btn-outline mr-2"
               onClick={handleSkip}
+              className="btn btn-ghost btn-sm mr-2 pointer-events-auto"
             >
               Skip
             </button>
             <button 
-              className="btn btn-sm btn-primary"
               onClick={handleNext}
+              className="btn btn-primary btn-sm pointer-events-auto"
             >
-              {currentStep === tourSteps.length - 1 ? "Finish" : "Next"}
+              {currentStep < tourSteps.length - 1 ? 'Next' : 'Finish'}
             </button>
-          </div>
-        </div>
-        
-        <div className="flex justify-center mt-4">
-          <div className="flex space-x-1">
-            {tourSteps.map((_, index) => (
-              <div 
-                key={index}
-                className={`w-2 h-2 rounded-full ${index === currentStep ? 'bg-primary' : 'bg-gray-300'}`}
-              />
-            ))}
           </div>
         </div>
       </div>
