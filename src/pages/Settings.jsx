@@ -4,7 +4,7 @@ import ThemeContext from "../context/ThemeContext";
 import { IoLogOut } from "react-icons/io5";
 import { doSignOut } from "../firebase/auth";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import { AiOutlineInfoCircle, AiOutlineUser } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { useToast } from "../context/ToastContext";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
@@ -16,6 +16,8 @@ import Feedback from "../components/Feedback";
 import InteractiveTour from "../components/InteractiveTour";
 import { useTour } from "../context/TourContext";
 import { FaComments } from "react-icons/fa";
+import { IoMdAddCircleOutline } from "react-icons/io";
+
 
 const themes = [
   "light",
@@ -348,7 +350,20 @@ function Settings() {
               <FaComments className="text-2xl" />
               Messaging Tour
             </button>
-
+            <button
+              className="btn btn-primary gap-2 text-base-100"
+              onClick={handleStartPostingTour}
+            >
+              <IoMdAddCircleOutline className="text-2xl" />
+              Posting Tour
+            </button>
+            <button
+              className="btn btn-primary gap-2 text-base-100"
+              onClick={handleStartProfileTour}
+            >
+              <AiOutlineUser className="text-2xl" />
+              Profile Tour
+            </button>
           </div>
         </div>
       </div>

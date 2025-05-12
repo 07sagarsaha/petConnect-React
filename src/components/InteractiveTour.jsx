@@ -124,11 +124,142 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
     }
   ];
 
+  // Add posting tour steps
+  const postingTourSteps = [
+    {
+      title: "Create a Post",
+      description: "Welcome to the posting tour! Let's learn how to share your pet's adventures with the community.",
+      location: "center",
+      image: "cat",
+      route: "/in/home",
+      targetSelector: null
+    },
+    {
+      title: "New Post Button",
+      description: "Click this button to start creating a new post about your pet.",
+      location: "post",
+      image: "dog",
+      route: "/in/home",
+      targetSelector: ".new-post-button, button:has(.IoMdAddCircleOutline), button:contains('New Post')"
+    },
+    {
+      title: "Post Title",
+      description: "Give your post a catchy title that describes what you're sharing.",
+      location: "input",
+      image: "cat",
+      route: "/in/home",
+      targetSelector: "input[placeholder*='Title'], input[name='title']"
+    },
+    {
+      title: "Post Content",
+      description: "Share details about your pet's adventure or ask questions to the community.",
+      location: "textarea",
+      image: "dog",
+      route: "/in/home",
+      targetSelector: "textarea, [contenteditable='true']"
+    },
+    {
+      title: "Add Images",
+      description: "Make your post more engaging by adding cute photos of your pet!",
+      location: "image",
+      image: "cat",
+      route: "/in/home",
+      targetSelector: "button:has(.CiImageOn), button:has(.IoMdImage)"
+    },
+    {
+      title: "Set Severity",
+      description: "Indicate how urgent or important your post is to help others prioritize.",
+      location: "slider",
+      image: "dog",
+      route: "/in/home",
+      targetSelector: "input[type='range'], .severity-slider"
+    },
+    {
+      title: "Submit Post",
+      description: "When you're ready, click this button to share your post with the community!",
+      location: "button",
+      image: "cat",
+      route: "/in/home",
+      targetSelector: "button[type='submit'], button:contains('Post')"
+    },
+    {
+      title: "All Done!",
+      description: "Great job! Now you know how to create posts and share your pet's journey with the community.",
+      location: "center",
+      image: "dog",
+      route: "/in/home",
+      targetSelector: null
+    }
+  ];
+
+  const profileTourSteps = [
+    {
+      title: "Profile Page Tour",
+      description: "Welcome to your profile page! Let's explore how to customize your profile and manage your pets.",
+      location: "center",
+      image: "cat",
+      route: "/in/profile",
+      targetSelector: null
+    },
+    {
+      title: "Your Profile Information",
+      description: "This section shows your profile picture, name, and bio. It's how other pet owners will see you!",
+      location: "profile",
+      image: "dog",
+      route: "/in/profile",
+      targetSelector: "img[src*='profilePic'], img[alt='Profile']"
+    },
+    {
+      title: "Edit Profile",
+      description: "Click this button to update your profile information, including your name, handle, and bio.",
+      location: "button",
+      image: "cat",
+      route: "/in/profile",
+      targetSelector: "#profilePicUpload"
+    },
+    {
+      title: "Your Pets",
+      description: "Here you can see all your pets. You can add new pets or edit existing ones.",
+      location: "pets",
+      image: "dog",
+      route: "/in/profile",
+      targetSelector: "div:has(> h1:contains('Your Pets')), div:has(> h2:contains('Your Pets'))"
+    },
+    {
+      title: "Add a New Pet",
+      description: "Click this button to add information about a new pet to your profile.",
+      location: "button",
+      image: "cat",
+      route: "/in/profile",
+      targetSelector: "button:has(.IoMdAddCircleOutline), button:contains('Add Pet')"
+    },
+    {
+      title: "Your Posts",
+      description: "This section shows all the posts you've shared with the community.",
+      location: "posts",
+      image: "dog",
+      route: "/in/profile",
+      targetSelector: "div:has(> h1:contains('Your Posts')), div:has(> h2:contains('Your Posts'))"
+    },
+    {
+      title: "All Done!",
+      description: "Great job! Now you know how to manage your profile and pets. Happy connecting!",
+      location: "center",
+      image: "cat",
+      route: "/in/profile",
+      targetSelector: null
+    }
+  ];
+
   // Memoize tour steps to prevent unnecessary re-renders
   const tourSteps = React.useMemo(() => {
     switch (tourType) {
       case 'messaging':
         return messagingTourSteps;
+      case 'posting':
+        return postingTourSteps;
+      case 'profile':
+        return profileTourSteps;
       case 'general':
       default:
         return generalTourSteps;

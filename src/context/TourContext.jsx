@@ -63,8 +63,8 @@ export const TourProvider = ({ children }) => {
   };
 
   const startTour = (type = 'general') => {
-    // Allow general and messaging tours
-    if (type !== 'general' && type !== 'messaging') {
+    // Allow general, messaging, posting, and profile tours
+    if (type !== 'general' && type !== 'messaging' && type !== 'posting' && type !== 'profile') {
       type = 'general';
     }
     setCurrentStep(0);
