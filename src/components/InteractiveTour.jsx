@@ -369,7 +369,7 @@ const InteractiveTour = ({ onClose, tourType = "general" }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black bg-opacity-50 pointer-events-auto">
+    <div className="fixed inset-0 z-[9999] pointer-events-auto">
       {/* Highlight for the target element */}
       {highlightPosition && (
         <div 
