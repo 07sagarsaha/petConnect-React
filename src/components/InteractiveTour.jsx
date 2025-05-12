@@ -4,13 +4,13 @@ import { FaCat, FaDog } from 'react-icons/fa';
 import { useTour } from '../context/TourContext';
 
 const InteractiveTour = ({ onClose, tourType = 'general' }) => {
-  const { currentStep, setCurrentStep, nextStep, prevStep } = useTour();
+  // Use useRef for values that shouldn't trigger re-renders
+  const [currentStep, setCurrentStep] = useState(0);
   const [highlightPosition, setHighlightPosition] = useState(null);
-  const [waitingForAction, setWaitingForAction] = useState(false);
   const [actionCompleted, setActionCompleted] = useState(false);
-  const navigate = useNavigate();
   const tooltipRef = useRef(null);
-
+  const navigate = useNavigate();
+  
   // Define different tour steps based on tour type
   const generalTourSteps = [
     {
@@ -79,20 +79,39 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
     }
   ];
 
-  // Select the appropriate tour steps based on the tour type
-  const tourSteps = tourType === 'general' ? generalTourSteps : generalTourSteps;
+  // Memoize tour steps to prevent unnecessary re-renders
+  const tourSteps = React.useMemo(() => {
+    return tourType === 'general' ? generalTourSteps : generalTourSteps;
+  }, [tourType, generalTourSteps]);
 
   // Navigate to the correct route for each step
   useEffect(() => {
+    let isMounted = true;
+    
     if (tourSteps[currentStep]?.route) {
-      console.log("Navigating to:", tourSteps[currentStep].route);
-      navigate(tourSteps[currentStep].route);
+      const currentPath = window.location.pathname;
+      const targetRoute = tourSteps[currentStep].route;
+      
+      // Only navigate if we're not already on the correct route
+      if (currentPath !== targetRoute) {
+        console.log("Navigating to:", targetRoute);
+        navigate(targetRoute);
+      }
     }
+    
+    return () => {
+      isMounted = false;
+    };
   }, [currentStep, navigate, tourSteps]);
 
   // Find and highlight the target element
   useEffect(() => {
+    let isMounted = true;
+    let intervalId = null;
+    
     const findTargetElement = () => {
+      if (!isMounted) return;
+      
       const step = tourSteps[currentStep];
       if (!step || !step.targetSelector) {
         setHighlightPosition(null);
@@ -167,7 +186,7 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
         }
       }
       
-      if (targetElement) {
+      if (targetElement && isMounted) {
         console.log("Found target element:", targetElement);
         const rect = targetElement.getBoundingClientRect();
         console.log("Element position:", rect);
@@ -177,7 +196,7 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
           // For the side nav, adjust the highlight to prevent bouncing
           if (currentStep === 4) {
             setHighlightPosition({
-              top: rect.top + window.scrollY,
+              top: rect.top,
               left: rect.left,
               width: rect.width,
               height: Math.min(rect.height, window.innerHeight - 100), // Limit height to prevent overflow
@@ -192,23 +211,37 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
               fixed: false
             });
           }
+          
+          // Clear the interval once we've found the element
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
         } else {
           console.log("Element has zero dimensions");
-          setHighlightPosition(null);
+          if (isMounted) setHighlightPosition(null);
         }
       } else {
         console.log("Target element not found");
-        setHighlightPosition(null);
+        if (isMounted) setHighlightPosition(null);
       }
     };
 
-    // Initial check
-    findTargetElement();
+    // Initial check with a delay to allow for navigation
+    const timeoutId = setTimeout(() => {
+      findTargetElement();
+      
+      // Set up interval only if we haven't found the element yet
+      if (!intervalId) {
+        intervalId = setInterval(findTargetElement, 1000);
+      }
+    }, 500);
     
-    // Check periodically in case the element appears later
-    const interval = setInterval(findTargetElement, 1000);
-    
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [currentStep, tourSteps]);
 
   // Position the tooltip based on the highlighted element
@@ -216,15 +249,15 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
     if (!tooltipRef.current) return;
     
     const tooltip = tooltipRef.current;
-    const tooltipRect = tooltip.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
-    const windowWidth = window.innerWidth;
     
     // If there's a highlighted element, position relative to it
     if (highlightPosition) {
+      const windowHeight = window.innerHeight;
+      const windowWidth = window.innerWidth;
+      const tooltipRect = tooltip.getBoundingClientRect();
+      
       // Calculate the center of the highlighted element
       const elementCenterX = highlightPosition.left + (highlightPosition.width / 2);
-      const elementCenterY = highlightPosition.top + (highlightPosition.height / 2);
       
       // Determine the best position for the tooltip
       let top, left;
@@ -250,6 +283,7 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
                       highlightPosition.top + (highlightPosition.height / 2) - (tooltipRect.height / 2));
       }
       
+      // Use direct DOM manipulation to avoid React re-renders
       tooltip.style.top = `${top}px`;
       tooltip.style.left = `${left}px`;
       tooltip.style.transform = 'none'; // Remove the default transform
@@ -259,6 +293,8 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       tooltip.style.left = '50%';
       tooltip.style.transform = 'translate(-50%, -50%)';
     }
+    
+    // Only run this effect when highlightPosition or currentStep changes
   }, [highlightPosition, currentStep]);
 
   const handleNext = () => {
