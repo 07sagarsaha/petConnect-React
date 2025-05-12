@@ -13,6 +13,8 @@ import sad_puppy from "../Assets/sad-puppy.jpg";
 import axios from "axios";
 import { useClerk, useUser, useSignIn } from "@clerk/clerk-react";
 import Feedback from "../components/Feedback";
+import InteractiveTour from "../components/InteractiveTour";
+import { useTour } from "../context/TourContext";
 
 const themes = [
   "light",
@@ -58,6 +60,8 @@ function Settings() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState("");
   const { user } = useUser();
+  const { startTour } = useTour();
+  const [showTour, setShowTour] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -130,8 +134,38 @@ function Settings() {
     }
   };
 
+  const handleStartGeneralTour = () => {
+    console.log("Starting general tour");
+    showToast("Starting tour...");
+    startTour('general');
+  };
+  
+  const handleStartMessagingTour = () => {
+    console.log("Starting messaging tour");
+    showToast("Starting messaging tour...");
+    startTour('messaging');
+  };
+  
+  const handleStartPostingTour = () => {
+    console.log("Starting posting tour");
+    showToast("Starting posting tour...");
+    startTour('posting');
+  };
+  
+  const handleStartProfileTour = () => {
+    console.log("Starting profile tour");
+    showToast("Starting profile editing tour...");
+    startTour('profile');
+  };
+
+  useEffect(() => {
+    if (showTour) {
+      console.log("Tour is now visible");
+    }
+  }, [showTour]);
+
   return (
-    <div className="flex flex-col justify-center p-4 bg-base-200  min-h-screen">
+    <div className="flex flex-col justify-center p-4 bg-base-200 min-h-screen">
       <div className="w-full bg-base-100 rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>
@@ -161,6 +195,13 @@ function Settings() {
             </NavLink>
           )}
           <Feedback />
+          <button
+            className="text-xl btn gap-2 max-sm:w-full w-fit text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center bg-secondary"
+            onClick={handleStartGeneralTour}
+          >
+            <AiOutlineInfoCircle className="text-2xl" />
+            {"Get a Tour"}
+          </button>
         </div>
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2 text-primary">
@@ -289,7 +330,52 @@ function Settings() {
             </div>
           )}
         </div>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4 text-primary">Tours & Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              className="btn btn-primary gap-2 text-base-100"
+              onClick={handleStartGeneralTour}
+            >
+              <AiOutlineInfoCircle className="text-2xl" />
+              Get a General Tour
+            </button>
+            
+            <button
+              className="btn btn-secondary gap-2 text-base-100"
+              onClick={handleStartMessagingTour}
+            >
+              <AiOutlineInfoCircle className="text-2xl" />
+              How to Send Messages
+            </button>
+            
+            <button
+              className="btn btn-accent gap-2 text-base-100"
+              onClick={handleStartPostingTour}
+            >
+              <AiOutlineInfoCircle className="text-2xl" />
+              How to Create Posts
+            </button>
+            
+            <button
+              className="btn btn-info gap-2 text-base-100"
+              onClick={handleStartProfileTour}
+            >
+              <AiOutlineInfoCircle className="text-2xl" />
+              How to Edit Your Profile
+            </button>
+          </div>
+        </div>
       </div>
+      {showTour && (
+        <InteractiveTour 
+          onClose={() => {
+            console.log("Closing tour");
+            setShowTour(false);
+            showToast("Tour closed");
+          }} 
+        />
+      )}
     </div>
   );
 }

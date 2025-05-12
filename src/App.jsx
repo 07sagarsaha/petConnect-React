@@ -4,10 +4,12 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./context/authContext/authContext";
 import "../src/App.css";
 import { ThemeProvider } from "./context/ThemeContext";
-import PetFacts from "./components/UI/PetFacts";
+import { useTour } from "./context/TourContext";
+import InteractiveTour from "./components/InteractiveTour";
 
 function App() {
   const { userLoggedIn } = useAuth();
+  const { showTour, tourType, endTour } = useTour();
 
   useEffect(() => {
     if (
@@ -30,6 +32,7 @@ function App() {
             <Outlet />
           </div>
         </div>
+        {showTour && <InteractiveTour onClose={endTour} tourType={tourType} />}
       </div>
     </ThemeProvider>
   );

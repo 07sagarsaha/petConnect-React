@@ -25,6 +25,7 @@ import { useToast } from "../context/ToastContext";
 import { useUser } from "@clerk/clerk-react";
 import { FaUserDoctor } from "react-icons/fa6";
 import pfp from "../icons/pfp.png";
+import { useTour } from "../context/TourContext";
 
 function Profile() {
   const [contentLoaded, setContentLoaded] = useState(false);
@@ -53,10 +54,14 @@ function Profile() {
   const [image, setImage] = useState(null);
   const {showToast} = useToast();
   const { user } = useUser();
-
+  const { startTour } = useTour();
 
   const handleProfileUpdate = () => {
     setisProfileEdit(!isProfileEdit);
+  };
+
+  const handleStartProfileTour = () => {
+    startTour('profile');
   };
 
   useEffect(() => {

@@ -17,6 +17,7 @@ import { useUser } from "@clerk/clerk-react";
 import pfp from "../icons/pfp.png"; // Default profile picture
 import { FaUserDoctor } from "react-icons/fa6";
 import { useToast } from "../context/ToastContext";
+import { useTour } from "../context/TourContext";
 
 const Chat = () => {
   const { user } = useUser();
@@ -29,6 +30,7 @@ const Chat = () => {
   const [recipientPfp, setReceipientPfp] = useState("");
   const messagesEndRef = useRef(null); // Add ref for auto-scroll
   const { showToast } = useToast();
+  const { startTour } = useTour();
 
   // Add scroll to bottom function
   const scrollToBottom = () => {
@@ -125,6 +127,10 @@ const Chat = () => {
     navigate(`/in/profile/${userId}`); // Navigate to the recipient's profile
   };
 
+  const handleStartMessagingTour = () => {
+    startTour('messaging');
+  };
+
   return (
     <div className="flex flex-col h-screen bg-base-100 max-lg:h-[100dvh]">
       {/* Header */}
@@ -161,6 +167,18 @@ const Chat = () => {
 
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto p-4 pb-32 max-lg:pb-40">
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-64 bg-base-100 rounded-lg shadow-lg p-6 mt-4">
+            <h3 className="text-xl font-bold mb-4">No messages yet</h3>
+            <p className="text-center mb-6">Start a conversation with another pet owner to connect!</p>
+            <button 
+              className="btn btn-primary start-conversation-button"
+              onClick={handleStartMessagingTour}
+            >
+              Start a Conversation
+            </button>
+          </div>
+        )}
         {messages.map((message) => (
           <div
             key={message.id}

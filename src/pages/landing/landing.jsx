@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext/authContext";
 import landingimg from "../../assets/landingPage.jpg";
@@ -11,6 +11,9 @@ import { IoPawSharp } from "react-icons/io5";
 import { FaCat } from "react-icons/fa";
 import Register from "../auth/signup";
 import Login from "../auth/login";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebase";
+import InteractiveTour from "../../components/InteractiveTour";
 
 const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
 const PetModel = ({ isAnimating, showCanvas, register, login }) => {
@@ -228,13 +231,14 @@ const BackgroundPaws = ({ isAnimating, showCanvas }) => {
 };
 
 const Landing = () => {
-  const { userLoggedIn } = useAuth();
+  const { userLoggedIn, user } = useAuth();
   const controlsRef = useRef();
   const [showCanvas, setShowCanvas] = React.useState(false);
   const [isAnimating, setIsAnimating] = React.useState(false);
   const [secondSection, setSecondSection] = React.useState(false); // State to control the second section
   const [register, showRegister] = React.useState(false);
   const [login, showLogin] = React.useState(false);
+  const [showFirstTimeTour, setShowFirstTimeTour] = useState(false);
   const navigate = useNavigate();
 
   const mainRef = useRef(null);
@@ -317,6 +321,37 @@ const Landing = () => {
         setSecondSection(false);
       }, 100); // Adjust timing as needed
     }, 100); // Matches your original animation timing
+  };
+
+  useEffect(() => {
+    const checkFirstTimeUser = async () => {
+      if (userLoggedIn && user) {
+        try {
+          const userRef = doc(db, "users", user.id);
+          const userDoc = await getDoc(userRef);
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // If the user has never seen the tour, show it
+            if (userData.hasSeenTour === undefined || userData.hasSeenTour === false) {
+              setShowFirstTimeTour(true);
+              
+              // Update the user document to indicate they've seen the tour
+              await setDoc(userRef, { ...userData, hasSeenTour: true }, { merge: true });
+            }
+          }
+        } catch (error) {
+          console.error("Error checking first-time user:", error);
+        }
+      }
+    };
+    
+    checkFirstTimeUser();
+  }, [userLoggedIn, user]);
+
+  const handleCloseTour = () => {
+    setShowFirstTimeTour(false);
   };
 
   return (
@@ -455,6 +490,7 @@ const Landing = () => {
           </div>
         </div>
       </div>
+      {showFirstTimeTour && <InteractiveTour onClose={handleCloseTour} />}
     </>
   );
 };

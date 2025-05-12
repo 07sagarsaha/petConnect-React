@@ -13,6 +13,7 @@ import { CiImageOn } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import LoadingBar from "react-top-loading-bar";
+import { useTour } from "../../context/TourContext";
 
 const Button = ({ buttonName, icon, submitName, className }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -25,6 +26,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
   const [isLoading, setIsLoading] = useState(false);
   const loadingBarRef = useRef(null);
   const { user } = useUser();
+  const { startTour } = useTour();
 
   const cloudinaryAccounts = [
     {
@@ -64,9 +66,35 @@ const Button = ({ buttonName, icon, submitName, className }) => {
     5: "😭 (contact vet)",
   };
 
+  // Add this function to check if it's the user's first post
+  const checkFirstTimePosting = async () => {
+    if (user) {
+      try {
+        const userRef = doc(db, "users", user.id);
+        const userDoc = await getDoc(userRef);
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          
+          // If the user has never posted before, show the tour
+          if (userData.hasPostedBefore === undefined || userData.hasPostedBefore === false) {
+            startTour('posting');
+            
+            // Update the user document to indicate they've posted before
+            await setDoc(userRef, { ...userData, hasPostedBefore: true }, { merge: true });
+          }
+        }
+      } catch (error) {
+        console.error("Error checking first-time posting:", error);
+      }
+    }
+  };
+  
   function handleClickEvent() {
     setIsClicked(!isClicked);
-    if (isClicked) {
+    if (!isClicked) {
+      checkFirstTimePosting();
+    } else {
       setTitle("");
       setContent("");
       setImageFile(null);

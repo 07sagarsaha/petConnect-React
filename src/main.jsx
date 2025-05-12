@@ -27,6 +27,7 @@ import ErrorBoundary from "./components/auth/ErrorBoundary.jsx";
 import Chat from "./pages/Chat.jsx";
 import ChatList from "./pages/ChatList.jsx";
 import { ToastProvider } from "./context/ToastContext.jsx";
+import { TourProvider } from "./context/TourContext.jsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -74,7 +75,9 @@ createRoot(document.getElementById("root")).render(
         <AuthProvider>
           <ThemeProvider>
             <ToastProvider>
-              <RouterProvider router={router} />
+              <TourProvider>
+                <RouterProvider router={router} />
+              </TourProvider>
             </ToastProvider>
           </ThemeProvider>
         </AuthProvider>
