@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useToast } from "../context/ToastContext";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import { IoMdClose } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowDropleft, IoMdClose } from "react-icons/io";
+import pfp from "../icons/pfp.png";
+import { BiCheck, BiCopy, BiCross, BiInfoCircle } from "react-icons/bi";
+import { FaUserDoctor } from "react-icons/fa6";
 
 const Admin = () => {
   const [vetUsers, setVetUsers] = useState([]);
@@ -136,6 +145,19 @@ const Admin = () => {
     }
   };
 
+  const handleDeleteFeedback = async (id) => {
+    try {
+      await deleteDoc(doc(db, "feedback", id));
+      setFeedback((prev) => prev.filter((fb) => fb.id !== id));
+      setBugs((prev) => prev.filter((fb) => fb.id !== id));
+      setOthers((prev) => prev.filter((fb) => fb.id !== id));
+      showToast("Feedback deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting feedback:", error);
+      showToast("Failed to delete feedback");
+    }
+  };
+
   const isClerkId = (id) => {
     // Clerk IDs typically start with 'user_' and are followed by a string of characters
     return typeof id === "string" && id.startsWith("user_");
@@ -145,274 +167,579 @@ const Admin = () => {
     return <div className="text-center p-4">Loading...</div>;
   }
 
+  const pendingCount = vetUsers.filter(
+    (user) => user.isVetVerified === undefined
+  ).length;
+
   return (
     <>
-      <div className="p-4">
+      <div className="p-8 max-sm:p-4">
         {isAdmin && user && (
           <>
-            <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
-            <button
-              className="btn btn-secondary py-4 my-4"
-              onClick={() => Navigate(`/in/home`)}
-            >
-              {"Go to home"}
-            </button>
+            <div className="flex flex-row gap-3 items-center bg-base-300 rounded-xl p-2 w-fit">
+              <button
+                className="btn btn-ghost btn-md"
+                onClick={() => Navigate(`/in/home`)}
+              >
+                <IoIosArrowDropleft size={30} />
+              </button>
+              <h1 className="text-2xl font-extrabold mr-4">{"Admin Panel"}</h1>
+            </div>
             <div
-              className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
+              className="flex items-center cursor-pointer border-b-2 border-base-300 text-base-content py-4 rounded-t"
               onClick={() => setIsVetTableOpen(!isVetTableOpen)}
             >
-              <h1 className="text-2xl font-bold">Vet Verification Dashboard</h1>
-              <span className="ml-2">{isVetTableOpen ? "▼" : "▶"}</span>
+              <h1 className="text-2xl font-bold flex flex-row gap-2 items-center">
+                <span className="py-2">{"Vet Verification Dashboard"}</span>
+                {pendingCount !== 0 && (
+                  <span className="font-medium text-base flex flex-row gap-2 text-center px-4 py-2 rounded-full bg-base-300">
+                    <span>{"Pending: "}</span>
+                    <span>{pendingCount}</span>
+                  </span>
+                )}
+              </h1>
+              <span className="ml-2">
+                <IoIosArrowDown
+                  size={20}
+                  className={`transition-all ${isVetTableOpen ? `-rotate-180` : `rotate-0`}`}
+                />
+              </span>
             </div>
             <div
-              className={`transition-all duration-300 ${isVetTableOpen ? "max-h-[2000px] overflow-auto" : "max-h-0 overflow-hidden"}`}
+              className={`transition-all duration-300 flex flex-row max-sm:flex-col gap-3 mt-4 overflow-auto p-4 ${isVetTableOpen ? ` inline` : `hidden`}`}
             >
-              <table className="w-full">
-                <thead className="bg-base-300 w-full">
-                  <tr>
-                    <th className="p-4 text-start">User ID</th>
-                    <th className="p-4 text-start">Email</th>
-                    <th className="p-4 text-start">Name</th>
-                    <th className="p-4 text-start">Vet RN</th>
-                    <th className="p-4 text-start">isVet</th>
-                    <th className="p-4 text-start">isVetVerified</th>
-                    <th className="p-4 text-start">Status</th>
-                    <th className="p-4 text-start">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="text-base-content w-full">
-                  {vetUsers.map((user) => (
-                    <>
-                      <tr key={user.id} className={`border-b bg-base-200`}>
-                        <td className="p-4 flex flex-row gap-3">
-                          {user.isVetVerified === undefined && (
-                            <div className="w-4 h-4 self-center rounded-full bg-red-500" />
-                          )}
-                          {user.id}
-                        </td>
-                        <td className="p-4">{user.email}</td>
-                        <td className="p-4">{user.name}</td>
-                        <td className="p-4">{user.rnum}</td>
-                        <td className="p-4">
-                          {user.isVet ? "User is vet" : "User is not vet"}
-                        </td>
-                        <td className="p-4">
-                          {user.isVetVerified
-                            ? "User is verified vet"
-                            : user.isVetVerified === undefined
-                              ? "User vet is pending"
-                              : "User is Not Vet Verified"}
-                        </td>
-                        <td className="p-4">
-                          {user.isVetVerified === true && "Approved"}
-                          {user.isVetVerified === false && "Denied"}
-                          {user.isVetVerified === undefined && "Pending"}
-                        </td>
-                        <td className="p-4 space-x-2 flex">
-                          {!user.isVetVerified && (
+              {vetUsers
+                .slice() // make a shallow copy to avoid mutating state
+                .sort((a, b) => {
+                  // Pending (undefined) first, then others
+                  if (
+                    a.isVetVerified === undefined &&
+                    b.isVetVerified !== undefined
+                  )
+                    return -1;
+                  if (
+                    a.isVetVerified !== undefined &&
+                    b.isVetVerified === undefined
+                  )
+                    return 1;
+                  return 0;
+                })
+                .map((user) => (
+                  <>
+                    <div
+                      key={user.id}
+                      className="w-full sm:w-fit h-fit p-4 shadow-Uni shadow-base-300 rounded-lg bg-base-100 flex flex-col gap-3"
+                    >
+                      <div
+                        className="flex flex-row gap-2 items-center"
+                        aria-label="Go to User"
+                      >
+                        <img
+                          src={user.profilePic || pfp}
+                          className="size-14 object-cover rounded-full cursor-pointer"
+                          onClick={() => {
+                            Navigate(`/in/profile/${user.id}`);
+                          }}
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-bold">{user.name}</span>
+                          <span className="font-normal max-w-[200px] truncate sm:max-w-none">
+                            {user.id}
+                            <button
+                              className="btn btn-circle btn-sm"
+                              onClick={() => {
+                                navigator.clipboard.writeText(user.id);
+                                showToast("Copied to clipboard!");
+                              }}
+                            >
+                              <BiCopy />
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                      <span className="p-4 rounded-lg bg-base-300 flex flex-row gap-2">
+                        {user.isVet && user.isVetVerified === true
+                          ? `This user is a vet`
+                          : user.isVetVerified === undefined
+                            ? `This user has requested to be a vet`
+                            : `This user in not a vet`}
+                        {user.isVetVerified === undefined && (
+                          <span className="text-primary text-2xl size-3 text-start max-sm:mr-4">
+                            <BiInfoCircle className="text-base-200 bg-error p-1 rounded-full" />
+                          </span>
+                        )}
+                        {user.isVetVerified === true && (
+                          <span className="text-primary text-2xl size-3 text-center">
+                            <FaUserDoctor className="text-base-200 bg-success p-1 rounded-full" />
+                          </span>
+                        )}
+                      </span>
+                      {user.rnum ? (
+                        <span className="p-4 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
+                          {`User's Vet Registration Number: `}
+                          {user.rnum}
+                          <button
+                            className="btn btn-circle btn-sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(user.rnum);
+                              showToast("Copied to clipboard!");
+                            }}
+                          >
+                            <BiCopy />
+                          </button>
+                        </span>
+                      ) : (
+                        <span className="p-4 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
+                          {
+                            "This user did not provide a Vet Registration Number for some reason"
+                          }
+                          <button
+                            className="btn btn-circle btn-sm"
+                            onClick={() => {
+                              showToast("No data found!");
+                            }}
+                          >
+                            <BiInfoCircle />
+                          </button>
+                        </span>
+                      )}
+                      {user.address ? (
+                        <span className="p-4 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
+                          {`User's Address: `}
+                          {user.address}
+                          <button
+                            className="btn btn-circle btn-sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(user.address);
+                              showToast("Copied to clipboard!");
+                            }}
+                          >
+                            <BiCopy />
+                          </button>
+                        </span>
+                      ) : (
+                        <span className="p-4 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
+                          {"This user did not provide any address"}
+                          <button
+                            className="btn btn-circle btn-sm"
+                            onClick={() => {
+                              showToast("No data found!");
+                            }}
+                          >
+                            <BiInfoCircle />
+                          </button>
+                        </span>
+                      )}
+                      <div className="flex flex-row gap-2">
+                        {user.isVetVerified === undefined ? (
+                          <>
+                            <button
+                              className="btn btn-success rounded-xl text-base-100"
+                              onClick={() => {
+                                handleVerification(user.id, true);
+                              }}
+                            >
+                              <BiCheck size={25} />
+                              {"Verify as vet"}
+                            </button>
+                            <button
+                              className="btn btn-error rounded-xl text-base-100"
+                              onClick={() => {
+                                handleVerification(user.id, false);
+                              }}
+                            >
+                              <IoMdClose size={25} />
+                              {"Deny"}
+                            </button>
+                          </>
+                        ) : user.isVetVerified === true ? (
+                          <>
+                            <button
+                              className="btn btn-error rounded-xl text-base-100"
+                              onClick={() => {
+                                handleVerification(user.id, false);
+                              }}
+                            >
+                              <IoMdClose size={25} />
+                              {"Revoke"}
+                            </button>
+                          </>
+                        ) : (
+                          user.isVetVerified === false && (
                             <>
                               <button
-                                onClick={() =>
-                                  handleVerification(user.id, true)
-                                }
-                                className="bg-green-500 text-white px-3 py-1 rounded"
+                                className="btn btn-accent rounded-xl text-base-100"
+                                onClick={() => {
+                                  handleVerification(user.id, true);
+                                }}
                               >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleVerification(user.id, false)
-                                }
-                                className="bg-red-500 text-white px-3 py-1 rounded"
-                              >
-                                Deny
+                                <BiCheck size={25} />
+                                {"Reverify"}
                               </button>
                             </>
-                          )}
-                          {user.isVetVerified && (
-                            <button
-                              onClick={() => handleVerification(user.id, false)}
-                              className="bg-red-500 text-white px-3 py-1 rounded"
-                            >
-                              Deny
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    </>
-                  ))}
-                </tbody>
-              </table>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ))}
             </div>
-            <div className="mt-8">
+            <div className="mt-8 w-full">
               <div
-                className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
+                className="flex items-center cursor-pointer bg-base-100 py-4 rounded-t border-b-2 border-base-300"
                 onClick={() => setIsUserTableOpen(!isUserTableOpen)}
               >
-                <h2 className="text-2xl font-bold">User Management</h2>
-                <span className="ml-2">{isUserTableOpen ? "▼" : "▶"}</span>
+                <h2 className="text-2xl font-bold">{"User Management"}</h2>
+                <span className="ml-2">
+                  <IoIosArrowDown
+                    size={20}
+                    className={`transition-all ${isUserTableOpen ? `-rotate-180` : `rotate-0`}`}
+                  />
+                </span>
               </div>
-              <div
-                className={`transition-all duration-300 w-full ${isUserTableOpen ? "max-h-[2000px] overflow-auto" : "max-h-0 overflow-hidden"}`}
-              >
-                <table className="w-full">
-                  <thead className="bg-gray-800 text-white w-full">
-                    <tr>
-                      <th className="p-4 text-start">User ID</th>
-                      <th className="p-4 text-start">Email</th>
-                      <th className="p-4 text-start">Name</th>
-                      <th className="p-4 text-start">is using Clerk</th>
-                      <th className="p-4 text-start">Is Admin</th>
-                      <th className="p-4 text-start">Is Vet</th>
-                      <th className="p-4 text-start">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-gray-200 w-full">
-                    {users.map((u) => (
-                      <tr key={u.id} className="border-b">
-                        <td className="p-4">{u.id}</td>
-                        <td className="p-4">{u.email}</td>
-                        <td className="p-4">{u.name}</td>
-                        <td className="p-4">
-                          {isClerkId(u.id) ? "using Clerk" : "using Firebase"}
-                        </td>
-                        <td className="p-4">
-                          {u.isAdmin ? "Admin" : "Normal User"}
-                        </td>
-                        <td className="p-4">
-                          {u.isVetVerified ? "Vet" : "Not Vet"}
-                        </td>
-                        <td className="p-4 space-x-2">
+              <div className={`h-fit ${isUserTableOpen ? "inline" : "hidden"}`}>
+                {users
+                  .slice()
+                  .sort((a, b) => {
+                    // Admins first
+                    if (a.isAdmin && !b.isAdmin) return -1;
+                    if (!a.isAdmin && b.isAdmin) return 1;
+                    // Then Clerk users
+                    if (isClerkId(a.id) && !isClerkId(b.id)) return -1;
+                    if (!isClerkId(a.id) && isClerkId(b.id)) return 1;
+                    // Otherwise, keep order
+                    return 0;
+                  })
+                  .map((u) => (
+                    <>
+                      <div
+                        key={u.id}
+                        className="grid grid-cols-4 max-sm:flex max-sm:flex-col max-sm:justify-start max-sm:items-start gap-4 w-full my-4 shadow-Uni shadow-base-300 rounded-xl p-4 items-center"
+                      >
+                        {/* Avatar + Name */}
+                        <div className="flex flex-row gap-3 items-center col-span-1">
+                          <img
+                            src={u.profilePic ?? pfp}
+                            className="size-14 rounded-full object-cover cursor-pointer"
+                            onClick={() => {
+                              Navigate(`/in/profile/${u.id}`);
+                            }}
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-bold">{u.name}</span>
+                            <div className="flex flex-row gap-2 items-center">
+                              <span className="p-2 rounded-md bg-base-300 w-fit">
+                                {isClerkId(u.id) ? "Clerk" : "Firebase"}
+                              </span>
+                              <span className="p-2 rounded-md bg-base-300 w-fit">
+                                {u.isAdmin ? "Admin" : "Normal User"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        {/* ID + Email */}
+                        <span className="font-medium col-span-1 max-sm:text-sm">
+                          {u.id}
+                          <button
+                            className="btn ml-2 btn-sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(u.id);
+                              showToast("Copied to clipboard!: " + u.id);
+                            }}
+                          >
+                            <BiCopy />
+                          </button>
+                        </span>
+                        <span className="font-medium col-span-1 max-sm:ml-0 ml-16">
+                          {u.email}
+                          <button
+                            className="btn ml-2 btn-sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(u.email);
+                              showToast("Copied to clipboard!: " + u.email);
+                            }}
+                          >
+                            <BiCopy />
+                          </button>
+                        </span>
+
+                        {/* Actions */}
+                        <div className="flex justify-end">
                           {u.id !== user.id ? (
-                            <>
-                              {!u.isAdmin ? (
-                                <>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedUserId(u);
-                                      setConfirmBox(!confirmBox);
-                                    }}
-                                    className="bg-blue-500 text-white px-3 py-1 rounded w-52"
-                                  >
-                                    Make Admin
-                                  </button>
-                                </>
-                              ) : (
-                                <button
-                                  onClick={() => handleAdminStatus(u.id, false)}
-                                  className="bg-orange-500 text-white px-3 py-1 rounded w-52"
-                                >
-                                  Remove Admin
-                                </button>
-                              )}
-                            </>
+                            !u.isAdmin ? (
+                              <button
+                                onClick={() => {
+                                  setSelectedUserId(u);
+                                  setConfirmBox(!confirmBox);
+                                }}
+                                className="btn-success text-base-100 btn btn-md"
+                              >
+                                {"Make Admin"}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleAdminStatus(u.id, false)}
+                                className="btn-error text-base-100 btn btn-md"
+                              >
+                                {"Remove Admin"}
+                              </button>
+                            )
                           ) : (
-                            <span className="text-gray-500">You</span>
+                            <span className="text-gray-500">{"You"}</span>
                           )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+                    </>
+                  ))}
               </div>
             </div>
             <div className="mt-8">
               <div
-                className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
+                className="flex items-center cursor-pointer bg-base-100 text-base-content py-4 rounded-t border-b-2 border-base-300"
                 onClick={() => setIsFeedbackTableOpen(!isFeedbackTableOpen)}
               >
-                <h2 className="text-2xl font-bold">Feedback</h2>
-                <span className="ml-2">{isFeedbackTableOpen ? "▼" : "▶"}</span>
+                <h2 className="text-2xl font-bold">{"Feedback"}</h2>
+                <span className="ml-2">
+                  <IoIosArrowDown
+                    size={20}
+                    className={`transition-all ${isFeedbackTableOpen ? `-rotate-180` : `rotate-0`}`}
+                  />
+                </span>
               </div>
               <div
-                className={`transition-all duration-300 w-full ${isFeedbackTableOpen ? "max-h-[2000px] overflow-auto" : "max-h-0 overflow-hidden"}`}
+                className={`transition-all duration-300 flex flex-row max-sm:flex-col gap-3 mt-4 overflow-auto p-4 ${isFeedbackTableOpen ? ` inline` : `hidden`}`}
               >
-                <table className="w-full mb-6">
-                  <thead className="bg-gray-800 text-white w-full">
-                    <tr>
-                      <th className="p-4 text-start">User ID</th>
-                      <th className="p-4 text-start">Name</th>
-                      <th className="p-4 text-start">Feedback</th>
-                      <th className="p-4 text-start">Importance</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-gray-200 w-full">
-                    {feedbacks.map((u) => (
-                      <tr key={u.id} className="border-b">
-                        <td className="p-4">{u.id}</td>
-                        <td className="p-4">{u.name}</td>
-                        <td className="p-4">{u.feedback}</td>
-                        <td className="p-4">{u.importance}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {feedbacks
+                  .slice() // make a shallow copy to avoid mutating state
+                  .sort((a, b) => {
+                    const importanceOrder = { High: 0, Medium: 1, Low: 2 };
+                    return (
+                      (importanceOrder[a.importance] ?? 3) -
+                      (importanceOrder[b.importance] ?? 3)
+                    );
+                  })
+                  .map((user) => (
+                    <>
+                      <div
+                        key={user.id}
+                        className="w-fit max-sm:w-full min-w-[30%] h-fit p-4 shadow-Uni shadow-base-300 rounded-lg bg-base-100 flex flex-col gap-3"
+                      >
+                        <div className="flex justify-between">
+                          <div className="flex flex-row gap-2 items-center">
+                            <img
+                              src={user.profilePic || pfp}
+                              className="size-14 object-cover rounded-full"
+                            />
+                            <div className="flex flex-col">
+                              <span className="font-bold">{user.name}</span>
+                              <span className="font-normal">{user.id}</span>
+                            </div>
+                          </div>
+                          <span className="p-2 bg-base-300 rounded-md h-fit w-fit">
+                            {user.importance}
+                          </span>
+                        </div>
+                        <span className="py-2 px-2 max-sm:text-sm rounded-lg bg-base-300 flex flex-row gap-2 items-center">
+                          {user.email ? (
+                            <>
+                              {user.email}
+                              <button
+                                className="btn btn-circle btn-sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(user.rnum);
+                                  showToast("Copied to clipboard!");
+                                }}
+                              >
+                                <BiCopy />
+                              </button>
+                            </>
+                          ) : (
+                            "User email not found!"
+                          )}
+                        </span>
+                        <span className="py-4 px-2 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
+                          {user.feedback}
+                        </span>
+                        <div className="flex flex-row gap-2">
+                          <button
+                            className="btn btn-success text-base-100"
+                            onClick={() => {
+                              handleDeleteFeedback(user.id);
+                            }}
+                          >
+                            <BiCheck size={25} />
+                            {"Done"}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ))}
               </div>
             </div>
             <div className="mt-8">
               <div
-                className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
+                className="flex items-center cursor-pointer bg-base-100 text-base-content py-4 rounded-t border-b-2 border-base-300"
                 onClick={() => setIsBugTableOpen(!isBugTableOpen)}
               >
-                <h2 className="text-2xl font-bold">Bugs</h2>
-                <span className="ml-2">{isBugTableOpen ? "▼" : "▶"}</span>
+                <h2 className="text-2xl font-bold">{"Bugs"}</h2>
+                <span className="ml-2">
+                  <IoIosArrowDown
+                    size={20}
+                    className={`transition-all ${isBugTableOpen ? `-rotate-180` : `rotate-0`}`}
+                  />
+                </span>
               </div>
               <div
-                className={`transition-all duration-300 w-full ${isBugTableOpen ? "max-h-[2000px] overflow-auto" : "max-h-0 overflow-hidden"}`}
+                className={`transition-all duration-300 flex flex-row max-sm:flex-col gap-3 mt-4 overflow-auto p-4 ${isBugTableOpen ? ` inline` : `hidden`}`}
               >
-                <table className="w-full mb-6">
-                  <thead className="bg-gray-800 text-white w-full">
-                    <tr>
-                      <th className="p-4 text-start">User ID</th>
-                      <th className="p-4 text-start">Name</th>
-                      <th className="p-4 text-start">Bug description</th>
-                      <th className="p-4 text-start">Importance</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-gray-200 w-full">
-                    {bugs.map((u) => (
-                      <tr key={u.id} className="border-b">
-                        <td className="p-4">{u.id}</td>
-                        <td className="p-4">{u.name}</td>
-                        <td className="p-4">{u.feedback}</td>
-                        <td className="p-4">{u.importance}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {bugs
+                  .slice() // make a shallow copy to avoid mutating state
+                  .sort((a, b) => {
+                    const importanceOrder = { High: 0, Medium: 1, Low: 2 };
+                    return (
+                      (importanceOrder[a.importance] ?? 3) -
+                      (importanceOrder[b.importance] ?? 3)
+                    );
+                  })
+                  .map((user) => (
+                    <>
+                      <div
+                        key={user.id}
+                        className="w-fit max-sm:w-full min-w-[30%] h-fit p-4 shadow-Uni shadow-base-300 rounded-lg bg-base-100 flex flex-col gap-3"
+                      >
+                        <div className="flex justify-between">
+                          <div className="flex flex-row gap-2 items-center">
+                            <img
+                              src={user.profilePic || pfp}
+                              className="size-14 object-cover rounded-full"
+                            />
+                            <div className="flex flex-col">
+                              <span className="font-bold">{user.name}</span>
+                              <span className="font-normal">{user.id}</span>
+                            </div>
+                          </div>
+                          <span className="p-2 bg-base-300 rounded-md h-fit w-fit">
+                            {user.importance}
+                          </span>
+                        </div>
+                        <span className="py-2 px-2 max-sm:text-sm rounded-lg bg-base-300 flex flex-row gap-2 items-center">
+                          {user.email ? (
+                            <>
+                              {user.email}
+                              <button
+                                className="btn btn-circle btn-sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(user.rnum);
+                                  showToast("Copied to clipboard!");
+                                }}
+                              >
+                                <BiCopy />
+                              </button>
+                            </>
+                          ) : (
+                            "User email not found!"
+                          )}
+                        </span>
+                        <span className="py-4 px-2 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
+                          {user.feedback}
+                        </span>
+                        <div className="flex flex-row gap-2">
+                          <button
+                            className="btn btn-success text-base-100"
+                            onClick={() => {
+                              handleDeleteFeedback(user.id);
+                            }}
+                          >
+                            <BiCheck size={25} />
+                            {"Done"}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ))}
               </div>
             </div>
             <div className="mt-8">
               <div
-                className="flex items-center cursor-pointer bg-gray-800 text-white p-4 rounded-t"
+                className="flex items-center cursor-pointer bg-base-100 text-base-content py-4 rounded-t border-b-2 border-base-300"
                 onClick={() => setIsOthersTableOpen(!isOthersTableOpen)}
               >
                 <h2 className="text-2xl font-bold">{"Others"}</h2>
-                <span className="ml-2">{isOthersTableOpen ? "▼" : "▶"}</span>
+                <span className="ml-2">
+                  <IoIosArrowDown
+                    size={20}
+                    className={`transition-all ${isOthersTableOpen ? `-rotate-180` : `rotate-0`}`}
+                  />
+                </span>
               </div>
               <div
-                className={`transition-all duration-300 w-full ${isOthersTableOpen ? "max-h-[2000px] overflow-auto" : "max-h-0 overflow-hidden"}`}
+                className={`transition-all duration-300 flex flex-row max-sm:flex-col gap-3 mt-4 overflow-auto p-4 ${isOthersTableOpen ? ` inline` : `hidden`}`}
               >
-                <table className="w-full mb-6">
-                  <thead className="bg-gray-800 text-white w-full">
-                    <tr>
-                      <th className="p-4 text-start">User ID</th>
-                      <th className="p-4 text-start">Name</th>
-                      <th className="p-4 text-start">{"User Says..."}</th>
-                      <th className="p-4 text-start">Importance</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-gray-200 w-full">
-                    {others.map((u) => (
-                      <tr key={u.id} className="border-b">
-                        <td className="p-4">{u.id}</td>
-                        <td className="p-4">{u.name}</td>
-                        <td className="p-4">{u.feedback}</td>
-                        <td className="p-4">{u.importance}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {others
+                  .slice() // make a shallow copy to avoid mutating state
+                  .sort((a, b) => {
+                    const importanceOrder = { High: 0, Medium: 1, Low: 2 };
+                    return (
+                      (importanceOrder[a.importance] ?? 3) -
+                      (importanceOrder[b.importance] ?? 3)
+                    );
+                  })
+                  .map((user) => (
+                    <>
+                      <div
+                        key={user.id}
+                        className="w-fit max-sm:w-full min-w-[30%] h-fit p-4 shadow-Uni shadow-base-300 rounded-lg bg-base-100 flex flex-col gap-3"
+                      >
+                        <div className="flex justify-between">
+                          <div className="flex flex-row gap-2 items-center">
+                            <img
+                              src={user.profilePic || pfp}
+                              className="size-14 object-cover rounded-full"
+                            />
+                            <div className="flex flex-col">
+                              <span className="font-bold">{user.name}</span>
+                              <span className="font-normal">{user.id}</span>
+                            </div>
+                          </div>
+                          <span className="p-2 bg-base-300 rounded-md h-fit w-fit">
+                            {user.importance}
+                          </span>
+                        </div>
+                        <span className="py-2 px-2 max-sm:text-sm rounded-lg bg-base-300 flex flex-row gap-2 items-center">
+                          {user.email ? (
+                            <>
+                              {user.email}
+                              <button
+                                className="btn btn-circle btn-sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(user.rnum);
+                                  showToast("Copied to clipboard!");
+                                }}
+                              >
+                                <BiCopy />
+                              </button>
+                            </>
+                          ) : (
+                            "User email not found!"
+                          )}
+                        </span>
+                        <span className="py-4 px-2 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
+                          {user.feedback}
+                        </span>
+                        <div className="flex flex-row gap-2">
+                          <button
+                            className="btn btn-success text-base-100"
+                            onClick={() => {
+                              handleDeleteFeedback(user.id);
+                            }}
+                          >
+                            <BiCheck size={25} />
+                            {"Done"}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ))}
               </div>
             </div>
           </>

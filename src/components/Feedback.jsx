@@ -34,14 +34,18 @@ const Feedback = () => {
 
     const unsubscribe = collection(db, "feedback");
     const userRef = await getDoc(doc(db, "users", user.id));
-    const userName = userRef.exists() ? userRef.data() : { name: "unknown" };
+    const userData = userRef.exists()
+      ? userRef.data()
+      : { name: "unknown", email: "unknown", profilePic: "unknown" };
 
     await addDoc(unsubscribe, {
       feedback: feedback,
       feedbackType: feedbackType,
       importance: importance,
       userId: user?.id,
-      name: userName.name,
+      name: userData.name,
+      email: userData.email,
+      profilePic: userData.profilePic,
     })
       .then(() => {
         showToast("Feedback successfully submitted!");
@@ -49,6 +53,9 @@ const Feedback = () => {
         openTypeMenu(false);
         setFeedbackForm(false);
         setLoading(false);
+        setFeedback("");
+        setFeedbackType("Feedback");
+        setImportance("Low");
       })
       .catch((error) => {
         showToast("Something went wrong");
@@ -78,6 +85,9 @@ const Feedback = () => {
               className="absolute top-5 right-5 rounded-full bg-base-300 text-base-content text-2xl"
               onClick={() => {
                 setFeedbackForm(false);
+                setFeedback("");
+                setFeedbackType("Feedback");
+                setImportance("Low");
               }}
             >
               <IoMdClose />
@@ -93,6 +103,7 @@ const Feedback = () => {
             <textarea
               className="mt-2 w-3/5 max-sm:w-full h-1/2 max-sm:h-1/3 resize-none rounded-2xl bg-base-300 p-4 outline-none"
               placeholder="Write here..."
+              value={feedback}
               onChange={(e) => {
                 setFeedback(e.target.value);
               }}
