@@ -80,7 +80,7 @@ const Feedback = () => {
       </button>
       {feedbackForm && (
         <>
-          <div className="fixed z-50 w-3/5 h-3/5 max-sm:w-5/6 max-sm:h-4/6 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100 rounded-2xl flex flex-col items-center p-6 gap-4">
+          <div className="fixed z-50 w-3/5 h-3/5 max-sm:w-[90%] max-sm:h-5/6 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100 rounded-2xl flex flex-col items-center p-6 gap-4">
             <button
               className="absolute top-5 right-5 rounded-full bg-base-300 text-base-content text-2xl"
               onClick={() => {
@@ -214,7 +214,7 @@ const Feedback = () => {
               </button>
             </div>
             <button
-              className="btn btn-primary mt-2 text-lg"
+              className="btn btn-primary mt-3 text-lg"
               onClick={handleSubmit}
               disabled={loading}
             >
