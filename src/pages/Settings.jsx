@@ -18,7 +18,6 @@ import { useTour } from "../context/TourContext";
 import { FaComments } from "react-icons/fa";
 import { IoMdAddCircleOutline } from "react-icons/io";
 
-
 const themes = [
   "light",
   "dark",
@@ -140,25 +139,25 @@ function Settings() {
   const handleStartGeneralTour = () => {
     console.log("Starting general tour");
     showToast("Starting tour...");
-    startTour('general');
+    startTour("general");
   };
-  
+
   const handleStartMessagingTour = () => {
     console.log("Starting messaging tour");
     showToast("Starting messaging tour...");
-    startTour('messaging');
+    startTour("messaging");
   };
-  
+
   const handleStartPostingTour = () => {
     console.log("Starting posting tour");
     showToast("Starting posting tour...");
-    startTour('posting');
+    startTour("posting");
   };
-  
+
   const handleStartProfileTour = () => {
     console.log("Starting profile tour");
     showToast("Starting profile editing tour...");
-    startTour('profile');
+    startTour("profile");
   };
 
   useEffect(() => {
@@ -183,7 +182,7 @@ function Settings() {
         <div className="flex flex-row max-sm:flex-col max-sm:gap-2 items-center mb-6 gap-2">
           <NavLink
             to="/in/about"
-            className="text-xl btn gap-2 w-[50%] max-sm:w-full text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center bg-primary md:hidden lg:hidden"
+            className="text-xl btn gap-2 w-[50%] max-sm:w-full text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center btn-primary md:hidden lg:hidden"
           >
             <AiOutlineInfoCircle className="text-2xl" />
             {"About us"}
@@ -191,7 +190,7 @@ function Settings() {
           {isAdmin && (
             <NavLink
               to="/admin"
-              className="text-xl btn gap-2 max-sm:w-full w-fit text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center bg-primary"
+              className="text-xl btn gap-2 max-sm:w-full w-fit text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center btn-primary"
             >
               <MdAdminPanelSettings className="text-2xl" />
               {"Admin"}
@@ -199,7 +198,7 @@ function Settings() {
           )}
           <Feedback />
           <button
-            className="text-xl btn gap-2 max-sm:w-full w-fit text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center bg-secondary"
+            className="text-xl btn gap-2 max-sm:w-full w-fit text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center btn-secondary"
             onClick={handleStartGeneralTour}
           >
             <AiOutlineInfoCircle className="text-2xl" />
@@ -334,7 +333,9 @@ function Settings() {
           )}
         </div>
         <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4 text-primary">Tours & Guides</h2>
+          <h2 className="text-2xl font-bold mb-4 text-primary">
+            Tours & Guides
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               className="btn btn-primary gap-2 text-base-100"
@@ -368,12 +369,12 @@ function Settings() {
         </div>
       </div>
       {showTour && (
-        <InteractiveTour 
+        <InteractiveTour
           onClose={() => {
             console.log("Closing tour");
             setShowTour(false);
             showToast("Tour closed");
-          }} 
+          }}
         />
       )}
     </div>

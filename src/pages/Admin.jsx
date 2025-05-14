@@ -18,7 +18,7 @@ import { FaUserDoctor } from "react-icons/fa6";
 const Admin = () => {
   const [vetUsers, setVetUsers] = useState([]);
   const [users, setUsers] = useState([]);
-  const [isVetTableOpen, setIsVetTableOpen] = useState(true);
+  const [isVetTableOpen, setIsVetTableOpen] = useState(false);
   const [isUserTableOpen, setIsUserTableOpen] = useState(false);
   const [isFeedbackTableOpen, setIsFeedbackTableOpen] = useState(false);
   const [isBugTableOpen, setIsBugTableOpen] = useState(false);
@@ -163,13 +163,26 @@ const Admin = () => {
     return typeof id === "string" && id.startsWith("user_");
   };
 
-  if (loading) {
-    return <div className="text-center p-4">Loading...</div>;
-  }
-
   const pendingCount = vetUsers.filter(
     (user) => user.isVetVerified === undefined
   ).length;
+
+  const feedbackCount = feedbacks.length;
+
+  const bugCount = bugs.length;
+
+  const othersCount = others.length;
+
+  useEffect(() => {
+    setIsVetTableOpen(pendingCount > 0);
+    setIsFeedbackTableOpen(feedbackCount > 0);
+    setIsBugTableOpen(bugCount > 0);
+    setIsOthersTableOpen(othersCount > 0);
+  }, [pendingCount, feedbackCount, bugCount, othersCount]);
+
+  if (loading) {
+    return <div className="text-center p-4">Loading...</div>;
+  }
 
   return (
     <>
@@ -431,9 +444,11 @@ const Admin = () => {
                               <span className="p-2 rounded-md bg-base-300 w-fit">
                                 {isClerkId(u.id) ? "Clerk" : "Firebase"}
                               </span>
-                              <span className="p-2 rounded-md bg-base-300 w-fit">
-                                {u.isAdmin ? "Admin" : "Normal User"}
-                              </span>
+                              {u.isAdmin && (
+                                <span className="p-2 rounded-md bg-base-300 w-fit">
+                                  {"Admin"}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -493,12 +508,21 @@ const Admin = () => {
                   ))}
               </div>
             </div>
+            {/*Feedback Table*/}
             <div className="mt-8">
               <div
                 className="flex items-center cursor-pointer bg-base-100 text-base-content py-4 rounded-t border-b-2 border-base-300"
                 onClick={() => setIsFeedbackTableOpen(!isFeedbackTableOpen)}
               >
-                <h2 className="text-2xl font-bold">{"Feedback"}</h2>
+                <div className="flex flex-row gap-3 items-center">
+                  <h2 className="text-2xl font-bold">{"Feedback"}</h2>
+                  {feedbackCount !== 0 && (
+                    <span className="font-medium text-base flex flex-row gap-2 text-center px-4 py-2 rounded-full bg-base-300">
+                      <span>{"Pending: "}</span>
+                      <span>{feedbackCount}</span>
+                    </span>
+                  )}
+                </div>
                 <span className="ml-2">
                   <IoIosArrowDown
                     size={20}
@@ -509,6 +533,11 @@ const Admin = () => {
               <div
                 className={`transition-all duration-300 flex flex-row max-sm:flex-col gap-3 mt-4 overflow-auto p-4 ${isFeedbackTableOpen ? ` inline` : `hidden`}`}
               >
+                {feedbackCount === 0 && (
+                  <span className="font-light italic">
+                    {"You're all caught up!"}
+                  </span>
+                )}
                 {feedbacks
                   .slice() // make a shallow copy to avoid mutating state
                   .sort((a, b) => {
@@ -576,12 +605,21 @@ const Admin = () => {
                   ))}
               </div>
             </div>
+            {/*Bug Table*/}
             <div className="mt-8">
               <div
                 className="flex items-center cursor-pointer bg-base-100 text-base-content py-4 rounded-t border-b-2 border-base-300"
                 onClick={() => setIsBugTableOpen(!isBugTableOpen)}
               >
-                <h2 className="text-2xl font-bold">{"Bugs"}</h2>
+                <div className="flex flex-row gap-3 items-center">
+                  <h2 className="text-2xl font-bold">{"Bugs"}</h2>
+                  {bugCount !== 0 && (
+                    <span className="font-medium text-base flex flex-row gap-2 text-center px-4 py-2 rounded-full bg-base-300">
+                      <span>{"Pending: "}</span>
+                      <span>{bugCount}</span>
+                    </span>
+                  )}
+                </div>
                 <span className="ml-2">
                   <IoIosArrowDown
                     size={20}
@@ -592,6 +630,11 @@ const Admin = () => {
               <div
                 className={`transition-all duration-300 flex flex-row max-sm:flex-col gap-3 mt-4 overflow-auto p-4 ${isBugTableOpen ? ` inline` : `hidden`}`}
               >
+                {bugCount === 0 && (
+                  <span className="font-light italic">
+                    {"You're all caught up!"}
+                  </span>
+                )}
                 {bugs
                   .slice() // make a shallow copy to avoid mutating state
                   .sort((a, b) => {
@@ -659,12 +702,21 @@ const Admin = () => {
                   ))}
               </div>
             </div>
+            {/*Other Table*/}
             <div className="mt-8">
               <div
                 className="flex items-center cursor-pointer bg-base-100 text-base-content py-4 rounded-t border-b-2 border-base-300"
                 onClick={() => setIsOthersTableOpen(!isOthersTableOpen)}
               >
-                <h2 className="text-2xl font-bold">{"Others"}</h2>
+                <div className="flex flex-row gap-3 items-center">
+                  <h2 className="text-2xl font-bold">{"Others"}</h2>
+                  {othersCount !== 0 && (
+                    <span className="font-medium text-base flex flex-row gap-2 text-center px-4 py-2 rounded-full bg-base-300">
+                      <span>{"Pending: "}</span>
+                      <span>{othersCount}</span>
+                    </span>
+                  )}
+                </div>
                 <span className="ml-2">
                   <IoIosArrowDown
                     size={20}
@@ -675,6 +727,11 @@ const Admin = () => {
               <div
                 className={`transition-all duration-300 flex flex-row max-sm:flex-col gap-3 mt-4 overflow-auto p-4 ${isOthersTableOpen ? ` inline` : `hidden`}`}
               >
+                {othersCount === 0 && (
+                  <span className="font-light italic">
+                    {"You're all caught up!"}
+                  </span>
+                )}
                 {others
                   .slice() // make a shallow copy to avoid mutating state
                   .sort((a, b) => {
