@@ -11,6 +11,7 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
   const [actionCompleted, setActionCompleted] = useState(false);
   const tooltipRef = useRef(null);
   const navigate = useNavigate();
+  const [originalScrollPosition, setOriginalScrollPosition] = useState(0);
   
   // Define different tour steps based on tour type
   const generalTourSteps = [
@@ -270,6 +271,13 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
   useEffect(() => {
     let isMounted = true;
     
+    // Store original scroll position and disable scrolling when tour starts
+    if (currentStep === 0) {
+      setOriginalScrollPosition(window.scrollY);
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+    }
+    
     if (tourSteps[currentStep]?.route) {
       const currentPath = window.location.pathname;
       const targetRoute = tourSteps[currentStep].route;
@@ -277,13 +285,20 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       // Only navigate if we're not already on the correct route
       if (currentPath !== targetRoute) {
         navigate(targetRoute);
+        // Ensure we're at the top of the page after navigation
+        window.scrollTo(0, 0);
       }
     }
     
     return () => {
       isMounted = false;
+      // Re-enable scrolling when component unmounts
+      if (currentStep === tourSteps.length - 1) {
+        document.body.style.overflow = '';
+        window.scrollTo(0, originalScrollPosition);
+      }
     };
-  }, [currentStep, navigate, tourSteps]);
+  }, [currentStep, navigate, tourSteps, originalScrollPosition]);
 
   // Find and highlight the target element
   useEffect(() => {
@@ -303,93 +318,64 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       const selectors = step.targetSelector.split(', ');
       let targetElement = null;
       
-      // Try each selector until we find a matching element
       for (const selector of selectors) {
-        if (selector.includes(':contains(')) {
-          // Handle custom :contains() selector
-          const match = selector.match(/:contains\('(.+?)'\)/);
-          if (match) {
-            const textToFind = match[1];
-            const elements = document.querySelectorAll('button, a, div, span, h1, h2, h3, h4, h5, h6, p');
-            for (let i = 0; i < elements.length; i++) {
-              if (elements[i].textContent.includes(textToFind)) {
-                targetElement = elements[i];
-                break;
-              }
-            }
-          }
-        } else if (selector.includes(':has(')) {
-          // Handle custom :has() selector
-          const match = selector.match(/:has\((.+?)\)/);
-          if (match) {
-            const iconClass = match[1];
-            const elements = document.querySelectorAll('button, a, div');
-            for (let i = 0; i < elements.length; i++) {
-              if (elements[i].querySelector(iconClass)) {
-                targetElement = elements[i];
-                break;
-              }
-            }
-          }
-        } else {
-          // Standard selector
+        try {
           const element = document.querySelector(selector);
           if (element) {
             targetElement = element;
             break;
           }
+        } catch (error) {
+          console.error(`Invalid selector: ${selector}`, error);
         }
-        
-        if (targetElement) break;
       }
       
-      // Special case handling for specific steps
-      if (!targetElement) {
-        if (tourType === 'general') {
-          if (currentStep === 1) { // Home Feed
-            // Try to find the posts container
-            targetElement = document.querySelector('.lg\\:w-2\\/3.w-full.z-0.flex.flex-col') || 
-                            document.querySelector('div[class*="flex flex-col gap-0"]');
-          } else if (currentStep === 2) { // New Post button
-            // Find button with "New Post" text
-            const buttons = document.querySelectorAll('button');
-            for (let i = 0; i < buttons.length; i++) {
-              if (buttons[i].textContent.includes('New Post')) {
-                targetElement = buttons[i];
-                break;
-              }
+      // Special case handling for navigation step
+      if (tourType === 'general' && (currentStep === 4 || currentStep === 5)) {
+        // Try more specific selectors for the navigation
+        targetElement = document.querySelector('.fixed.z-10') || 
+                        document.querySelector('nav') ||
+                        document.querySelector('.sidenav') ||
+                        document.querySelector('div[class*="fixed z-10"]');
+                        
+        // If we found the nav element
+        if (targetElement && isMounted) {
+          const rect = targetElement.getBoundingClientRect();
+          
+          // Only update if we have valid dimensions
+          if (rect.width > 0 && rect.height > 0) {
+            // Use fixed positioning for the nav highlight
+            setHighlightPosition({
+              top: rect.top,
+              left: rect.left,
+              width: rect.width,
+              height: Math.min(rect.height, window.innerHeight * 0.8), // Limit height
+              fixed: true // Mark as fixed position
+            });
+            
+            // Clear the interval once we've found the element
+            if (intervalId) {
+              clearInterval(intervalId);
+              intervalId = null;
             }
-          } else if (currentStep === 4) { // Navigation Menu
-            // Find the side navigation
-            targetElement = document.querySelector('.fixed.z-10') || 
-                            document.querySelector('div[class*="fixed z-10"]');
+            return;
           }
         }
       }
       
+      // Handle other elements normally
       if (targetElement && isMounted) {
         const rect = targetElement.getBoundingClientRect();
         
         // Only update if we have valid dimensions
         if (rect.width > 0 && rect.height > 0) {
-          // For the side nav, adjust the highlight to prevent bouncing
-          if (tourType === 'general' && currentStep === 4) {
-            setHighlightPosition({
-              top: rect.top,
-              left: rect.left,
-              width: rect.width,
-              height: Math.min(rect.height, window.innerHeight - 100), // Limit height to prevent overflow
-              fixed: true // Mark as fixed position
-            });
-          } else {
-            setHighlightPosition({
-              top: rect.top + window.scrollY,
-              left: rect.left,
-              width: rect.width,
-              height: rect.height,
-              fixed: false
-            });
-          }
+          setHighlightPosition({
+            top: rect.top + window.scrollY,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+            fixed: false
+          });
           
           // Clear the interval once we've found the element
           if (intervalId) {
@@ -439,31 +425,44 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       // Determine the best position for the tooltip
       let top, left;
       
-      // Try to position below the element first
-      top = highlightPosition.top + highlightPosition.height + 20;
-      
-      // If that would go off the bottom of the screen, position above
-      if (top + tooltipRect.height > windowHeight - 20) {
-        top = Math.max(20, highlightPosition.top - tooltipRect.height - 20);
-      }
-      
-      // Center horizontally relative to the element
-      left = elementCenterX - (tooltipRect.width / 2);
-      
-      // Keep the tooltip on screen horizontally
-      left = Math.max(20, Math.min(left, windowWidth - tooltipRect.width - 20));
-      
-      // For the side nav (step 4 in general tour), position the tooltip to the right of the nav
-      if (tourType === 'general' && currentStep === 4) {
-        left = highlightPosition.left + highlightPosition.width + 20;
-        top = Math.min(windowHeight - tooltipRect.height - 20, 
-                      highlightPosition.top + (highlightPosition.height / 2) - (tooltipRect.height / 2));
+      // Special case for navigation bar in general tour (steps 4 and 5)
+      if (tourType === 'general' && (currentStep === 4 || currentStep === 5)) {
+        // For mobile (bottom nav bar)
+        if (window.innerWidth <= 1024) { // lg breakpoint in Tailwind
+          // Position tooltip above the bottom nav bar
+          top = windowHeight - highlightPosition.height - tooltipRect.height - 20;
+          left = windowWidth / 2 - tooltipRect.width / 2;
+        } else {
+          // For desktop (side nav bar)
+          left = highlightPosition.left + highlightPosition.width + 20;
+          top = Math.min(
+            windowHeight - tooltipRect.height - 20,
+            highlightPosition.top + (highlightPosition.height / 2) - (tooltipRect.height / 2)
+          );
+        }
+      } else {
+        // Default positioning for other steps
+        // Try to position below the element first
+        top = highlightPosition.top + highlightPosition.height + 20;
+        
+        // If that would go off the bottom of the screen, position above
+        if (top + tooltipRect.height > windowHeight - 20) {
+          top = Math.max(20, highlightPosition.top - tooltipRect.height - 20);
+        }
+        
+        // Center horizontally relative to the element
+        left = elementCenterX - (tooltipRect.width / 2);
+        
+        // Keep the tooltip on screen horizontally
+        left = Math.max(20, Math.min(left, windowWidth - tooltipRect.width - 20));
       }
       
       // Use direct DOM manipulation to avoid React re-renders
       tooltip.style.top = `${top}px`;
       tooltip.style.left = `${left}px`;
       tooltip.style.transform = 'none'; // Remove the default transform
+      tooltip.style.zIndex = '9999'; // Ensure tooltip is above everything
+      tooltip.style.opacity = '1'; // Make sure tooltip is visible
     } else {
       // If no element is highlighted, center the tooltip
       tooltip.style.top = '50%';
@@ -478,6 +477,8 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       setCurrentStep(currentStep + 1);
       setActionCompleted(false);
     } else {
+      document.body.style.overflow = '';
+      window.scrollTo(0, originalScrollPosition);
       onClose();
     }
   };
@@ -490,6 +491,8 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
   };
 
   const handleSkip = () => {
+    document.body.style.overflow = '';
+    window.scrollTo(0, originalScrollPosition);
     onClose();
   };
 
@@ -505,116 +508,37 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] pointer-events-none">
-      {/* Create multiple overlay sections to darken everything except the highlighted element */}
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 overflow-hidden">
+      {/* Highlight overlay */}
       {highlightPosition && (
-        <>
-          {/* Top section */}
-          <div 
-            className="absolute bg-black/70 pointer-events-auto"
-            style={{
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: highlightPosition.top + 'px',
-              zIndex: 10000
-            }}
-          />
-          
-          {/* Left section */}
-          <div 
-            className="absolute bg-black/70 pointer-events-auto"
-            style={{
-              top: highlightPosition.top + 'px',
-              left: 0,
-              width: highlightPosition.left + 'px',
-              height: highlightPosition.height + 'px',
-              zIndex: 10000
-            }}
-          />
-          
-          {/* Right section */}
-          <div 
-            className="absolute bg-black/70 pointer-events-auto"
-            style={{
-              top: highlightPosition.top + 'px',
-              left: (highlightPosition.left + highlightPosition.width) + 'px',
-              width: `calc(100% - ${highlightPosition.left + highlightPosition.width}px)`,
-              height: highlightPosition.height + 'px',
-              zIndex: 10000
-            }}
-          />
-          
-          {/* Bottom section */}
-          <div 
-            className="absolute bg-black/70 pointer-events-auto"
-            style={{
-              top: (highlightPosition.top + highlightPosition.height) + 'px',
-              left: 0,
-              width: '100%',
-              height: `calc(100% - ${highlightPosition.top + highlightPosition.height}px)`,
-              zIndex: 10000
-            }}
-          />
-        </>
-      )}
-      
-      {/* If no element is highlighted, darken the entire screen */}
-      {!highlightPosition && (
-        <div className="absolute inset-0 bg-black/70 pointer-events-auto" style={{ zIndex: 10000 }} />
-      )}
-      
-      {/* Highlight border for the target element */}
-      {highlightPosition && (
-        <div 
-          className="border-4 border-primary rounded-lg pointer-events-none"
+        <div
+          className="absolute rounded-lg ring-4 ring-primary pointer-events-none"
           style={{
+            top: highlightPosition.top,
+            left: highlightPosition.left,
+            width: highlightPosition.width,
+            height: highlightPosition.height,
             position: highlightPosition.fixed ? 'fixed' : 'absolute',
-            top: highlightPosition.top + 'px',
-            left: highlightPosition.left + 'px',
-            width: highlightPosition.width + 'px',
-            height: highlightPosition.height + 'px',
-            boxShadow: 'var(--shadow-tourHighlight, 0 0 15px 5px rgba(147, 51, 234, 0.7), 0 0 30px 10px rgba(147, 51, 234, 0.4))',
-            zIndex: 10001,
-            backgroundColor: 'transparent'
-          }}
-        />
-      )}
-      
-      {/* Create a "hole" in the overlay to allow interaction with the highlighted element */}
-      {highlightPosition && (
-        <div 
-          className="pointer-events-auto"
-          style={{
-            position: highlightPosition.fixed ? 'fixed' : 'absolute',
-            top: highlightPosition.top + 'px',
-            left: highlightPosition.left + 'px',
-            width: highlightPosition.width + 'px',
-            height: highlightPosition.height + 'px',
-            zIndex: 10002,
-            backgroundColor: 'transparent'
           }}
         />
       )}
       
       {/* Tooltip */}
-      <div 
+      <div
         ref={tooltipRef}
-        className="fixed bg-base-100 p-6 rounded-xl shadow-xl max-w-md pointer-events-auto"
+        className="absolute bg-base-100 p-4 rounded-xl shadow-xl max-w-md w-full z-[9999] pointer-events-auto"
         style={{
-          position: 'fixed',
-          zIndex: 10003,
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
+          position: 'fixed', // Ensure tooltip is always fixed position
+          zIndex: 9999 // Ensure tooltip is above everything
         }}
       >
-        <div className="flex items-center mb-4">
+        {/* Tooltip content */}
+        <div className="flex items-center gap-4 mb-4">
           {renderImage()}
-          <h3 className="text-xl font-bold ml-2">{tourSteps[currentStep]?.title}</h3>
+          <h3 className="text-xl font-bold">{tourSteps[currentStep]?.title}</h3>
         </div>
         
-        <p className="mb-6">{tourSteps[currentStep]?.description}</p>
+        <p className="mb-4">{tourSteps[currentStep]?.description}</p>
         
         <div className="flex justify-between items-center">
           <div>
