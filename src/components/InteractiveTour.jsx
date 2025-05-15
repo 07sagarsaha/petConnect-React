@@ -512,13 +512,14 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       {/* Highlight overlay */}
       {highlightPosition && (
         <div
-          className="absolute rounded-lg ring-4 ring-primary pointer-events-none"
+          className="absolute rounded-lg ring-4 ring-primary pointer-events-none animate-tourPulse shadow-tourHighlight transition-all duration-300 ease-out-expo brightness-125"
           style={{
             top: highlightPosition.top,
             left: highlightPosition.left,
             width: highlightPosition.width,
             height: highlightPosition.height,
             position: highlightPosition.fixed ? 'fixed' : 'absolute',
+            zIndex: 9998
           }}
         />
       )}
@@ -526,10 +527,10 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       {/* Tooltip */}
       <div
         ref={tooltipRef}
-        className="absolute bg-base-100 p-4 rounded-xl shadow-xl max-w-md w-full z-[9999] pointer-events-auto"
+        className="absolute bg-base-100 p-4 rounded-xl shadow-xl max-w-md w-full z-[9999] pointer-events-auto transition-all duration-500 ease-out-expo"
         style={{
-          position: 'fixed', // Ensure tooltip is always fixed position
-          zIndex: 9999 // Ensure tooltip is above everything
+          position: 'fixed',
+          zIndex: 9999
         }}
       >
         {/* Tooltip content */}
