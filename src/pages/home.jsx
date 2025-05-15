@@ -327,7 +327,7 @@ function Home() {
         <>
           <div className="flex flex-col items-center bg-base-200 p-4 rounded-lg">
             {/* Container for search and new post */}
-            <div className="lg:w-2/3 max-sm:w-full flex-col self-start flex gap-4 md:w-full max-md:w-full px-3">
+            <div className="lg:w-2/3 w-full flex-col self-start flex gap-4 md:w-full max-md:w-full px-3 max-sm:px-0">
               {/* Search Container */}
               <div
                 className={`${isSearchModalOpen ? "w-full" : "lg:flex-1 md:w-full max-md:w-full"} relative`}
