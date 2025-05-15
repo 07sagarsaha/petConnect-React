@@ -28,6 +28,9 @@ const Button = ({ buttonName, icon, submitName, className }) => {
   const loadingBarRef = useRef(null);
   const { user } = useUser();
   const { startTour, hasTourBeenCompleted } = useTour();
+  const [showButton, setShowButton] = useState(true);
+  const lastScrollY = useRef(window.scrollY);
+  const [fullScreenForm, setFullScreenForm] = useState(false);
 
   const cloudinaryAccounts = [
     {
@@ -73,17 +76,24 @@ const Button = ({ buttonName, icon, submitName, className }) => {
       try {
         const userRef = doc(db, "users", user.id);
         const userDoc = await getDoc(userRef);
-        
+
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          
+
           // If the user has never posted before and hasn't completed the posting tour
-          if ((userData.hasPostedBefore === undefined || userData.hasPostedBefore === false) && 
-              !hasTourBeenCompleted('posting')) {
-            startTour('posting');
-            
+          if (
+            (userData.hasPostedBefore === undefined ||
+              userData.hasPostedBefore === false) &&
+            !hasTourBeenCompleted("posting")
+          ) {
+            startTour("posting");
+
             // Update the user document to indicate they've posted before
-            await setDoc(userRef, { ...userData, hasPostedBefore: true }, { merge: true });
+            await setDoc(
+              userRef,
+              { ...userData, hasPostedBefore: true },
+              { merge: true }
+            );
           }
         }
       } catch (error) {
@@ -91,12 +101,21 @@ const Button = ({ buttonName, icon, submitName, className }) => {
       }
     }
   };
-  
+
   function handleClickEvent() {
-    setIsClicked(!isClicked);
     if (!isClicked) {
+      // Check if at the top of the page (allow a small threshold)
+      if (window.scrollY > 10) {
+        setFullScreenForm(true);
+        setIsClicked(true);
+      } else {
+        setFullScreenForm(false);
+        setIsClicked(true);
+      }
       checkFirstTimePosting();
     } else {
+      setIsClicked(false);
+      setFullScreenForm(false);
       setTitle("");
       setContent("");
       setImageFile(null);
@@ -192,119 +211,158 @@ const Button = ({ buttonName, icon, submitName, className }) => {
     setIsImageClicked(!isImageClicked);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current) {
+        setShowButton(false); // scrolling down
+      } else {
+        setShowButton(true); // scrolling up
+      }
+      lastScrollY.current = window.scrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center">
-      <button
-        onClick={() => setIsClicked(!isClicked)}
-        className="new-post-button btn btn-primary text-base-100 shadow-lg flex items-center justify-center gap-2 mb-4"
-      >
-        <IoMdAddCircleOutline className="text-xl" />
-        New Post
-      </button>
-      
-      {isClicked && (
-        <div className="w-full max-w-2xl bg-base-100 rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold mb-4 text-primary">Create a Post</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="post-title-input w-full p-2 border rounded-lg focus:ring focus:ring-primary/20"
-                placeholder="Give your post a title"
-                required
-              />
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Content</label>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="post-content-input w-full p-2 border rounded-lg h-32 focus:ring focus:ring-primary/20"
-                placeholder="What's on your mind?"
-                required
-              />
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Image (Optional)</label>
-              <div className="post-image-upload flex items-center space-x-2">
-                <label className="cursor-pointer bg-base-200 hover:bg-base-300 p-2 rounded-lg flex items-center">
-                  <IoMdImage className="mr-2" />
-                  Upload Image
+    <>
+      <div className="flex flex-col items-center justify-center">
+        {fullScreenForm && (
+          <div
+            className="fixed z-40 top-0 left-0 w-full h-full bg-black opacity-50"
+            onClick={handleClickEvent}
+          />
+        )}
+        <div
+          className={` ${isClicked ? `max-sm:transition-all max-sm:duration-500 ${fullScreenForm ? `transition-none fixed z-50 w-3/5 max-sm:w-5/6 h-fit top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 bg-base-100` : `w-full bg-base-100 h-[35rem] shadow-lg p-4 opacity-100`}` : `rounded-xl h-0 bg-base-200 p-0 opacity-0`} rounded-xl flex-col text-base-100 flex items-start justify-center gap-2 max-sm:w-full max-sm:transition-all duration-500`}
+        >
+          {isClicked && (
+            <>
+              <h2 className="text-2xl font-bold mb-4 text-primary w-full">
+                {"Create a Post"}
+              </h2>
+              <form onSubmit={handleSubmit} className="w-full">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1 text-base-content text-start">
+                    {"Title"}
+                  </label>
                   <input
-                    type="file"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    accept="image/*"
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="post-title-input w-full p-2 border rounded-lg focus:ring focus:ring-primary/20 text-base-content outline-none"
+                    placeholder="Give your post a title"
+                    required
                   />
-                </label>
-                {imagePreview && (
-                  <div className="relative">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="h-16 w-16 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute -top-2 -right-2 bg-error text-white rounded-full p-1"
-                    >
-                      <IoMdClose size={14} />
-                    </button>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1 text-base-content text-start">
+                    {"Content"}
+                  </label>
+                  <textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="post-content-input w-full p-2 border rounded-lg h-32 focus:ring focus:ring-primary/20 resize-none outline-none text-base-content"
+                    placeholder="What's on your mind?"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1 text-base-content text-start">
+                    {"Image (Optional)"}
+                  </label>
+                  <div className="post-image-upload flex items-center space-x-2">
+                    <label className="cursor-pointer bg-base-200 hover:bg-base-300 p-2 rounded-lg flex items-center text-base-content text-start">
+                      <IoMdImage className="mr-2" />
+                      {"Upload Image"}
+                      <input
+                        type="file"
+                        onChange={handleImageChange}
+                        className="hidden"
+                        accept="image/*"
+                      />
+                    </label>
+                    {imagePreview && (
+                      <div className="relative aspect-auto">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="h-16 w-16 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeImage}
+                          className="absolute -top-2 -right-2 bg-error text-white rounded-full p-1"
+                        >
+                          <IoMdClose size={14} />
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-1">
-                Severity (for help requests)
-              </label>
-              <div className="post-severity-slider flex items-center space-x-4">
-                <span>Low</span>
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  value={sevVal}
-                  onChange={(e) => setSevVal(parseInt(e.target.value))}
-                  className="range range-primary"
-                />
-                <span>High</span>
-                <span className="ml-2 font-medium">{sevVal}</span>
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setIsClicked(false)}
-                className="btn btn-outline mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="post-submit-button btn btn-primary text-base-100"
-              >
-                {isLoading ? (
-                  <span className="loading loading-spinner loading-sm"></span>
-                ) : (
-                  "Post"
-                )}
-              </button>
-            </div>
-          </form>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-1 text-base-content text-start">
+                    {"Severity (for help requests)"}
+                  </label>
+                  <div className="post-severity-slider flex items-center space-x-4 text-base-content text-start">
+                    <span>{"Low"}</span>
+                    <input
+                      type="range"
+                      min="1"
+                      max="5"
+                      value={sevVal}
+                      onChange={(e) => setSevVal(parseInt(e.target.value))}
+                      className="range range-primary"
+                    />
+                    <span className="text-base-content text-start">
+                      {"High"}
+                    </span>
+                    <span className="ml-2 font-medium">{sevVal}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleClickEvent}
+                    className="btn btn-outline mr-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="post-submit-button btn btn-primary text-base-100"
+                  >
+                    {isLoading ? (
+                      <span className="loading loading-spinner loading-sm"></span>
+                    ) : (
+                      "Post"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
-      )}
-      <LoadingBar color="#8B5CF6" ref={loadingBarRef} />
-    </div>
+
+        {!isClicked && (
+          <button
+            className={`shadow-Uni flex flex-row items-center gap-4 lg:w-fit md:w-fit btn-primary btn max-sm:btn-square btn-lg fixed z-20 right-4 backdrop:blur-md transition-all duration-300
+            ${showButton ? "opacity-100 pointer-events-auto lg:bottom-20 md:bottom-28 max-md:bottom-28 max-sm:bottom-28 lg:left-[4%] max-sm:right-5" : "lg:opacity-100 max-sm:opacity-0 max-md:opacity-0 md:opacity-0 pointer-events-none lg:bottom-20 max-md:bottom-8 md:bottom-8 max-sm:bottom-8 lg:left-[4%] max-sm:right-5"}`}
+            onClick={isClicked ? null : handleClickEvent}
+          >
+            <IoMdAddCircleOutline className="text-xl" size={25} />
+            <span className="max-sm:hidden">{"New Post"}</span>
+          </button>
+        )}
+        <LoadingBar color="#8B5CF6" ref={loadingBarRef} />
+      </div>
+    </>
   );
 };
 

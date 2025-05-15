@@ -22,11 +22,10 @@ function SideNav() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try{
+    try {
       await signOut();
       navigate("/");
-    }
-    catch(err){
+    } catch (err) {
       console.error("Error during sign out:", err);
     }
   };
@@ -76,21 +75,6 @@ function SideNav() {
               to="/in/settings"
             />
           </div>
-        </div>
-        <div
-          className="flex flex-row gap-4 text-base-100 hover:scale-105 transition-transform duration-300"
-          style={{ display: showLogout ? "flex" : "none" }}
-        >
-          <IoLogOutOutline
-            onClick={handleLogout}
-            className="w-8 h-8 max-lg:hidden cursor-pointer text-white"
-          />
-          <button
-            onClick={handleLogout}
-            className="max-lg:hidden lg:flex text-white"
-          >
-            Logout
-          </button>
         </div>
       </div>
     </>

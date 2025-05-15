@@ -172,7 +172,7 @@ function Settings() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold mb-4 text-primary">Settings</h1>
           <button
-            className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700 lg:hidden"
+            className="text-lg p-3 flex justify-center items-center rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
             onClick={handleLogout}
           >
             <IoLogOut className="size-7 mr-2" />

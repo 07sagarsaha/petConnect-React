@@ -55,7 +55,9 @@ function Home() {
       const q = query(
         collection(db, "posts"),
         orderBy("createdAt", "desc"),
-        ...(isInitial ? [limit(postsPerPage)] : [startAfter(lastDoc), limit(postsPerPage)])
+        ...(isInitial
+          ? [limit(postsPerPage)]
+          : [startAfter(lastDoc), limit(postsPerPage)])
       );
 
       const snapshot = await getDocs(q);
@@ -71,7 +73,9 @@ function Home() {
 
               setPost((prevPosts) => {
                 const updatedPosts = [...prevPosts];
-                const index = updatedPosts.findIndex((p) => p.id === postDoc.id);
+                const index = updatedPosts.findIndex(
+                  (p) => p.id === postDoc.id
+                );
                 if (index !== -1) {
                   updatedPosts[index] = {
                     id: postDoc.id,
@@ -118,24 +122,28 @@ function Home() {
       if (!isInitial) {
         setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
       }
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setIsLoading(false);
-        setInitialLoading(false);
-      }
-    };
-  
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setIsLoading(false);
+      setInitialLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(postsPerPage));
+    const q = query(
+      collection(db, "posts"),
+      orderBy("createdAt", "desc"),
+      limit(postsPerPage)
+    );
     setInitialLoading(true);
-  
+
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       const postData = await Promise.all(
         snapshot.docs.map(async (postDoc) => {
           const postData = postDoc.data();
           let userProfile = {};
-          
+
           if (postData.userId) {
             const userRef = doc(db, "users", postData.userId);
             const userSnap = await getDoc(userRef);
@@ -143,7 +151,7 @@ function Home() {
               userProfile = userSnap.data();
             }
           }
-  
+
           return {
             id: postDoc.id,
             ...postData,
@@ -153,30 +161,31 @@ function Home() {
           };
         })
       );
-  
+
       setPost(postData);
-  
+
       setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
       setInitialLoading(false);
       setContentLoaded(true);
     });
-  
+
     return () => unsubscribe();
   }, []);
-  
+
   // Load more posts on scroll
   useEffect(() => {
     const handleScroll = debounce(() => {
       if (isLoading) return;
-      const scrollPosition = window.innerHeight + document.documentElement.scrollTop;
-      const threshold = document.documentElement.offsetHeight - 100; 
+      const scrollPosition =
+        window.innerHeight + document.documentElement.scrollTop;
+      const threshold = document.documentElement.offsetHeight - 100;
       if (scrollPosition >= threshold) {
-        fetchPosts(false); 
+        fetchPosts(false);
       }
     }, 200);
-  
+
     window.addEventListener("scroll", handleScroll);
-  
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -265,10 +274,10 @@ function Home() {
 
   return (
     <>
-    {!contentLoaded ? (
+      {!contentLoaded ? (
         <div className="flex flex-row">
           <div className="flex flex-col items-start w-full animate-pulse">
-          {/* Search and New Post Skeleton */}
+            {/* Search and New Post Skeleton */}
             <div className="lg:w-4/6 w-full bg-base-200 p-4 rounded-lg mb-4">
               <div className="flex max-sm:flex-col flex-row gap-4 bg-base-100 p-4 rounded-xl">
                 <div className="animate-pulse lg:flex-1">
@@ -279,28 +288,31 @@ function Home() {
                 </div>
               </div>
             </div>
-          {/* Posts Skeleton */}
-          <div className="lg:w-2/3 w-full flex flex-col gap-4 px-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse bg-base-100 p-6 rounded-xl">
-                {/* Post Header */}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-base-300 rounded-full" />
-                  <div className="flex-1">
-                    <div className="h-4 bg-base-300 rounded w-1/4 mb-2" />
-                    <div className="h-3 bg-base-300 rounded w-1/6" />
+            {/* Posts Skeleton */}
+            <div className="lg:w-2/3 w-full flex flex-col gap-4 px-4">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="animate-pulse bg-base-100 p-6 rounded-xl"
+                >
+                  {/* Post Header */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-base-300 rounded-full" />
+                    <div className="flex-1">
+                      <div className="h-4 bg-base-300 rounded w-1/4 mb-2" />
+                      <div className="h-3 bg-base-300 rounded w-1/6" />
+                    </div>
                   </div>
+                  {/* Post Content */}
+                  <div className="space-y-3">
+                    <div className="h-4 bg-base-300 rounded w-full" />
+                    <div className="h-4 bg-base-300 rounded w-5/6" />
+                    <div className="h-4 bg-base-300 rounded w-4/6" />
+                  </div>
+                  {/* Post Image Placeholder */}
+                  <div className="mt-4 h-48 bg-base-300 rounded-lg w-full" />
                 </div>
-                {/* Post Content */}
-                <div className="space-y-3">
-                  <div className="h-4 bg-base-300 rounded w-full" />
-                  <div className="h-4 bg-base-300 rounded w-5/6" />
-                  <div className="h-4 bg-base-300 rounded w-4/6" />
-                </div>
-                {/* Post Image Placeholder */}
-                <div className="mt-4 h-48 bg-base-300 rounded-lg w-full" />
-              </div>
-            ))}
+              ))}
             </div>
           </div>
           {/* Pet Facts Skeleton */}
@@ -313,96 +325,106 @@ function Home() {
         </div>
       ) : (
         <>
-        <div className="flex flex-col items-center bg-base-200 p-4 rounded-lg">
-          {/* Container for search and new post */}
-          <div className="lg:w-4/6 max-sm:w-full max-sm:flex-col self-start flex lg:flex-row gap-4 mb-4 md:flex-row md:w-full max-md:w-full max-md:flex-row">
-            {/* Search Container */}
-            <div
-              className={`${isSearchModalOpen ? "w-full" : "lg:flex-1 md:w-full max-md:w-full"} relative`}
-            >
-              <form
-                onSubmit={handleSearch}
-                className="flex flex-row items-center gap-2 text-base-content"
+          <div className="flex flex-col items-center bg-base-200 p-4 rounded-lg">
+            {/* Container for search and new post */}
+            <div className="lg:w-2/3 max-sm:w-full flex-col self-start flex gap-4 md:w-full max-md:w-full px-3">
+              {/* Search Container */}
+              <div
+                className={`${isSearchModalOpen ? "w-full" : "lg:flex-1 md:w-full max-md:w-full"} relative`}
               >
-                <input
-                  value={searchQuery}
-                  onChange={handleAutocomplete}
-                  placeholder="Search by name or handle..."
-                  className="w-full outline-none bg-base-100 p-4 text-[16px] shadow-lg rounded-lg text-base-content"
-                  onClick={isSearchModalOpen ? null : openSearchModal}
-                />
-                {isSearchModalOpen && (
-                  <>
-                    <button
-                      type="submit"
-                      className="text-lg p-3 flex py-4 justify-center items-center rounded-2xl bg-primary shadow-lg hover:bg-base-100 ease-in-out duration-700"
-                    >
-                      <IoSearchSharp />
-                    </button>
-                    <button
-                      className="text-lg p-3 py-4 rounded-2xl bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors ease duration-200"
-                      onClick={clearSearch && closeSearchModal}
-                    >
-                      <IoMdClose />
-                    </button>
-                  </>
-                )}
-              </form>
-
-              {/* Search Results - Now positioned absolutely */}
-              {isSearchModalOpen &&
-                (autocompleteResults.length > 0 || searchResults.length > 0) && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-base-100 p-4 shadow-lg rounded-2xl z-50">
-                    {autocompleteResults.map((user) => (
-                      <div
-                        key={user.id}
-                        className="flex justify-between items-center bg-base-200 p-4 rounded-lg shadow-lg mb-2 cursor-pointer"
-                        onClick={() => handleUserClick(user.id)}
+                <form
+                  onSubmit={handleSearch}
+                  className="flex flex-row items-center gap-2 text-base-content"
+                >
+                  <input
+                    value={searchQuery}
+                    onChange={handleAutocomplete}
+                    placeholder="Search by name or handle..."
+                    className="w-full outline-none bg-base-100 p-4 text-[16px] shadow-lg rounded-lg text-base-content"
+                    onClick={isSearchModalOpen ? null : openSearchModal}
+                  />
+                  {isSearchModalOpen && (
+                    <>
+                      <button
+                        type="submit"
+                        className="text-lg p-3 flex py-4 justify-center items-center rounded-2xl bg-primary shadow-lg hover:bg-base-100 ease-in-out duration-700"
                       >
-                        <div>
-                          <p className="font-bold text-base-content">{user.name}</p>
-                          <p className="text-sm text-base-content">@{user.handle}</p>
+                        <IoSearchSharp />
+                      </button>
+                      <button
+                        className="text-lg p-3 py-4 rounded-2xl bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors ease duration-200"
+                        onClick={clearSearch && closeSearchModal}
+                      >
+                        <IoMdClose />
+                      </button>
+                    </>
+                  )}
+                </form>
+
+                {/* Search Results - Now positioned absolutely */}
+                {isSearchModalOpen &&
+                  (autocompleteResults.length > 0 ||
+                    searchResults.length > 0) && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-base-100 p-4 shadow-lg rounded-2xl z-50">
+                      {autocompleteResults.map((user) => (
+                        <div
+                          key={user.id}
+                          className="flex justify-between items-center bg-base-200 p-4 rounded-lg shadow-lg mb-2 cursor-pointer"
+                          onClick={() => handleUserClick(user.id)}
+                        >
+                          <div>
+                            <p className="font-bold text-base-content">
+                              {user.name}
+                            </p>
+                            <p className="text-sm text-base-content">
+                              @{user.handle}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
+              </div>
+
+              {/* New Post Button Container */}
+              <div className="w-full max-sm:w-full">
+                <Button
+                  buttonName="New Post"
+                  icon={<IoMdAddCircleOutline className="size-7 mr-2" />}
+                  submitName="Post"
+                  className="w-full h-full"
+                />
+              </div>
             </div>
 
-            {/* New Post Button Container */}
-            <div className="lg:w-[300px] w-full md:w-[300px] max-md:w-[300px] max-sm:w-full">
-              <Button
-                buttonName="New Post"
-                icon={<IoMdAddCircleOutline className="size-7 mr-2" />}
-                submitName="Post"
-                className="w-full h-full"
+            {/* Modal Backdrop */}
+            {isSearchModalOpen && (
+              <div className="fixed inset-0 z-40" onClick={closeSearchModal} />
+            )}
+
+            {/* Main content container */}
+            <div className="w-full flex flex-col gap-4">
+              {/* Posts section */}
+              <div className="lg:w-2/3 w-full z-0">
+                <PetFacts />
+              </div>
+            </div>
+          </div>
+          <div className="lg:w-2/3 w-full z-0 flex flex-col gap-0 px-4">
+            {post.map((post) => (
+              <Posts
+                key={post.id}
+                {...post}
+                profilePic={post.profilePic}
+                date={
+                  post.createdAt
+                    ? format(post.createdAt.toDate(), "PPP")
+                    : "No date"
+                }
+                isVetVerified={post.isVetVerified}
               />
-            </div>
+            ))}
           </div>
-
-          {/* Modal Backdrop */}
-          {isSearchModalOpen && (
-            <div className="fixed inset-0 z-40" onClick={closeSearchModal} />
-          )}
-
-          {/* Main content container */}
-          <div className="w-full flex flex-col gap-4">
-            {/* Posts section */}
-            <div className="lg:w-2/3 w-full z-0">
-              <PetFacts/>
-            </div>
-          </div>
-        </div>
-        <div className="lg:w-2/3 w-full z-0 flex flex-col gap-0 px-4">
-          {post.map((post) => (
-              <Posts key={post.id} {...post} profilePic={post.profilePic} date={
-                post.createdAt
-                  ? format(post.createdAt.toDate(), "PPP")
-                  : "No date" 
-              }
-              isVetVerified ={post.isVetVerified} />
-          ))}
-        </div>
         </>
       )}
     </>
