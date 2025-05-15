@@ -508,8 +508,27 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 overflow-hidden">
-      {/* Highlight overlay */}
+    <div className="fixed inset-0 z-50 pointer-events-none">
+      {/* Semi-transparent overlay - only covering non-highlighted areas */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 pointer-events-auto">
+        {/* Cutout for the highlighted element */}
+        {highlightPosition && (
+          <div
+            className="absolute bg-transparent rounded-lg"
+            style={{
+              top: highlightPosition.top,
+              left: highlightPosition.left,
+              width: highlightPosition.width,
+              height: highlightPosition.height,
+              position: highlightPosition.fixed ? 'fixed' : 'absolute',
+              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.7)',
+              zIndex: 9998
+            }}
+          />
+        )}
+      </div>
+      
+      {/* Highlight border only */}
       {highlightPosition && (
         <div
           className="absolute rounded-lg ring-4 ring-primary pointer-events-none animate-tourPulse shadow-tourHighlight transition-all duration-300 ease-out-expo brightness-125"
