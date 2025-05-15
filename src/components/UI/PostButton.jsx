@@ -169,13 +169,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
           author: user.emailAddresses[0].emailAddress,
         }).then(() => {
           // Clear the form fields after successful submission
-          setTitle("");
-          setContent("");
-          setSevVal(3);
-          setImageFile(null);
-          setImagePreview(null);
-          setIsClicked(!isClicked);
-          setIsLoading(false);
+          handleClickEvent();
           loadingBarRef.current.complete();
 
           // Send browser notification
@@ -190,6 +184,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
       }
     } catch (error) {
       console.error("Error adding post: ", error);
+      handleClickEvent();
       loadingBarRef.current.complete();
     }
   };
