@@ -273,7 +273,7 @@ function Home() {
   };
 
   return (
-    <>
+    <div className="posts-container">
       {!contentLoaded ? (
         <div className="flex flex-row">
           <div className="flex flex-col items-start w-full animate-pulse">
@@ -427,7 +427,7 @@ function Home() {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
 

@@ -244,6 +244,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
                   </label>
                   <input
                     type="text"
+                    name="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="post-title-input w-full p-2 border rounded-lg focus:ring focus:ring-primary/20 text-base-content outline-none"
@@ -348,7 +349,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
         {!isClicked && (
           <button
             className={`shadow-Uni flex flex-row items-center gap-4 lg:w-fit md:w-fit btn-primary btn max-sm:btn-square btn-lg fixed z-20 right-4 backdrop:blur-md transition-all duration-300 new-post-button
-            ${showButton ? "opacity-100 pointer-events-auto lg:bottom-20 md:bottom-28 max-md:bottom-28 max-sm:bottom-28 lg:left-[4%] max-sm:right-5" : "lg:opacity-100 max-sm:opacity-0 max-md:opacity-0 md:opacity-0 lg:bottom-20 max-md:bottom-8 md:bottom-8 max-sm:bottom-8 lg:left-[4%] max-sm:right-5"}`}
+            ${showButton ? "opacity-100 pointer-events-auto lg:bottom-[7%] md:bottom-28 max-md:bottom-28 max-sm:bottom-28 lg:left-[4%] max-sm:right-5" : "lg:opacity-100 max-sm:opacity-0 max-md:opacity-0 md:opacity-0 lg:bottom-20 max-md:bottom-8 md:bottom-8 max-sm:bottom-8 lg:left-[4%] max-sm:right-5"}`}
             onClick={isClicked ? null : handleClickEvent}
           >
             <IoMdAddCircleOutline className="text-xl" size={25} />
