@@ -141,7 +141,7 @@ const InteractiveTour = ({ onClose, tourType = 'general' }) => {
       location: "post",
       image: "dog",
       route: "/in/home",
-      targetSelector: ".new-post-button, button:has(.IoMdAddCircleOutline), button:contains('New Post')"
+      targetSelector: ".new-post-button, button:has(span:contains('New Post')), button:has(.IoMdAddCircleOutline)"
     },
     {
       title: "Post Title",
