@@ -216,7 +216,7 @@ const AiChat = () => {
 
   return (
     //in large screen h shuld be screen
-    <div className="w-full lg:h-screen lg: h-[87vh] flex flex-col bg-base-100 relative overflow-hidden ai-chat">
+    <div className="w-full lg:h-screen lg: h-[87vh] flex flex-col bg-base-200 relative overflow-hidden ai-chat">
       {/* Floating History/Close Button */}
       <div className="absolute top-4 right-4 z-50">
         <button
@@ -242,7 +242,6 @@ const AiChat = () => {
         }`}
       >
         <div className="mt-16">
-          {" "}
           {/* Add padding for the floating button */}
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold">Conversation History</h3>
@@ -285,7 +284,7 @@ const AiChat = () => {
       >
         {/* Chat Messages Container */}
         <div className="flex-1 relative">
-          <div className="absolute inset-x-0 top-16 bottom-24 max-lg:top-12 max-lg:bottom-32 mx-4 rounded-xl bg-base-200 overflow-y-auto">
+          <div className="absolute inset-x-0 top-16 bottom-24 max-lg:top-12 max-lg:bottom-32 mx-4 rounded-xl bg-base-100 overflow-y-auto">
             <div className="p-4">
               {chatLog.map((message, index) => (
                 <div
@@ -299,8 +298,8 @@ const AiChat = () => {
                   <div
                     className={`inline-block p-3 rounded-lg ${
                       message.sender === "Pet Connect"
-                        ? "bg-primary text-base-100 shadow-lg animate-postAnim3"
-                        : "bg-secondary text-base-100 shadow-lg animate-postAnim3"
+                        ? "bg-base-300 text-base-content shadow-lg animate-postAnim3"
+                        : "bg-accent text-base-100 shadow-lg animate-postAnim3"
                     }`}
                   >
                     <strong>{message.sender}: </strong>
@@ -322,20 +321,13 @@ const AiChat = () => {
           </div>
         </div>
 
-        {/* Loading Indicator */}
-        {loading && (
-          <div className="absolute left-1/2 bottom-32 -translate-x-1/2">
-            <AiOutlineLoading3Quarters className="animate-spin w-6 h-6" />
-          </div>
-        )}
-
         {/* Input Form */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             getResponse();
           }}
-          className="absolute bottom-2 left-0 right-0 max-lg:ml-0 p-4 bg-base-100 border-t border-base-200"
+          className="absolute bottom-2 left-0 right-0 max-lg:ml-0 p-4 bg-base-200 border-t border-base-200"
         >
           <div className="flex gap-2 w-full justify-between items-center">
             <input
@@ -343,13 +335,13 @@ const AiChat = () => {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask me anything about pets..."
-              className="flex-1 p-3 rounded-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary min-w-[200px]"
+              className="flex-1 p-3 rounded-full bg-base-100 focus:outline-none focus:ring-2 focus:ring-primary min-w-[200px]"
               disabled={isGenerating}
             />
             <button
               type="submit"
               disabled={!question.trim() || isGenerating}
-              className="px-6 py-3 btn bg-primary text-base-100 rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 btn btn-primary rounded-full hover:bg-primary-focus transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? (
                 <div className="flex items-center gap-2">

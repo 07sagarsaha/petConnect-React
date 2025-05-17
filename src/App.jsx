@@ -11,7 +11,8 @@ import { db } from "./firebase/firebase";
 
 function App() {
   const { userLoggedIn, user } = useAuth();
-  const { showTour, tourType, endTour, startTour, hasTourBeenCompleted } = useTour();
+  const { showTour, tourType, endTour, startTour, hasTourBeenCompleted } =
+    useTour();
   const location = useLocation();
 
   // Check if it's the user's first login
@@ -21,19 +22,23 @@ function App() {
         try {
           const userRef = doc(db, "users", user.id);
           const userDoc = await getDoc(userRef);
-          
+
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            
+
             // If the user has never seen the tour, show it
-            if (!hasTourBeenCompleted('general')) {
-              startTour('general');
-              
+            if (!hasTourBeenCompleted("general")) {
+              startTour("general");
+
               // Update the user document to indicate they've seen the tour
-              await setDoc(userRef, { 
-                ...userData, 
-                hasSeenTour: true 
-              }, { merge: true });
+              await setDoc(
+                userRef,
+                {
+                  ...userData,
+                  hasSeenTour: true,
+                },
+                { merge: true }
+              );
             }
           }
         } catch (error) {
@@ -41,7 +46,7 @@ function App() {
         }
       }
     };
-    
+
     checkFirstTimeUser();
   }, [userLoggedIn, user, hasTourBeenCompleted, startTour]);
 
@@ -63,7 +68,7 @@ function App() {
           <div className="">
             <SideNav />
           </div>
-          <div className="w-full lg:ml-[16%] max-md:ml-0 md:ml-0 max-sm:ml-0 sm:ml-0 max-lg:ml-[14%] max-lg:mb-24">
+          <div className="w-full lg:ml-[16%] max-md:ml-0 md:ml-0 max-sm:ml-0 sm:ml-0 max-lg:ml-[14%] lg:pl-10 max-lg:mb-24">
             <Outlet />
           </div>
         </div>

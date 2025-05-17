@@ -69,9 +69,7 @@ const Posts = ({
         showToast("You liked the post and removed your dislike."); // Display toast
       } else {
         await updateDoc(postRef, {
-          likes: isLiked
-            ? arrayRemove(user.id)
-            : arrayUnion(user.id),
+          likes: isLiked ? arrayRemove(user.id) : arrayUnion(user.id),
         });
         showToast(isLiked ? "You unliked the post." : "You liked the post."); // Display toast
       }
@@ -94,11 +92,11 @@ const Posts = ({
         showToast("You disliked the post and removed your like."); // Display toast
       } else {
         await updateDoc(postRef, {
-          dislikes: isDisliked
-            ? arrayRemove(user.id)
-            : arrayUnion(user.id),
+          dislikes: isDisliked ? arrayRemove(user.id) : arrayUnion(user.id),
         });
-        showToast(isDisliked ? "You removed your dislike." : "You disliked the post."); // Display toast
+        showToast(
+          isDisliked ? "You removed your dislike." : "You disliked the post."
+        ); // Display toast
       }
     } catch (error) {
       console.error("Error updating dislike:", error);
@@ -109,7 +107,7 @@ const Posts = ({
   const handleImageClick = () => {
     setIsImageClicked(!isImageClicked);
     setImageMaxZoom(false);
-  }
+  };
 
   const handleImageZoom = (e) => {
     const rect = e.target.getBoundingClientRect();
@@ -117,7 +115,7 @@ const Posts = ({
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     setTransformOrigin(`${x}% ${y}%`);
     setImageMaxZoom(!maxImageZoom);
-  }
+  };
 
   const confirmDeleteBox = (postId) => {
     setPostToDelete(postId); // Store the comment ID
@@ -125,14 +123,14 @@ const Posts = ({
   };
 
   const handleDeletePost = async () => {
-      const postRef = doc(db, "posts", postToDelete);
-      try {
-        await deleteDoc(postRef);
-        showToast("Post deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting post:", error);
-      }
-      confirmDeleteBox();
+    const postRef = doc(db, "posts", postToDelete);
+    try {
+      await deleteDoc(postRef);
+      showToast("Post deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+    confirmDeleteBox();
   };
 
   //blur image
@@ -145,22 +143,22 @@ const Posts = ({
 
   const generateBlurredImage = async (imageUrl) => {
     return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
       const img = new Image();
 
-      img.crossOrigin = "Anonymous";  // Handle CORS issues
+      img.crossOrigin = "Anonymous"; // Handle CORS issues
       img.onload = () => {
         // Set canvas size to a smaller dimension for blur effect
         canvas.width = img.width / 4;
         canvas.height = img.height / 4;
 
         // Draw and blur the image
-        ctx.filter = 'blur(10px)';
+        ctx.filter = "blur(10px)";
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         // Convert to base64 and resolve
-        const blurredUrl = canvas.toDataURL('image/jpeg', 0.5);
+        const blurredUrl = canvas.toDataURL("image/jpeg", 0.5);
         setBlurredImageUrl(blurredUrl);
         resolve(blurredUrl);
       };
@@ -179,7 +177,7 @@ const Posts = ({
       {/* Post Content */}
       <div
         key={id}
-        className="w-[100%] sm:w-[100%] text-lg sm:text-xl bg-base-100 p-3 mb-6 sm:p-6 flex-col justify-center items-center shadow-lg h-max sm:min-h-12 rounded-xl transition-all ease-in-out duration-200"
+        className="w-[100%] sm:w-[100%] text-lg sm:text-xl bg-base-100 p-3 mb-6 sm:p-6 flex-col justify-center items-center shadow-lg h-max sm:min-h-12 rounded-xl transition-all ease-in-out duration-200 border-2 border-base-300"
       >
         <div className="flex justify-between">
           {/* Header */}
@@ -191,21 +189,33 @@ const Posts = ({
               onClick={() => navigate(`/in/profile/${userId}`)}
             />
             <div className="flex flex-col items-start justify-center">
-              <div className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}>
+              <div
+                className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}
+              >
                 <p
                   className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
                   onClick={() => navigate(`/in/profile/${userId}`)}
                 >
-                  {handle}{isVetVerified && <span className="text-primary text-xl size-3 text-center translate-y-1">
-                    <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
-                  </span>}
+                  {handle}
+                  {isVetVerified && (
+                    <span className="text-primary text-xl size-3 text-center translate-y-1">
+                      <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full" />
+                    </span>
+                  )}
                 </p>
                 <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
               </div>
               <p className="max-sm:text-sm text-[15px]">{date}</p>
             </div>
           </div>
-          {(userId == user.id) && <button className="text-lg self-start" onClick={() => confirmDeleteBox(id)}><IoTrashBin /></button>}
+          {userId == user.id && (
+            <button
+              className="text-lg self-start"
+              onClick={() => confirmDeleteBox(id)}
+            >
+              <IoTrashBin />
+            </button>
+          )}
         </div>
 
         {confirmDelete && postToDelete === id && (
@@ -214,7 +224,7 @@ const Posts = ({
               className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
               onClick={confirmDeleteBox}
             />
-            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-1/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-1/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-10 border-2 border-base-content/30">
               <button
                 className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
                 onClick={confirmDeleteBox}
@@ -224,18 +234,16 @@ const Posts = ({
               <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
                 {"Delete Post?"}
               </h3>
-              <p className="mb-4">
-                {"This action cannot be undone"}
-              </p>
+              <p className="mb-4">{"This action cannot be undone"}</p>
               <div className="flex flex-row gap-5">
                 <button
-                  className="bg-error btn rounded-xl text-xl"
+                  className="btn-error btn rounded-xl text-xl"
                   onClick={handleDeletePost}
                 >
                   Yes
                 </button>
                 <button
-                  className="border-2 border-error btn rounded-xl text-xl"
+                  className="border-2 border-error btn btn-base-100 rounded-xl text-xl"
                   onClick={confirmDeleteBox}
                 >
                   No
@@ -243,7 +251,7 @@ const Posts = ({
               </div>
             </div>
           </>
-        )}          
+        )}
 
         {/* Title and Content */}
         <h1 className="text-[19px] sm:text-[21px] font-bold py-4">{title}</h1>
@@ -254,15 +262,17 @@ const Posts = ({
         {/* Image */}
         {imageUrl && (
           <>
-            <div className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl" 
+            <div
+              className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl"
               onClick={handleImageClick}
               style={{
                 backgroundImage: `url(${blurredImageUrl || imageUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
-              }}>
-                <img
+              }}
+            >
+              <img
                 src={imageUrl}
                 alt="Post"
                 className="h-full rounded-none object-contain cursor-pointer "
@@ -273,11 +283,25 @@ const Posts = ({
 
         {isImageClicked && imageUrl && (
           <>
-            <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
-            <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
-              <img src={imageUrl} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
+            <div
+              className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
+              onClick={handleImageClick}
+            />
+            <div
+              className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+            >
+              <img
+                src={imageUrl}
+                alt="Post"
+                className="w-full h-full object-cover rounded-xl max-sm:rounded-none"
+                onClick={handleImageZoom}
+                style={{ transformOrigin }}
+              />
             </div>
-            <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
+            <IoMdClose
+              className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer"
+              onClick={handleImageClick}
+            />
           </>
         )}
 

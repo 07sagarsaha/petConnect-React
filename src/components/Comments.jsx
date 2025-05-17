@@ -56,7 +56,7 @@ const CommentDisplay = ({
   const [maxImageZoom, setImageMaxZoom] = useState(false);
   const [transformOrigin, setTransformOrigin] = useState("center center");
   const [blurredImageUrl, setBlurredImageUrl] = useState(null);
-  const  navigate  = useNavigate();
+  const navigate = useNavigate();
   const { showToast } = useToast();
 
   const handlePost = () => {
@@ -64,7 +64,7 @@ const CommentDisplay = ({
     setIsImageClicked(false);
     setImageMaxZoom(false);
     toggleConfirmDelete(false);
-    setCommentToDelete(null); 
+    setCommentToDelete(null);
   };
 
   const handleAddComment = async (e) => {
@@ -123,9 +123,7 @@ const CommentDisplay = ({
         showToast("You liked the post and removed your dislike.");
       } else {
         await updateDoc(postRef, {
-          likes: isLiked
-            ? arrayRemove(user.id)
-            : arrayUnion(user.id),
+          likes: isLiked ? arrayRemove(user.id) : arrayUnion(user.id),
         });
         showToast(isLiked ? "You unliked the post." : "You liked the post.");
       }
@@ -150,11 +148,11 @@ const CommentDisplay = ({
         showToast("You disliked the post and removed your like.");
       } else {
         await updateDoc(postRef, {
-          dislikes: isDisliked
-            ? arrayRemove(user.id)
-            : arrayUnion(user.id),
+          dislikes: isDisliked ? arrayRemove(user.id) : arrayUnion(user.id),
         });
-        showToast(isDisliked ? "You removed your dislike." : "You disliked the post.");
+        showToast(
+          isDisliked ? "You removed your dislike." : "You disliked the post."
+        );
       }
     } catch (error) {
       console.error("Error updating dislike:", error);
@@ -185,7 +183,7 @@ const CommentDisplay = ({
   const handleImageClick = () => {
     setIsImageClicked(!isImageClicked);
     setImageMaxZoom(false);
-  }
+  };
 
   const handleImageZoom = (e) => {
     const rect = e.target.getBoundingClientRect();
@@ -193,56 +191,70 @@ const CommentDisplay = ({
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     setTransformOrigin(`${x}% ${y}%`);
     setImageMaxZoom(!maxImageZoom);
-  }
+  };
 
   const isImageURLPresent = !!imageURL;
 
   useEffect(() => {
-      if (imageURL) {
-        generateBlurredImage(imageURL);
-      }
-    }, [imageURL]); // Dependency array ensures this runs when imageUrl changes
-  
-    const generateBlurredImage = async (imageUrl) => {
-      return new Promise((resolve) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-  
-        img.crossOrigin = "Anonymous";  // Handle CORS issues
-        img.onload = () => {
-          // Set canvas size to a smaller dimension for blur effect
-          canvas.width = img.width / 4;
-          canvas.height = img.height / 4;
-  
-          // Draw and blur the image
-          ctx.filter = 'blur(10px)';
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  
-          // Convert to base64 and resolve
-          const blurredUrl = canvas.toDataURL('image/jpeg', 0.5);
-          setBlurredImageUrl(blurredUrl);
-          resolve(blurredUrl);
-        };
-  
-        img.onerror = (error) => {
-          console.error("Error loading image:", error);
-          resolve(null); // Resolve with null or a default value
-        };
-  
-        img.src = imageUrl;
-      });
-    };
+    if (imageURL) {
+      generateBlurredImage(imageURL);
+    }
+  }, [imageURL]); // Dependency array ensures this runs when imageUrl changes
+
+  const generateBlurredImage = async (imageUrl) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+
+      img.crossOrigin = "Anonymous"; // Handle CORS issues
+      img.onload = () => {
+        // Set canvas size to a smaller dimension for blur effect
+        canvas.width = img.width / 4;
+        canvas.height = img.height / 4;
+
+        // Draw and blur the image
+        ctx.filter = "blur(10px)";
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Convert to base64 and resolve
+        const blurredUrl = canvas.toDataURL("image/jpeg", 0.5);
+        setBlurredImageUrl(blurredUrl);
+        resolve(blurredUrl);
+      };
+
+      img.onerror = (error) => {
+        console.error("Error loading image:", error);
+        resolve(null); // Resolve with null or a default value
+      };
+
+      img.src = imageUrl;
+    });
+  };
 
   return (
     <>
-    {isImageClicked && imageURL && (
+      {isImageClicked && imageURL && (
         <>
-              <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" onClick={handleImageClick}/>
-                <div className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
-                <img src={imageURL} alt="Post" className="w-full h-full object-cover rounded-xl max-sm:rounded-none" onClick={handleImageZoom} style={{ transformOrigin }}/>
-              </div>
-            <IoMdClose className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer" onClick={handleImageClick} />
+          <div
+            className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
+            onClick={handleImageClick}
+          />
+          <div
+            className={`fixed z-50 justify-center items-center ${maxImageZoom ? "w-full h-full cursor-zoom-out overflow-auto" : "w-fit h-4/5 max-sm:w-full max-sm:h-fit flex cursor-zoom-in"} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+          >
+            <img
+              src={imageURL}
+              alt="Post"
+              className="w-full h-full object-cover rounded-xl max-sm:rounded-none"
+              onClick={handleImageZoom}
+              style={{ transformOrigin }}
+            />
+          </div>
+          <IoMdClose
+            className="fixed z-50 bg-base-100 top-8 right-8 text-5xl max-sm:text-4xl max-sm:top-4 max-sm:right-4 rounded-lg cursor-pointer"
+            onClick={handleImageClick}
+          />
         </>
       )}
       <div
@@ -253,13 +265,14 @@ const CommentDisplay = ({
         }`}
         onClick={isPostClicked ? null : handlePost}
       >
-        
         {isPostClicked ? (
           <>
-            <div className="flex flex-row justify-between items-center w-full bg-primary text-base-100">
-              <h1 className="text-2xl font-bold p-4">Add comment</h1>
+            <div className="flex flex-row justify-between items-center w-full bg-base-200 text-base-100">
+              <h1 className="text-2xl font-bold p-4 text-base-content">
+                Add comment
+              </h1>
               <IoMdClose
-                className="text-3xl hover:text-error transition-colors duration-300 mr-4"
+                className="text-3xl hover:text-error text-base-content cursor-pointer transition-colors duration-300 mr-4"
                 onClick={handlePost}
               />
             </div>
@@ -267,39 +280,53 @@ const CommentDisplay = ({
               <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto max-sm:overflow-y-auto md:overflow-hidden max-md:overflow-hidden max-sm:animate-postAnim1">
                 <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
                   <div className="flex flex-row gap-2 items-center py-2">
-                    <img src={profilePic || pfp} className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer" onClick={() => navigate(`/in/profile/${userId}`)}/>
-                    <div className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}>
+                    <img
+                      src={profilePic || pfp}
+                      className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer"
+                      onClick={() => navigate(`/in/profile/${userId}`)}
+                    />
+                    <div
+                      className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}
+                    >
                       <p
                         className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
                         onClick={() => navigate(`/in/profile/${userId}`)}
                       >
-                        {handle}{isVetVerified && <span className="text-primary text-xl size-3 text-center translate-y-1">
-                        <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
-                        </span>}
+                        {handle}
+                        {isVetVerified && (
+                          <span className="text-primary text-xl size-3 text-center translate-y-1">
+                            <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full" />
+                          </span>
+                        )}
                       </p>
                       <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
                     </div>
                   </div>
                   <h2 className="text-xl font-bold text-left">{title}</h2>
                   <p className="text-[16px] mt-2 text-left">{content}</p>
-                  <div className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl" 
+                  <div
+                    className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl"
                     onClick={handleImageClick}
                     style={{
                       backgroundImage: `url(${blurredImageUrl || imageURL})`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       backgroundRepeat: "no-repeat",
-                    }}>
-                      <img
+                    }}
+                  >
+                    <img
                       src={imageURL}
                       alt="Post"
                       className="h-full rounded-none object-contain cursor-pointer "
                     />
                   </div>
-                  
+
                   <p className="text-base text-gray-600 mt-3">{date}</p>
                   <div className="flex flex-row mt-4 items-center gap-2">
-                    <button onClick={handleLike} className="btn btn-lg btn-ghost">
+                    <button
+                      onClick={handleLike}
+                      className="btn btn-lg btn-ghost"
+                    >
                       {isLiked ? (
                         <FaThumbsUp className="text-primary text-xl" />
                       ) : (
@@ -307,7 +334,10 @@ const CommentDisplay = ({
                       )}
                       <span>{likes?.length || 0} likes</span>
                     </button>
-                    <button onClick={handleDislike} className="btn btn-lg btn-ghost">
+                    <button
+                      onClick={handleDislike}
+                      className="btn btn-lg btn-ghost"
+                    >
                       {isDisliked ? (
                         <FaThumbsDown className="text-error text-xl" />
                       ) : (
@@ -351,10 +381,17 @@ const CommentDisplay = ({
                             {comment.userHandle}
                           </p>
                           <div className="flex flex-row gap-2">
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-base-content/50">
                               {comment.createdAt?.toDate().toLocaleDateString()}
                             </p>
-                            {(comment.userId == user.id) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
+                            {comment.userId == user.id && (
+                              <button
+                                className="text-sm self-start"
+                                onClick={() => confirmDeleteBox(comment.id)}
+                              >
+                                <IoTrashBin />
+                              </button>
+                            )}
                           </div>
                         </div>
                         {confirmDelete && commentToDelete === comment.id && (
@@ -363,7 +400,7 @@ const CommentDisplay = ({
                               className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
                               onClick={confirmDeleteBox}
                             />
-                            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
+                            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-10 border-2 border-base-content/30">
                               <button
                                 className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
                                 onClick={confirmDeleteBox}
@@ -378,13 +415,13 @@ const CommentDisplay = ({
                               </p>
                               <div className="flex flex-row gap-5">
                                 <button
-                                  className="bg-error btn rounded-xl text-xl"
+                                  className="btn-error btn rounded-xl text-xl"
                                   onClick={handleDeletePComment}
                                 >
                                   Yes
                                 </button>
                                 <button
-                                  className="border-2 border-error btn rounded-xl text-xl"
+                                  className="border-2 border-error btn btn-base-100 rounded-xl text-xl"
                                   onClick={confirmDeleteBox}
                                 >
                                   No
@@ -393,7 +430,7 @@ const CommentDisplay = ({
                             </div>
                           </>
                         )}
-                        <p className="text-gray-700 my-2 text-left">
+                        <p className="text-base-content my-2 text-left">
                           {comment.content}
                         </p>
                         <button
@@ -412,23 +449,35 @@ const CommentDisplay = ({
             ) : (
               <div className="flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-y-auto animate-postAnim1">
                 <div className="flex flex-row gap-2 items-center py-2">
-                    <img src={profilePic || pfp} className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer" onClick={() => navigate(`/in/profile/${userId}`)}/>
-                    <div className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}>
-                      <p
-                        className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
-                        onClick={() => navigate(`/in/profile/${userId}`)}
-                      >
-                        {handle}{isVetVerified && <span className="text-primary text-xl size-3 text-center translate-y-1">
-                        <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
-                        </span>}
-                      </p>
-                      <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
-                    </div>
+                  <img
+                    src={profilePic || pfp}
+                    className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer"
+                    onClick={() => navigate(`/in/profile/${userId}`)}
+                  />
+                  <div
+                    className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}
+                  >
+                    <p
+                      className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
+                      onClick={() => navigate(`/in/profile/${userId}`)}
+                    >
+                      {handle}
+                      {isVetVerified && (
+                        <span className="text-primary text-xl size-3 text-center translate-y-1">
+                          <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full" />
+                        </span>
+                      )}
+                    </p>
+                    <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
                   </div>
+                </div>
                 <h2 className="text-xl font-bold text-left">{title}</h2>
                 <p className="text-[16px] mt-2 text-left">{content}</p>
                 <div className="flex flex-row mt-4 items-center gap-4">
-                  <button onClick={handleLike} className="btn size-sm btn-ghost">
+                  <button
+                    onClick={handleLike}
+                    className="btn size-sm btn-ghost"
+                  >
                     {isLiked ? (
                       <FaThumbsUp className="text-primary text-xl" />
                     ) : (
@@ -436,7 +485,10 @@ const CommentDisplay = ({
                     )}
                   </button>
                   <span>{likes?.length || 0} likes</span>
-                  <button onClick={handleDislike} className="btn size-sm btn-ghost">
+                  <button
+                    onClick={handleDislike}
+                    className="btn size-sm btn-ghost"
+                  >
                     {isDisliked ? (
                       <FaThumbsDown className="text-error text-xl" />
                     ) : (
@@ -482,7 +534,14 @@ const CommentDisplay = ({
                             <p className="text-xs text-gray-500">
                               {comment.createdAt?.toDate().toLocaleDateString()}
                             </p>
-                            {(comment.userId == user.id) && <button className="text-sm self-start" onClick={() => confirmDeleteBox(comment.id)}><IoTrashBin /></button>}
+                            {comment.userId == user.id && (
+                              <button
+                                className="text-sm self-start"
+                                onClick={() => confirmDeleteBox(comment.id)}
+                              >
+                                <IoTrashBin />
+                              </button>
+                            )}
                           </div>
                         </div>
                         {confirmDelete && commentToDelete === comment.id && (

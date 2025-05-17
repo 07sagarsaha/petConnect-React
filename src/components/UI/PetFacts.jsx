@@ -128,7 +128,7 @@ const PetFacts = () => {
     <>
       {/* Pet Facts section - only visible on large screens */}
       <div className="hidden lg:block lg:w-1/3">
-        <div className="bg-base-100 rounded-lg shadow-lg p-6 fixed top-4 z-0 right-4 w-[26%] lg:h-[96vh] overflow-y-auto">
+        <div className="bg-base-100 rounded-lg shadow-lg p-6 fixed top-4 z-0 right-4 w-[26%] lg:h-[96vh]">
           <div className="flex items-center gap-2 mb-4">
             <AiOutlineInfoCircle className="text-2xl text-primary" />
             <h2 className="text-xl font-semibold text-primary">Pet Facts</h2>
@@ -136,20 +136,20 @@ const PetFacts = () => {
 
           {isLoadingFacts ? (
             <div className="flex justify-center p-4">
-              <AiOutlineLoading3Quarters className="animate-spin text-2xl text-primary" />
+              <AiOutlineLoading3Quarters className="animate-spin text-2xl text-base-content" />
             </div>
           ) : error ? (
             <div className="text-error p-4 text-center">{error}</div>
           ) : (
-            <div className="space-y-4">
+            <div className="flex flex-col justify-between gap-4 overflow-y-auto">
               {petFacts.map((fact) => (
                 <div
                   key={fact.id}
-                  className="bg-base-200 p-4 rounded-lg transition-all duration-300 hover:shadow-md"
+                  className="bg-base-200 p-4 rounded-lg transition-all duration-300"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     {getFactIcon(fact.type)}
-                    <h3 className="font-semibold text-primary capitalize">
+                    <h3 className="text-base-content font-bold capitalize">
                       {petTypes[fact.type]?.name || "Pet"} Fact
                     </h3>
                   </div>
