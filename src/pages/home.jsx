@@ -340,7 +340,7 @@ function Home() {
                     value={searchQuery}
                     onChange={handleAutocomplete}
                     placeholder="Search by name or handle..."
-                    className="w-full outline-none bg-base-100 p-4 text-[16px] shadow-lg rounded-lg text-base-content"
+                    className="w-full outline-none bg-base-100 p-4 text-[16px] shadow-lg rounded-lg text-base-content border-2 border-base-300"
                     onClick={isSearchModalOpen ? null : openSearchModal}
                   />
                   {isSearchModalOpen && (
