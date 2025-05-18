@@ -33,6 +33,10 @@ export default defineConfig({
         start_url: '/',
         display: 'standalone',
         background_color: '#000000',
+      },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5000000, // Increase to 5MB or whatever size you need
+        // other workbox options...
       }
     })],
   assetsInclude: ["**/*.glb"],
