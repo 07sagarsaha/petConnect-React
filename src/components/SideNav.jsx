@@ -14,6 +14,7 @@ import {
 } from "react-icons/io5";
 import Nav from "./nav/Nav";
 import { useClerk } from "@clerk/clerk-react";
+import Header from "./auth/header";
 
 function SideNav() {
   const [showLogout, setshowLogout] = useState(true);
@@ -36,6 +37,12 @@ function SideNav() {
 
   return (
     <>
+      <div
+        className="fixed z-50 w-fit top-10 backdrop-blur-md p-4 shadow-lg rounded-r-2xl lg:inline md:hidden max-sm:hidden"
+        onClick={() => navigate("/in/home")}
+      >
+        <Header />
+      </div>
       <div
         className={`fixed z-10 max-lg:bottom-0 left-0 max-lg:right-0 w-20 h-full max-lg:h-20 lg:w-[16.35%] md:w-[96%] max-md:w-[96%] max-sm:w-[95%] flex flex-col max-lg:flex-row justify-evenly items-center rounded-r-xl transition-transform duration-300 bg-gradient-to-br bg-primary lg:bg-base-200 bg-opacity-60 min-w-[200px] translate-x-0 backdrop-blur-md max-lg:rounded-xl max-lg:m-2 max-lg:ml-[0.7rem]`}
       >

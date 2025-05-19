@@ -128,10 +128,12 @@ const PetFacts = () => {
     <>
       {/* Pet Facts section - only visible on large screens */}
       <div className="hidden lg:block lg:w-1/3">
-        <div className="bg-base-100 rounded-lg shadow-lg p-6 fixed top-4 z-0 right-4 w-[26%] lg:h-[96vh]">
+        <div className="bg-base-100 rounded-lg shadow-lg p-6 fixed top-4 z-0 right-4 w-[26%] lg:h-[96vh] border-2 border-base-300">
           <div className="flex items-center gap-2 mb-4">
             <AiOutlineInfoCircle className="text-2xl text-primary" />
-            <h2 className="text-xl font-semibold text-primary">Pet Facts</h2>
+            <h2 className="text-xl font-semibold text-primary">
+              {"Pet Facts"}
+            </h2>
           </div>
 
           {isLoadingFacts ? (

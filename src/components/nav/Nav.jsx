@@ -8,7 +8,7 @@ function Nav({ title, icon, to }) {
         to={to}
         className={({ isActive }) =>
           isActive
-            ? "text-base-100 w-[100%] flex flex-row justify-center py-2 max-lg:px-2 max-lg:py-1 bg-primary md:rounded-lg max-md:rounded-lg max-sm:rounded-lg lg:rounded-r-2xl lg:rounded-l-none shadow-md"
+            ? "text-base-100 w-[100%] flex flex-row justify-center py-2 max-lg:px-2 max-lg:py-1 lg:bg-base-200 lg:border-b-2 lg:border-r-2 lg:border-t-2 lg:border-primary outline-none lg:text-primary bg-primary md:rounded-lg max-md:rounded-lg max-sm:rounded-lg lg:rounded-r-2xl lg:rounded-l-none shadow-xl"
             : "text-base-content max-sm:text-base-100 w-[100%] flex flex-row justify-center max-lg:px-2 py-2"
         }
       >

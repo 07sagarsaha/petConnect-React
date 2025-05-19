@@ -21,6 +21,7 @@ import { FaCat, FaDog, FaFish, FaDove, FaHorse } from "react-icons/fa";
 import { GiRabbit } from "react-icons/gi";
 import PetFacts from "../components/UI/PetFacts";
 import { format } from "date-fns";
+import Header from "../components/auth/header";
 
 function Home() {
   const [contentLoaded, setContentLoaded] = useState(false);
