@@ -38,7 +38,7 @@ function SideNav() {
   return (
     <>
       <div
-        className="fixed z-50 w-fit top-10 backdrop-blur-md p-4 shadow-lg rounded-r-2xl lg:inline md:hidden max-sm:hidden"
+        className="fixed z-50 w-fit top-10 backdrop-blur-md p-4 shadow-lg rounded-r-2xl lg:inline md:hidden max-md:hidden max-sm:hidden"
         onClick={() => navigate("/in/home")}
       >
         <Header />
