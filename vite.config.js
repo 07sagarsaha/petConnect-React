@@ -35,9 +35,45 @@ export default defineConfig({
         background_color: '#000000',
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 10000000, // Increase to 5MB or whatever size you need
-        // other workbox options...
+        maximumFileSizeToCacheInBytes: 15000000, // Increased to 15MB to accommodate the 10.9MB bundle
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,gif,webp}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
       }
     })],
   assetsInclude: ["**/*.glb"],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          icons: ['react-icons'],
+          // Add other large dependencies here
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1600,
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
 });
