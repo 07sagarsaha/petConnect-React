@@ -35,7 +35,7 @@ export default defineConfig({
         background_color: '#000000',
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 5000000, // Increase to 5MB or whatever size you need
+        maximumFileSizeToCacheInBytes: 10000000, // Increase to 5MB or whatever size you need
         // other workbox options...
       }
     })],
