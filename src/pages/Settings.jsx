@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdAdminPanelSettings } from "react-icons/md";
-import ThemeContext from "../context/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 import { IoLogOut } from "react-icons/io5";
 import { doSignOut } from "../firebase/auth";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -54,7 +54,8 @@ const themes = [
 function Settings() {
   const { signOut } = useClerk();
   const { signIn } = useSignIn();
-  const { theme, changeTheme } = useContext(ThemeContext);
+  const { theme, changeTheme, autoMode, toggleAutoMode, systemPreference } =
+    useTheme();
   const navigate = useNavigate();
   const { showToast } = useToast(); // Get showToast from context
   const [deleteAccount, setDeleteAccount] = useState(false);
@@ -206,16 +207,52 @@ function Settings() {
           </button>
         </div>
         <section className="mb-6">
-          <h2 className="text-2xl font-semibold mb-2 text-primary">
-            Theme Switcher
+          <h2 className="text-2xl font-semibold mb-4 text-primary">
+            Theme Settings
           </h2>
+
+          {/* Auto Mode Toggle */}
+          <div className="mb-6 p-4 bg-base-200 rounded-lg shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold mb-1">Auto Dark Mode</h3>
+                <p className="text-sm text-base-content/70">
+                  Automatically switch between light and dark themes based on
+                  your system preference.
+                  {autoMode && (
+                    <span className="block mt-1 text-primary font-medium">
+                      Currently following system: {systemPreference} mode
+                    </span>
+                  )}
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                className="toggle toggle-primary rounded-full"
+                checked={autoMode}
+                onChange={toggleAutoMode}
+              />
+            </div>
+          </div>
+
+          <h3 className="text-xl font-semibold mb-2 text-primary">
+            Manual Theme Selection
+          </h3>
+          {autoMode && (
+            <p className="text-sm text-base-content/70 mb-4">
+              Selecting a theme below will disable auto mode and use your chosen
+              theme.
+            </p>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {themes.map((themeName) => (
               <div
                 key={themeName}
-                className={`p-4 border rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300 ${
-                  theme === themeName ? "border-4 border-primary" : ""
-                }`}
+                className={`p-4 border rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 ${
+                  theme === themeName
+                    ? "border-4 border-primary"
+                    : "border-4 border-base-100"
+                } ${autoMode ? "opacity-50 hover:opacity-80" : ""}`}
                 data-theme={themeName}
                 onClick={() => changeTheme(themeName)}
               >

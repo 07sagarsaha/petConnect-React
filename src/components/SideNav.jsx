@@ -15,6 +15,7 @@ import {
 import Nav from "./nav/Nav";
 import { useClerk } from "@clerk/clerk-react";
 import Header from "./auth/header";
+import ThemeToggle from "./ThemeToggle";
 
 function SideNav() {
   const [showLogout, setshowLogout] = useState(true);

@@ -90,7 +90,7 @@ function UserProfile() {
 
   const handleBioExpand = () => {
     setIsBioExpanded(!isBioExpanded);
-  }
+  };
 
   return (
     <div className="flex flex-col justify-center p-4 bg-base-200 text-primary-focus min-h-screen">
@@ -107,7 +107,10 @@ function UserProfile() {
                 alt="Image"
                 className="h-4/5 w-fit m-12 object-contain rounded-2xl animate-postAnim1 fixed z-20"
               />
-              <div className="h-full w-full bg-black opacity-50 fixed z-10" onClick={handleProfileClick}/>
+              <div
+                className="h-full w-full bg-black opacity-50 fixed z-10"
+                onClick={handleProfileClick}
+              />
             </div>
           )}
           <div className="flex flex-row justify-between w-full gap-5 max-sm:flex-col">
@@ -119,17 +122,20 @@ function UserProfile() {
                 onClick={handleProfileClick}
               />
               <div className="flex flex-col justify-center self-center -translate-y-2">
-                  <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4 flex flex-row gap-2">
-                    {userData?.name || "loading..."}{userData?.isVetVerified && <span className="text-primary text-2xl size-3 text-center translate-y-1">
-                    <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full"/>
-                  </span>}
-                  </h1>
-                  <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
-                    {"@" + userData?.handle || "loading..."}
-                  </h2>
-                </div>
+                <h1 className="text-start max-sm:text-center text-2xl font-bold mt-4 flex flex-row gap-2">
+                  {userData?.name || "loading..."}
+                  {userData?.isVetVerified && (
+                    <span className="text-primary text-2xl size-3 text-center translate-y-1">
+                      <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full" />
+                    </span>
+                  )}
+                </h1>
+                <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
+                  {"@" + userData?.handle || "loading..."}
+                </h2>
+              </div>
             </div>
-            {(user.id === userId) && navigate(`/in/profile`)}
+            {user.id === userId && navigate(`/in/profile`)}
             <div className="flex self-center gap-3">
               <button
                 onClick={startChat}
@@ -140,64 +146,84 @@ function UserProfile() {
               </button>
             </div>
           </div>
-          
-          <div className={`flex flex-col gap-5 justify-start items-start w-full p-5 rounded-xl bg-base-200 mt-8 ${isBioExpanded ? `hover:bg-base-200` : `hover:bg-base-300`} transition-all mb-5`} onClick={handleBioExpand}>
-            <p className="self-start w-full flex items-start">{userData?.bio || "Bio is Empty"}</p>
-            {isBioExpanded && userData.isVetVerified &&
-            <div className="flex flex-col text-start items-start justify-between w-full">
-              <div>
-                <h2 className="text-2xl font-bold mb-2 text-primary">
-                  {"Basic info"}
-                </h2>
-                <p className="mb-2">
-                  <strong>{"Location:"}</strong> {userData?.address || "No Location Added"}
-                </p>
-                <p className="mb-2 max-sm:text-sm">
-                  <strong>{"Email:"}</strong> {userData?.email}
-                </p>
-              </div>
-            </div>}
-            {userData?.isVetVerified && <p className="self-start">{"Show "}{isBioExpanded ? "Less" : 'More'}{"..."}</p>}
-          </div>
-        <div className="mb-5 w-full bg-base-200 p-5 rounded-xl">
-            <div className="flex flex-row justify-between">
-              <h3 className="text-2xl font-bold mb-2 text-primary self-center">
-                {"Pets: "}{pets.length}
-              </h3>
-            </div>
-          <div className="flex flex-col w-full">
-            {pets.map((pet) => (
-              <div
-                key={pet.id}
-                className="flex flex-row max-sm:flex-col gap-2 items-center justify-between bg-primary mt-2 p-4 rounded-lg bg-opacity-30"
-              >
-              <div className="flex flex-row gap-2 max-sm:flex-col">
-                <img
-                  className="w-24 h-auto rounded-md object-cover max-sm:w-full"
-                  src={pet.photoUrl}
-                  alt="Pet"
-                />
-                <div className="flex flex-col items-start justify-center text-neutral gap-2">
-                  <p>
-                    <strong>{"Name:"}</strong> {pet.name}
+
+          <div
+            className={`flex flex-col gap-5 justify-start items-start w-full p-5 rounded-xl bg-base-200 mt-8 ${isBioExpanded ? `hover:bg-base-200` : `hover:bg-base-300`} transition-all mb-5`}
+            onClick={handleBioExpand}
+          >
+            <p className="self-start w-full flex items-start">
+              {userData?.bio || "Bio is Empty"}
+            </p>
+            {isBioExpanded && userData.isVetVerified && (
+              <div className="flex flex-col text-start items-start justify-between w-full">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2 text-primary">
+                    {"Basic info"}
+                  </h2>
+                  <p className="mb-2">
+                    <strong>{"Location:"}</strong>{" "}
+                    {userData?.address || "No Location Added"}
                   </p>
-                  <p>
-                    <strong>{"Age:"}</strong> {pet.age}
-                  </p>
-                  <p>
-                    <strong>{"Breed:"}</strong> {pet.breed}
+                  <p className="mb-2 max-sm:text-sm">
+                    <strong>{"Email:"}</strong> {userData?.email}
                   </p>
                 </div>
               </div>
+            )}
+            {userData?.isVetVerified && (
+              <p className="self-start">
+                {"Show "}
+                {isBioExpanded ? "Less" : "More"}
+                {"..."}
+              </p>
+            )}
+          </div>
+          <div className="mb-5 w-full bg-base-200 p-5 rounded-xl">
+            <div className="flex flex-row justify-between">
+              <h3 className="text-2xl font-bold mb-2 text-primary self-center">
+                {"Pets: "}
+                {pets.length}
+              </h3>
             </div>
-            ))}
-          </div>
-          </div>
+            <div className="flex flex-col w-full">
+              {pets.map((pet) => (
+                <div
+                  key={pet.id}
+                  className="flex flex-row max-sm:flex-col gap-2 items-center justify-between bg-primary mt-2 p-4 rounded-lg bg-opacity-30"
+                >
+                  <div className="flex flex-row gap-2 max-sm:flex-col">
+                    <img
+                      className="w-24 h-auto rounded-md object-cover max-sm:w-full"
+                      src={pet.photoUrl}
+                      alt="Pet"
+                    />
+                    <div className="flex flex-col items-start justify-center text-base-content gap-2">
+                      <p>
+                        <strong>{"Name:"}</strong> {pet.name}
+                      </p>
+                      <p>
+                        <strong>{"Age:"}</strong> {pet.age}
+                      </p>
+                      <p>
+                        <strong>{"Breed:"}</strong> {pet.breed}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="w-4/5 max-sm:w-full self-center">
+      </div>
+      <div className="w-4/5 max-sm:w-full self-center">
         <div>
-          {(posts.length === 0) ? <h1 className="py-8 text-3xl text-primary">{`No post from ${userData?.name} yet!`}</h1> : <h1 className="py-8 text-3xl text-primary">{"Posts by "+userData?.name}</h1>}
+          {posts.length === 0 ? (
+            <h1 className="py-8 text-3xl text-primary">{`No post from ${userData?.name} yet!`}</h1>
+          ) : (
+            <h1 className="py-8 text-3xl text-primary">
+              {"Posts by " + userData?.name}
+            </h1>
+          )}
         </div>
         <div className="flex flex-col items-center w-full">
           {posts.map((post) => (

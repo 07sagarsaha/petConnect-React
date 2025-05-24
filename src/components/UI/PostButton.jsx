@@ -247,7 +247,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
                     name="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="post-title-input w-full p-2 border rounded-lg focus:ring focus:ring-primary/20 text-base-content outline-none"
+                    className="post-title-input w-full p-2 border rounded-lg focus:ring focus:ring-primary/20 text-base-content outline-none bg-base-100"
                     placeholder="Give your post a title"
                     required
                   />
@@ -260,7 +260,7 @@ const Button = ({ buttonName, icon, submitName, className }) => {
                   <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="post-content-input w-full p-2 border rounded-lg h-32 focus:ring focus:ring-primary/20 resize-none outline-none text-base-content"
+                    className="post-content-input w-full p-2 border rounded-lg h-32 focus:ring focus:ring-primary/20 resize-none outline-none text-base-content bg-base-100"
                     placeholder="What's on your mind?"
                     required
                   />

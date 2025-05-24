@@ -269,185 +269,17 @@ const CommentDisplay = ({
           <>
             <div className="flex flex-row justify-between items-center w-full bg-base-200 text-base-100">
               <h1 className="text-2xl font-bold p-4 text-base-content">
-                Add comment
+                {"Add comment"}
               </h1>
               <IoMdClose
                 className="text-3xl hover:text-error text-base-content cursor-pointer transition-colors duration-300 mr-4"
                 onClick={handlePost}
               />
             </div>
-            {isImageURLPresent ? (
-              <div className="flex flex-row max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto max-sm:overflow-y-auto md:overflow-hidden max-md:overflow-hidden max-sm:animate-postAnim1">
-                <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full">
-                  <div className="flex flex-row gap-2 items-center py-2">
-                    <img
-                      src={profilePic || pfp}
-                      className="sm:w-10 sm:h-10 w-8 h-8 rounded-full object-cover cursor-pointer"
-                      onClick={() => navigate(`/in/profile/${userId}`)}
-                    />
-                    <div
-                      className={`flex flex-row items-center ${isVetVerified ? "gap-3" : "gap-1"}`}
-                    >
-                      <p
-                        className="text-[18px] max-sm:text-[15px] cursor-pointer flex flex-row gap-1"
-                        onClick={() => navigate(`/in/profile/${userId}`)}
-                      >
-                        {handle}
-                        {isVetVerified && (
-                          <span className="text-primary text-xl size-3 text-center translate-y-1">
-                            <FaUserDoctor className="text-base-200 bg-primary p-1 rounded-full" />
-                          </span>
-                        )}
-                      </p>
-                      <p className="max-sm:text-sm text-[15px]">{"posted:"}</p>
-                    </div>
-                  </div>
-                  <h2 className="text-xl font-bold text-left">{title}</h2>
-                  <p className="text-[16px] mt-2 text-left">{content}</p>
-                  <div
-                    className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl"
-                    onClick={handleImageClick}
-                    style={{
-                      backgroundImage: `url(${blurredImageUrl || imageURL})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  >
-                    <img
-                      src={imageURL}
-                      alt="Post"
-                      className="h-full rounded-none object-contain cursor-pointer "
-                    />
-                  </div>
-
-                  <p className="text-base text-gray-600 mt-3">{date}</p>
-                  <div className="flex flex-row mt-4 items-center gap-2">
-                    <button
-                      onClick={handleLike}
-                      className="btn btn-lg btn-ghost"
-                    >
-                      {isLiked ? (
-                        <FaThumbsUp className="text-primary text-xl" />
-                      ) : (
-                        <FaRegThumbsUp className="text-primary text-xl" />
-                      )}
-                      <span>{likes?.length || 0} likes</span>
-                    </button>
-                    <button
-                      onClick={handleDislike}
-                      className="btn btn-lg btn-ghost"
-                    >
-                      {isDisliked ? (
-                        <FaThumbsDown className="text-error text-xl" />
-                      ) : (
-                        <FaRegThumbsDown className="text-error text-xl" />
-                      )}
-                      <span>{dislikes?.length || 0} dislikes</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col p-10">
-                  <form
-                    onSubmit={handleAddComment}
-                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-10 transition-all"
-                  >
-                    <input
-                      type="text"
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Add a comment..."
-                      className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-base-200 shadow-lg z-0"
-                    />
-                    <button
-                      type="submit"
-                      className="px-4 py-2 w-fit h-12 btn bg-primary text-base-100 shadow-lg hover:text-primary hover:bg-base-100 ease-in-out duration-300 rounded-md"
-                      disabled={!newComment.trim()}
-                    >
-                      <IoSend />
-                    </button>
-                  </form>
-                  <h3 className="text-lg font-bold mt-3 text-left">
-                    Comments: {commentCount}
-                  </h3>
-                  <div className="comments-section my-3 flex flex-col items-start pb-11 max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto">
-                    {comments.map((comment) => (
-                      <div
-                        key={comment.id}
-                        className="bg-base-200 w-fit my-4 p-3 rounded-md shadow-lg"
-                      >
-                        <div className="flex justify-between gap-7">
-                          <p className="text-sm font-semibold">
-                            {comment.userHandle}
-                          </p>
-                          <div className="flex flex-row gap-2">
-                            <p className="text-xs text-base-content/50">
-                              {comment.createdAt?.toDate().toLocaleDateString()}
-                            </p>
-                            {comment.userId == user.id && (
-                              <button
-                                className="text-sm self-start"
-                                onClick={() => confirmDeleteBox(comment.id)}
-                              >
-                                <IoTrashBin />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                        {confirmDelete && commentToDelete === comment.id && (
-                          <>
-                            <div
-                              className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
-                              onClick={confirmDeleteBox}
-                            />
-                            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-10 border-2 border-base-content/30">
-                              <button
-                                className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
-                                onClick={confirmDeleteBox}
-                              >
-                                <IoMdClose />
-                              </button>
-                              <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
-                                {"Delete Comment?"}
-                              </h3>
-                              <p className="mb-4">
-                                {"This action cannot be undone"}
-                              </p>
-                              <div className="flex flex-row gap-5">
-                                <button
-                                  className="btn-error btn rounded-xl text-xl"
-                                  onClick={handleDeletePComment}
-                                >
-                                  Yes
-                                </button>
-                                <button
-                                  className="border-2 border-error btn btn-base-100 rounded-xl text-xl"
-                                  onClick={confirmDeleteBox}
-                                >
-                                  No
-                                </button>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                        <p className="text-base-content my-2 text-left">
-                          {comment.content}
-                        </p>
-                        <button
-                          className="text-sm"
-                          onClick={() => {
-                            handleCommentTag(comment.userHandle);
-                          }}
-                        >
-                          <BiCommentDetail />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col p-4 pr-8 pt-12 w-[100%] overflow-y-auto animate-postAnim1">
+            <div
+              className={`flex ${isImageURLPresent ? `flex-row` : `flex-col`} max-sm:flex-col p-4 pr-10 pt-12 w-full gap-5 overflow-y-auto max-sm:overflow-y-auto md:overflow-hidden max-md:overflow-hidden`}
+            >
+              <div className="flex flex-col items-start gap-2 w-[50%] max-sm:w-full max-sm:animate-postAnim1">
                 <div className="flex flex-row gap-2 items-center py-2">
                   <img
                     src={profilePic || pfp}
@@ -473,130 +305,151 @@ const CommentDisplay = ({
                 </div>
                 <h2 className="text-xl font-bold text-left">{title}</h2>
                 <p className="text-[16px] mt-2 text-left">{content}</p>
-                <div className="flex flex-row mt-4 items-center gap-4">
-                  <button
-                    onClick={handleLike}
-                    className="btn size-sm btn-ghost"
+                {isImageURLPresent && (
+                  <div
+                    className="aspect-video flex justify-center w-full h-[500px] max-sm:h-full overflow-hidden rounded-xl"
+                    onClick={handleImageClick}
+                    style={{
+                      backgroundImage: `url(${blurredImageUrl || imageURL})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
                   >
+                    <img
+                      src={imageURL}
+                      alt="Post"
+                      className="h-full rounded-none object-contain cursor-pointer "
+                    />
+                  </div>
+                )}
+
+                <p className="text-base text-base-content/70 mt-3">{date}</p>
+                <div className="flex flex-row mt-4 items-center gap-2">
+                  <button onClick={handleLike} className="btn btn-lg btn-ghost">
                     {isLiked ? (
                       <FaThumbsUp className="text-primary text-xl" />
                     ) : (
                       <FaRegThumbsUp className="text-primary text-xl" />
                     )}
+                    <span>
+                      {likes?.length || 0} {"likes"}
+                    </span>
                   </button>
-                  <span>{likes?.length || 0} likes</span>
                   <button
                     onClick={handleDislike}
-                    className="btn size-sm btn-ghost"
+                    className="btn btn-lg btn-ghost"
                   >
                     {isDisliked ? (
                       <FaThumbsDown className="text-error text-xl" />
                     ) : (
                       <FaRegThumbsDown className="text-error text-xl" />
                     )}
+                    <span>
+                      {dislikes?.length || 0} {"dislikes"}
+                    </span>
                   </button>
-                  <span>{dislikes?.length || 0} dislikes</span>
-                </div>
-                <div className="flex flex-col w-[100%] max-sm:p-0 max-sm:bottom-0 max-sm:flex-col py-5">
-                  <form
-                    onSubmit={handleAddComment}
-                    className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-10 transition-all"
-                  >
-                    <input
-                      type="text"
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Add a comment..."
-                      className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-base-200 shadow-lg z-0"
-                    />
-                    <button
-                      type="submit"
-                      className="px-4 py-2 w-fit h-12 btn bg-primary text-base-100 shadow-lg hover:text-primary hover:bg-base-100 ease-in-out duration-300 rounded-md"
-                      disabled={!newComment.trim()}
-                    >
-                      <IoSend />
-                    </button>
-                  </form>
-                  <h3 className="text-lg font-bold mt-3 text-left">
-                    Comments: {commentCount}
-                  </h3>
-                  <div className="comments-section my-3 flex flex-col items-start pb-11 max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto">
-                    {comments.map((comment) => (
-                      <div
-                        key={comment.id}
-                        className="bg-base-200 w-fit my-4 p-3 rounded-md shadow-lg"
-                      >
-                        <div className="flex justify-between gap-7">
-                          <p className="text-sm font-semibold">
-                            {comment.userHandle}
-                          </p>
-                          <div className="flex flex-row gap-2">
-                            <p className="text-xs text-gray-500">
-                              {comment.createdAt?.toDate().toLocaleDateString()}
-                            </p>
-                            {comment.userId == user.id && (
-                              <button
-                                className="text-sm self-start"
-                                onClick={() => confirmDeleteBox(comment.id)}
-                              >
-                                <IoTrashBin />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                        {confirmDelete && commentToDelete === comment.id && (
-                          <>
-                            <div
-                              className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
-                              onClick={confirmDeleteBox}
-                            />
-                            <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl">
-                              <button
-                                className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
-                                onClick={confirmDeleteBox}
-                              >
-                                <IoMdClose />
-                              </button>
-                              <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
-                                {"Delete Comment?"}
-                              </h3>
-                              <p className="mb-4">
-                                {"This action cannot be undone"}
-                              </p>
-                              <div className="flex flex-row gap-5">
-                                <button
-                                  className="bg-error btn rounded-xl text-xl"
-                                  onClick={handleDeletePComment}
-                                >
-                                  Yes
-                                </button>
-                                <button
-                                  className="border-2 border-error btn rounded-xl text-xl"
-                                  onClick={confirmDeleteBox}
-                                >
-                                  No
-                                </button>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                        <p className="text-gray-700 my-2 text-left">
-                          {comment.content}
-                        </p>
-                        <button
-                          className="text-sm"
-                          onClick={() => {
-                            handleCommentTag(comment.userHandle);
-                          }}
-                        >
-                          <BiCommentDetail />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
-            )}
+              <div className="flex flex-col w-full max-sm:p-0 max-sm:bottom-0 max-sm:flex-col max-sm:w-full">
+                <form
+                  onSubmit={handleAddComment}
+                  className="relative flex max-sm:flex-row items-left gap-6 max-sm:gap-2 w-[90%] max-sm:fixed max-sm:bottom-10 transition-all"
+                >
+                  <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Add a comment..."
+                    className="w-full p-2 max-sm:w-full max-sm:h-12 border rounded-lg bg-base-200 shadow-lg z-0"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 w-fit h-12 btn bg-primary text-base-100 shadow-lg hover:text-primary hover:bg-base-100 ease-in-out duration-300 rounded-md"
+                    disabled={!newComment.trim()}
+                  >
+                    <IoSend />
+                  </button>
+                </form>
+                <h3 className="text-lg font-bold mt-3 text-left max-sm:animate-postAnim1">
+                  Comments: {commentCount}
+                </h3>
+                <div className="comments-section my-3 flex flex-col items-start pb-11 max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto max-sm:animate-postAnim1">
+                  {comments.map((comment) => (
+                    <div
+                      key={comment.id}
+                      className="bg-base-200 w-fit my-4 p-3 rounded-md shadow-lg"
+                    >
+                      <div className="flex justify-between gap-7">
+                        <p className="text-sm font-semibold">
+                          {comment.userHandle}
+                        </p>
+                        <div className="flex flex-row gap-2">
+                          <p className="text-xs text-base-content/70">
+                            {comment.createdAt?.toDate().toLocaleDateString()}
+                          </p>
+                          {comment.userId == user.id && (
+                            <button
+                              className="text-sm self-start"
+                              onClick={() => confirmDeleteBox(comment.id)}
+                            >
+                              <IoTrashBin />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      {confirmDelete && commentToDelete === comment.id && (
+                        <>
+                          <div
+                            className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
+                            onClick={confirmDeleteBox}
+                          />
+                          <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-10 border-2 border-base-content/30">
+                            <button
+                              className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
+                              onClick={confirmDeleteBox}
+                            >
+                              <IoMdClose />
+                            </button>
+                            <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
+                              {"Delete Comment?"}
+                            </h3>
+                            <p className="mb-4">
+                              {"This action cannot be undone"}
+                            </p>
+                            <div className="flex flex-row gap-5">
+                              <button
+                                className="btn-error btn rounded-xl text-xl"
+                                onClick={handleDeletePComment}
+                              >
+                                Yes
+                              </button>
+                              <button
+                                className="border-2 border-error btn btn-base-100 rounded-xl text-xl"
+                                onClick={confirmDeleteBox}
+                              >
+                                No
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      <p className="text-base-content my-2 text-left">
+                        {comment.content}
+                      </p>
+                      <button
+                        className="text-sm"
+                        onClick={() => {
+                          handleCommentTag(comment.userHandle);
+                        }}
+                      >
+                        <BiCommentDetail />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </>
         ) : (
           <>
