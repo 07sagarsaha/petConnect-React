@@ -17,6 +17,14 @@ const SetAdmin = ({ users }) => {
   const [confirmBox, setConfirmBox] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [admin, setAdmin] = useState(users);
+  const [openDetails, setOpenDetails] = useState({});
+
+  const toggleUserDetails = (userId) => {
+    setOpenDetails((prev) => ({
+      ...prev,
+      [userId]: !prev[userId],
+    }));
+  };
 
   const handleAdminStatus = async (userId, makeAdmin) => {
     try {
@@ -75,11 +83,11 @@ const SetAdmin = ({ users }) => {
             return 0;
           })
           .map((u) => (
-            <>
-              <div
-                key={u.id}
-                className="grid grid-cols-4 max-sm:flex max-sm:flex-col max-sm:justify-start max-sm:items-start gap-4 w-full my-4 shadow-Uni shadow-base-300 rounded-xl p-4 items-center"
-              >
+            <div
+              key={u.id}
+              className="flex flex-col my-4 shadow-Uni shadow-base-300 rounded-xl p-4"
+            >
+              <div className="grid grid-cols-4 max-sm:flex max-sm:flex-col max-sm:justify-start max-sm:items-start gap-4 w-full items-center">
                 {/* Avatar + Name */}
                 <div className="flex flex-row gap-3 items-center col-span-1">
                   <img
@@ -158,7 +166,82 @@ const SetAdmin = ({ users }) => {
                   )}
                 </div>
               </div>
-            </>
+              <div
+                key={`details-${u.id}`}
+                data-userid={u.id}
+                className={`bg-base-300 rounded-xl p-4 relative mt-4 w-full ${openDetails[u.id] ? `flex flex-col gap-2` : `flex justify-between items-center cursor-pointer`}`}
+                onClick={() => {
+                  if (!openDetails[u.id]) {
+                    toggleUserDetails(u.id);
+                  }
+                }}
+              >
+                <p>{!openDetails[u.id] && "More about the user..."}</p>
+                <button
+                  className={`btn btn-sm btn-base-200 ${openDetails[u.id] ? `absolute right-2` : `self-end`}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleUserDetails(u.id);
+                  }}
+                >
+                  <IoIosArrowDown />
+                </button>
+                {openDetails[u.id] && (
+                  <>
+                    <div className="flex flex-col gap-2">
+                      <span className="font-semibold text-base">
+                        Handle: {u.handle || "Not provided"}
+                      </span>
+                    </div>
+                    <span className="font-semibold text-base flex flex-row gap-1 max-sm:flex-col">
+                      <p>Address: </p>
+                      <p>{u?.address || "Not provided"}</p>
+                      <p className="max-sm:hidden">{u?.selectedCity && ", "}</p>
+                      <p className="text-sm">
+                        {typeof u.selectedCity === "string"
+                          ? u.selectedCity
+                          : u.selectedCity?.label ||
+                            u.selectedCity?.value ||
+                            ""}
+                      </p>
+                      <p className="max-sm:hidden">
+                        {u?.selectedState && ", "}
+                      </p>
+                      <p className="text-sm">
+                        {typeof u.selectedState === "string"
+                          ? u.selectedState
+                          : u.selectedState?.label ||
+                            u.selectedState?.value ||
+                            ""}
+                      </p>
+                      <p className="max-sm:hidden">
+                        {u?.selectedCountry && ", "}
+                      </p>
+                      <p className="text-sm">
+                        {typeof u.selectedCountry === "string"
+                          ? u.selectedCountry
+                          : u.selectedCountry?.label ||
+                            u.selectedCountry?.value ||
+                            ""}
+                      </p>
+                      {u.address && (
+                        <button
+                          className="btn btn-xs btn-base-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const fullAddress = `${u.address}, ${u.selectedCity?.label || u.selectedCity || ""}, ${u.selectedState?.label || u.selectedState || ""}, ${u.selectedCountry?.label || u.selectedCountry || ""}`;
+                            navigator.clipboard.writeText(fullAddress);
+                            showToast("Address copied to clipboard!");
+                          }}
+                        >
+                          <BiCopy />
+                        </button>
+                      )}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
           ))}
       </div>
       {confirmBox && (

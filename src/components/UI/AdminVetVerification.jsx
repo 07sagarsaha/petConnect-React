@@ -200,17 +200,51 @@ const AdminVetVerification = ({ users }) => {
                   )}
                   {user.address ? (
                     <span className="p-4 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
-                      {`User's Address: `}
-                      {user.address}
-                      <button
-                        className="btn btn-circle btn-sm"
-                        onClick={() => {
-                          navigator.clipboard.writeText(user.address);
-                          showToast("Copied to clipboard!");
-                        }}
-                      >
-                        <BiCopy />
-                      </button>
+                      <p>{`User's address: `}</p>
+                      <p>{user?.address || "Not provided"}</p>
+                      <p className="max-sm:hidden">
+                        {user?.selectedCity && ", "}
+                      </p>
+                      <p className="text-sm">
+                        {typeof user.selectedCity === "string"
+                          ? user.selectedCity
+                          : user.selectedCity?.label ||
+                            user.selectedCity?.value ||
+                            ""}
+                      </p>
+                      <p className="max-sm:hidden">
+                        {user?.selectedState && ", "}
+                      </p>
+                      <p className="text-sm">
+                        {typeof user.selectedState === "string"
+                          ? user.selectedState
+                          : user.selectedState?.label ||
+                            user.selectedState?.value ||
+                            ""}
+                      </p>
+                      <p className="max-sm:hidden">
+                        {user?.selectedCountry && ", "}
+                      </p>
+                      <p className="text-sm">
+                        {typeof user.selectedCountry === "string"
+                          ? user.selectedCountry
+                          : user.selectedCountry?.label ||
+                            user.selectedCountry?.value ||
+                            ""}
+                      </p>
+                      {user.address && (
+                        <button
+                          className="btn btn-xs btn-base-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const fullAddress = `${user.address}, ${user.selectedCity?.label || user.selectedCity || ""}, ${user.selectedState?.label || user.selectedState || ""}, ${user.selectedCountry?.label || user.selectedCountry || ""}`;
+                            navigator.clipboard.writeText(fullAddress);
+                            showToast("Address copied to clipboard!");
+                          }}
+                        >
+                          <BiCopy />
+                        </button>
+                      )}
                     </span>
                   ) : (
                     <span className="p-4 rounded-lg bg-base-300 flex flex-row gap-3 items-center">
