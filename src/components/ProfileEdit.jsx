@@ -27,6 +27,7 @@ const ProfileEdit = ({
   selectedCountry,
   selectedState,
   selectedCity,
+  onProfileUpdate,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -135,6 +136,10 @@ const ProfileEdit = ({
           await updateDoc(userRef, {
             profilePic: data.secure_url,
           });
+
+          if (typeof onProfileUpdate === "function") {
+            onProfileUpdate({ profilePic: data.secure_url });
+          }
         }
       }
       showToast("Profile Picture Updated!");

@@ -408,6 +408,11 @@ function Profile() {
                           userData.selectedCity?.value ||
                           ""
                     }
+                    onProfileUpdate={(updatedData) => {
+                      if (updatedData.profilePic) {
+                        setProfilePic(updatedData.profilePic);
+                      }
+                    }}
                   />
                   <NavLink
                     to="/in/settings"
