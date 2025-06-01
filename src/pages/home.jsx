@@ -282,10 +282,7 @@ function Home() {
             <div className="lg:w-4/6 w-full bg-base-200 p-4 rounded-lg mb-4">
               <div className="flex max-sm:flex-col flex-row gap-4 bg-base-100 p-4 rounded-xl">
                 <div className="animate-pulse lg:flex-1">
-                  <div className="h-14 bg-base-300 rounded-lg w-full" />
-                </div>
-                <div className="animate-pulse lg:w-[300px] max-sm:w-full">
-                  <div className="h-14 bg-base-300 rounded-lg w-full" />
+                  <div className="h-7 bg-base-100 rounded-lg w-full" />
                 </div>
               </div>
             </div>

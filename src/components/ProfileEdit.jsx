@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import {
   collection,
@@ -9,18 +9,52 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { BsPencil } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
 import { useToast } from "../context/ToastContext";
 import { useUser } from "@clerk/clerk-react";
+import { BiPencil } from "react-icons/bi";
+import { FaPaw } from "react-icons/fa6";
+import { City, Country, State } from "country-state-city";
+import CustomListBox from "./UI/CustomListbox";
 
-const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
+const ProfileEdit = ({
+  image,
+  name,
+  handle,
+  bio,
+  address,
+  pin,
+  selectedCountry,
+  selectedState,
+  selectedCity,
+}) => {
+  const [isClicked, setIsClicked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [profilePic, setProfilePic] = useState(image);
   const [changeName, setNameChange] = useState(name);
   const [changeHandle, setChangeHandle] = useState(handle);
   const [changeBio, setChangeBio] = useState(bio);
+  const [changeAddress, setAddress] = useState(address);
+  const [changePin, setPin] = useState(pin);
   const { user } = useUser();
-  const {showToast} = useToast();
+  const { showToast } = useToast();
+  const [changeSelectedCountry, setSelectedCountry] = useState(
+    typeof selectedCountry === "string"
+      ? { label: selectedCountry, value: selectedCountry }
+      : selectedCountry
+  );
+  const [changeSelectedState, setSelectedState] = useState(
+    typeof selectedState === "string"
+      ? { label: selectedState, value: selectedState }
+      : selectedState
+  );
+  const [changeSelectedCity, setSelectedCity] = useState(
+    typeof selectedCity === "string"
+      ? { label: selectedCity, value: selectedCity }
+      : selectedCity
+  );
+  const [hasChanged, setHasChanged] = useState(false);
+
   const cloudinaryAccounts = [
     //add more cloudinary accounts here just add the name and and change the url too
     //  https://api.cloudinary.com/v1_1/Put_your_cloud_name_here/image/upload
@@ -46,6 +80,28 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
     },
   ];
 
+  const countryOptions = Country.getAllCountries().map((country) => ({
+    label: country.name,
+    value: country.isoCode,
+  }));
+
+  const stateOptions = changeSelectedCountry
+    ? State.getStatesOfCountry(changeSelectedCountry.value).map((state) => ({
+        label: state.name,
+        value: state.isoCode,
+      }))
+    : [];
+
+  const cityOptions = changeSelectedState
+    ? City.getCitiesOfState(
+        changeSelectedCountry.value,
+        changeSelectedState.value
+      ).map((city) => ({
+        label: city.name,
+        value: city.name,
+      }))
+    : [];
+
   const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
   const getNextAccount = () => {
     const nextIndex = (currentAccountIndex + 1) % cloudinaryAccounts.length;
@@ -54,8 +110,9 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
   };
 
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
+    let file = e.target.files[0];
     if (!file) return;
+    setLoading(true);
     const currentAccount = getNextAccount();
     const formData = new FormData();
     formData.append("file", file);
@@ -81,8 +138,13 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
         }
       }
       showToast("Profile Picture Updated!");
+      setLoading(false);
+      file = "";
     } catch (error) {
       console.error("Error uploading profile picture:", error);
+      showToast("Something went wrong!");
+      setLoading(false);
+      file = "";
     }
   };
 
@@ -93,7 +155,6 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
       return;
     }
 
-
     if (user) {
       const userDoc = doc(db, "users", user.id);
       try {
@@ -101,6 +162,11 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
           name: changeName,
           handle: changeHandle,
           bio: changeBio,
+          address: changeAddress,
+          pin: changePin,
+          selectedCountry: changeSelectedCountry,
+          selectedState: changeSelectedState,
+          selectedCity: changeSelectedCity,
         });
         showToast("Profile Updated!");
       } catch (error) {
@@ -122,71 +188,209 @@ const ProfileEdit = ({ image, name, handle, bio, handleProfileClose }) => {
     }
   };
 
+  useEffect(() => {
+    const nameChanged = changeName.trim() !== name;
+    const bioChanged = changeBio.trim() !== bio;
+    const handleChanged = changeHandle.trim() !== handle;
+    const addressChanged = changeAddress.trim() !== address;
+    const pinChanged = changePin !== pin;
+    const countryChanged =
+      changeSelectedCountry?.value !== selectedCountry?.value;
+    const stateChanged = changeSelectedState?.value !== selectedState?.value;
+    const cityChanged = changeSelectedCity?.value !== selectedCity?.value;
+
+    if (
+      nameChanged ||
+      bioChanged ||
+      handleChanged ||
+      addressChanged ||
+      pinChanged ||
+      countryChanged ||
+      stateChanged ||
+      cityChanged
+    ) {
+      setHasChanged(true);
+    } else {
+      setHasChanged(false);
+    }
+  }, [
+    changeName,
+    changeBio,
+    changeHandle,
+    changeAddress,
+    changePin,
+    name,
+    bio,
+    handle,
+    changeSelectedCountry,
+    changeSelectedState,
+    changeSelectedCity,
+  ]);
+
   return (
     <>
-      <div className="h-full w-full left-0 justify-center items-center flex flex-col fixed top-0 z-40 bg-neutral-focus transition-colors duration-200">
-        <div className="h-4/5 max-sm:h-max w-1/2 max-sm:w-[80%] rounded-xl bg-base-100 shadow-xl overflow-hidden">
-          <div className="flex flex-row justify-center w-full ml-4 mt-4 items-center">
-            <h1 className="flex w-full justify-center text-2xl my-4 text-primary">
-              Update Your Profile
-            </h1>
-            <IoMdClose
-              className="text-4xl mr-8 hover:text-error transition-all duration-300"
-              onClick={handleProfileClose}
-            />
+      {isClicked && (
+        <div
+          className="fixed z-30 w-full h-full bg-black/30 opacity-50 top-0 left-0"
+          onClick={() => {
+            setIsClicked(!isClicked);
+          }}
+        />
+      )}
+      <div
+        className={`text-xl ${isClicked ? `fixed max-sm:w-full rounded-xl max-sm:rounded-none max-sm:h-full z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/20 backdrop-blur-lg border-2 border-base-content/35 w-3/5 h-4/5` : `top-0 right-0 rounded-xl cursor-pointer p-2 h-fit w-fit flex justify-end items-center gap-3 btn btn-primary text-base-100 shadow-lg border-2 border-primary`}`}
+        onClick={() => {
+          if (!isClicked) {
+            setIsClicked(!isClicked);
+          }
+        }}
+      >
+        {!isClicked && (
+          <div className="flex flex-row gap-2 items-center">
+            <BiPencil size={25} />
+            <p>{" Edit Profile"}</p>
           </div>
-          <div className="flex flex-row justify-center mt gap-6 items-center">
-            <img
-              className="w-[150px] h-[150px] rounded-full object-cover"
-              src={profilePic}
-              alt="Profile"
-            />
-            <label
-              htmlFor="profile_image"
-              className="text-lg p-3 m-[10px] absolute ml-40 mt-32 rounded-full bg-primary text-base-100 hover:bg-base-100 hover:text-primary ease-in-out duration-700"
-            >
-              <BsPencil />
-            </label>
-            <input
-              type="file"
-              id="profile_image"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageChange}
-            />
-          </div>
-          <div className="flex flex-col items-center">
-            <input
-              placeholder={name}
-              value={changeName}
-              type="text"
-              className="w-[55%] max-sm:w-[75%] max-sm:h-[5vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-9 bg-base-200"
-              onChange={(e) => setNameChange(e.target.value)}
-            />
-            <input
-              placeholder={handle}
-              value={changeHandle}
-              type="text"
-              className="w-[55%] max-sm:w-[75%] max-sm:h-[5vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-5 bg-base-200"
-              onChange={(e) => setChangeHandle(e.target.value)}
-            />
-            <textarea
-              placeholder={bio}
-              value={changeBio}
-              type="text"
-              className="w-[55%] max-sm:w-[75%] h-[10vh] max-sm:text-lg outline-none text-xl rounded-lg p-4 text-black mt-5 bg-base-200"
-              onChange={(e) => setChangeBio(e.target.value)}
-            />
+        )}
+        {isClicked && (
+          <div className="flex flex-col justify-between h-full p-8 max-sm:px-8 max-sm:py-4 items-start relative">
             <button
-              className="text-lg p-3 m-[10px] mt-5 rounded-xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary ease-in-out duration-700"
+              className="absolute right-6 top-6 bg-primary text-base-100 size-8 rounded-full hover:bg-primary/75 flex justify-center items-center transition-all"
+              onClick={() => {
+                setIsClicked(false);
+              }}
+            >
+              <IoMdClose />
+            </button>
+            <div className="flex flex-row max-sm:flex-col max-sm:w-full gap-8 items-center w-1/2">
+              <div className="relative w-1/3">
+                <img
+                  alt="Profile"
+                  src={image}
+                  className="object-cover rounded-full size-32"
+                />
+                <div
+                  className={
+                    loading
+                      ? `absolute top-0 left-0 bg-black/50 w-full h-full rounded-full opacity-100`
+                      : `opacity-0`
+                  }
+                >
+                  <FaPaw
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse"
+                    size={30}
+                  />
+                </div>
+                <label
+                  className={`absolute bottom-0 right-0 btn ${loading ? `btn-disabled` : `btn-primary`} rounded-full btn-sm`}
+                >
+                  <BiPencil size={20} />
+                  <input
+                    className="hidden"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    disabled={loading}
+                  />
+                </label>
+              </div>
+              <div className="relative h-18 w-full">
+                <p className="text-sm text-primary absolute -top-6 left-0">
+                  {"Name"}
+                </p>
+                <input
+                  type="text"
+                  value={changeName}
+                  placeholder="Enter Your New Name"
+                  className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
+                  onChange={(e) => setNameChange(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="relative h-18 mt-8 w-1/2 max-sm:w-full">
+              <p className="text-sm text-primary absolute -top-6 left-0">
+                {"Handle"}
+              </p>
+              <input
+                type="text"
+                value={changeHandle}
+                placeholder="Enter Your New Handle"
+                className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
+                onChange={(e) => setChangeHandle(e.target.value)}
+              />
+            </div>
+            <div className="relative h-18 mt-8 w-full">
+              <p className="text-sm text-primary absolute -top-6 left-0">
+                {"Bio"}
+              </p>
+              <textarea
+                type="text"
+                value={changeBio}
+                placeholder="Enter Your New Bio"
+                className="rounded-xl resize-none w-full p-4 h-36 max-sm:h-28 bg-base-100"
+                onChange={(e) => setChangeBio(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-row justify-between w-full gap-4 max-sm:flex-col max-sm:gap-2">
+              <CustomListBox
+                options={countryOptions}
+                value={changeSelectedCountry}
+                onChange={setSelectedCountry}
+                placeholder="Select Country"
+                labelText="Country"
+              />
+
+              <CustomListBox
+                options={stateOptions}
+                value={changeSelectedState}
+                onChange={setSelectedState}
+                placeholder="Select State"
+                labelText="State"
+              />
+
+              <CustomListBox
+                options={cityOptions}
+                value={changeSelectedCity}
+                onChange={setSelectedCity}
+                placeholder="Select City"
+                labelText="City"
+              />
+            </div>
+            <div className="flex flex-row w-full gap-4">
+              <div className="relative h-18 mt-8 w-full">
+                <p className="text-sm text-primary absolute -top-6 left-0">
+                  {"Address"}
+                </p>
+                <input
+                  type="text"
+                  value={changeAddress}
+                  placeholder="Enter Your New address"
+                  className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
+                  onChange={(e) => setAddress(e.target.value)}
+                />
+              </div>
+              <div className="relative h-18 mt-8 w-full">
+                <p className="text-sm text-primary absolute -top-6 left-0">
+                  {"Pincode"}
+                </p>
+                <input
+                  type="text"
+                  value={changePin}
+                  placeholder="Enter Your New Pin"
+                  className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
+                  onChange={(e) => setPin(e.target.value)}
+                />
+              </div>
+            </div>
+            <button
+              className="self-center btn btn-primary max-sm:my-4"
+              disabled={!hasChanged}
               onClick={handleProfileUpdate}
             >
-              Done
+              {"Done"}
             </button>
           </div>
-        </div>
+        )}
       </div>
-      <div className="fixed z-20 bg-black opacity-50 w-full h-full left-0 top-0" onClick={handleProfileClose}/>
     </>
   );
 };

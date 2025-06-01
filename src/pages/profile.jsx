@@ -380,14 +380,35 @@ function Profile() {
                   </div>
                 </div>
                 <div className="flex self-center gap-3">
-                  <button
-                    id="profilePicUpload"
-                    className="text-2xl flex justify-end btn items-center gap-3 rounded-2xl bg-primary text-base-100 shadow-lg hover:bg-base-100 hover:text-primary"
-                    onClick={handleProfileUpdate}
-                  >
-                    <p className="text-lg">{"Edit"}</p>
-                    <BsPencil />
-                  </button>
+                  <ProfileEdit
+                    image={profilePic}
+                    name={userData?.name}
+                    handle={userData?.handle}
+                    bio={userData?.bio || "No Bio."}
+                    address={userData?.address}
+                    pin={userData?.pin}
+                    selectedCountry={
+                      typeof userData.selectedCountry === "string"
+                        ? userData.selectedCountry
+                        : userData.selectedCountry?.label ||
+                          userData.selectedCountry?.value ||
+                          ""
+                    }
+                    selectedState={
+                      typeof userData.selectedState === "string"
+                        ? userData.selectedState
+                        : userData.selectedState?.label ||
+                          userData.selectedState?.value ||
+                          ""
+                    }
+                    selectedCity={
+                      typeof userData.selectedCity === "string"
+                        ? userData.selectedCity
+                        : userData.selectedCity?.label ||
+                          userData.selectedCity?.value ||
+                          ""
+                    }
+                  />
                   <NavLink
                     to="/in/settings"
                     className="text-3xl text-base-100 btn rounded-2xl self-center flex items-center justify-center bg-primary shadow-lg md:hidden lg:hidden hover:bg-base-100 hover:text-primary"
@@ -396,16 +417,6 @@ function Profile() {
                   </NavLink>
                 </div>
               </div>
-
-              {isProfileEdit && (
-                <ProfileEdit
-                  image={profilePic}
-                  name={userData?.name}
-                  handle={userData?.handle}
-                  bio={userData?.bio || "No Bio."}
-                  handleProfileClose={handleProfileUpdate}
-                />
-              )}
 
               <div
                 className={`flex flex-col gap-5 justify-start items-start w-full p-5 rounded-xl bg-base-200 mt-8 ${isBioExpanded ? `hover:bg-base-200` : `hover:bg-base-300`} transition-all mb-5`}
@@ -421,8 +432,32 @@ function Profile() {
                         {"Basic info"}
                       </h2>
                       <p className="mb-2">
-                        <strong>{"Location:"}</strong>{" "}
-                        {userData?.location || "No Location Added"}
+                        <strong>{"Address:"}</strong>{" "}
+                        {userData?.address || "No Location Added"}
+                      </p>
+                      <p className="mb-2">
+                        <strong>{"Country:"}</strong>{" "}
+                        {typeof userData.selectedCountry === "string"
+                          ? userData.selectedCountry
+                          : userData.selectedCountry?.label ||
+                            userData.selectedCountry?.value ||
+                            ""}
+                      </p>
+                      <p className="mb-2">
+                        <strong>{"State:"}</strong>{" "}
+                        {typeof userData.selectedState === "string"
+                          ? userData.selectedState
+                          : userData.selectedState?.label ||
+                            userData.selectedState?.value ||
+                            ""}
+                      </p>
+                      <p className="mb-2">
+                        <strong>{"City:"}</strong>{" "}
+                        {typeof userData.selectedCity === "string"
+                          ? userData.selectedCity
+                          : userData.selectedCity?.label ||
+                            userData.selectedCity?.value ||
+                            ""}
                       </p>
                       <p className="mb-2 max-sm:text-sm">
                         <strong>{"Email:"}</strong> {userData?.email}

@@ -10,6 +10,7 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useClerk, useSignUp } from "@clerk/clerk-react";
 import { City, Country, State } from "country-state-city";
 import Select from "react-select";
+import CustomListBox from "../../components/UI/CustomListbox";
 
 const Register = () => {
   const { userLoggedIn } = useAuth();
@@ -220,30 +221,33 @@ const Register = () => {
                 )}
               </button>
             </div>
-            <Select
+            <CustomListBox
               options={countryOptions}
               value={selectedCountry}
               onChange={setSelectedCountry}
               placeholder="Select Country"
+              labelText={"Country"}
               required
             />
 
             {selectedCountry && (
-              <Select
+              <CustomListBox
                 options={stateOptions}
                 value={selectedState}
                 onChange={setSelectedState}
                 placeholder="Select State"
+                labelText={"State"}
                 required
               />
             )}
 
             {selectedCountry && selectedState && (
-              <Select
+              <CustomListBox
                 options={cityOptions}
                 value={selectedCity}
                 onChange={setSelectedCity}
                 placeholder="Select City"
+                labelText={"City"}
                 required
               />
             )}
