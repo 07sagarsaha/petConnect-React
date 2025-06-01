@@ -212,7 +212,10 @@ function Settings() {
           </h2>
 
           {/* Auto Mode Toggle */}
-          <div className="mb-6 p-4 bg-base-200 rounded-lg shadow-lg">
+          <div
+            className="mb-6 p-4 bg-base-200 rounded-lg shadow-lg cursor-pointer"
+            onClick={toggleAutoMode}
+          >
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold mb-1">Auto Dark Mode</h3>

@@ -238,7 +238,7 @@ const ProfileEdit = ({
         />
       )}
       <div
-        className={`text-xl ${isClicked ? `fixed max-sm:w-full rounded-xl max-sm:rounded-none max-sm:h-full z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/20 backdrop-blur-lg border-2 border-base-content/35 w-3/5 h-4/5` : `top-0 right-0 rounded-xl cursor-pointer p-2 h-fit w-fit flex justify-end items-center gap-3 btn btn-primary text-base-100 shadow-lg border-2 border-primary`}`}
+        className={`text-xl ${isClicked ? `fixed max-sm:w-full rounded-xl max-sm:rounded-none max-sm:h-full z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/20 backdrop-blur-lg border-2 border-base-content/20 w-3/5 h-4/5` : `top-0 right-0 rounded-xl cursor-pointer p-2 h-fit w-fit flex justify-end items-center gap-3 btn btn-primary text-base-100 shadow-lg border-2 border-primary`}`}
         onClick={() => {
           if (!isClicked) {
             setIsClicked(!isClicked);
@@ -265,7 +265,7 @@ const ProfileEdit = ({
               <div className="relative w-1/3">
                 <img
                   alt="Profile"
-                  src={image}
+                  src={profilePic}
                   className="object-cover rounded-full size-32"
                 />
                 <div
