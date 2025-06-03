@@ -51,7 +51,7 @@ export default {
         tourPulse: {
           '0%, 100%': { boxShadow: '0 0 15px 5px rgba(147, 51, 234, 0.4)' },
           '50%': { boxShadow: '0 0 25px 10px rgba(147, 51, 234, 0.7)' },
-        }
+        },
       },
       animation: {
         postButtonAnim1: "postAnim 1s ease",

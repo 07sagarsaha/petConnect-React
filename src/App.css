@@ -125,3 +125,39 @@ body {
     max-height: calc(100vh - 14rem);
   }
 }
+
+@keyframes textSize {
+  0% {
+    transform-origin: left;
+    transform: scale(5) translateY(1000%);
+  }
+  50% {
+    transform-origin: left;
+    transform: scale(5) translateY(0%);
+  }
+  100% {
+    transform-origin: left;
+    transform: scale(1) translateY(0%);
+  }
+}
+
+.animate-textSize{
+  animation: textSize 4s ease-in-out;
+}
+
+@keyframes subText {
+  0% {
+    transform-origin: left;
+    transform: scale(1) translateY(500%);
+    opacity: 0;
+  }
+  100% {
+    transform-origin: left;
+    transform: scale(1) translateY(0%);
+    opacity: 1;
+  }
+}
+
+.animate-subText{
+  animation: subText 2s ease-in-out;
+}

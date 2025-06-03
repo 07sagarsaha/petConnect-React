@@ -55,6 +55,7 @@ const ProfileEdit = ({
       : selectedCity
   );
   const [hasChanged, setHasChanged] = useState(false);
+  const [wantNewAddress, setWantNewAddress] = useState(false);
 
   const cloudinaryAccounts = [
     //add more cloudinary accounts here just add the name and and change the url too
@@ -199,20 +200,13 @@ const ProfileEdit = ({
     const handleChanged = changeHandle.trim() !== handle;
     const addressChanged = changeAddress.trim() !== address;
     const pinChanged = changePin !== pin;
-    const countryChanged =
-      changeSelectedCountry?.value !== selectedCountry?.value;
-    const stateChanged = changeSelectedState?.value !== selectedState?.value;
-    const cityChanged = changeSelectedCity?.value !== selectedCity?.value;
 
     if (
       nameChanged ||
       bioChanged ||
       handleChanged ||
       addressChanged ||
-      pinChanged ||
-      countryChanged ||
-      stateChanged ||
-      cityChanged
+      pinChanged
     ) {
       setHasChanged(true);
     } else {
@@ -227,9 +221,8 @@ const ProfileEdit = ({
     name,
     bio,
     handle,
-    changeSelectedCountry,
-    changeSelectedState,
-    changeSelectedCity,
+    address,
+    pin,
   ]);
 
   return (
@@ -257,9 +250,9 @@ const ProfileEdit = ({
           </div>
         )}
         {isClicked && (
-          <div className="flex flex-col justify-between h-full p-8 max-sm:px-8 max-sm:py-4 items-start relative">
+          <div className="flex flex-col justify-between h-full p-8 max-sm:px-8 max-sm:py-4 items-start relative max-sm:overflow-y-auto">
             <button
-              className="absolute right-6 top-6 bg-primary text-base-100 size-8 rounded-full hover:bg-primary/75 flex justify-center items-center transition-all"
+              className="absolute max-sm:fixed max-sm:z-40 right-6 top-6 bg-primary text-base-100 size-8 rounded-full hover:bg-primary/75 flex justify-center items-center transition-all"
               onClick={() => {
                 setIsClicked(false);
               }}
@@ -267,7 +260,7 @@ const ProfileEdit = ({
               <IoMdClose />
             </button>
             <div className="flex flex-row max-sm:flex-col max-sm:w-full gap-8 items-center w-1/2">
-              <div className="relative w-1/3">
+              <div className="relative w-1/3 max-sm:w-1/2">
                 <img
                   alt="Profile"
                   src={profilePic}
@@ -281,7 +274,7 @@ const ProfileEdit = ({
                   }
                 >
                   <FaPaw
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse"
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse text-white/50"
                     size={30}
                   />
                 </div>
@@ -331,63 +324,82 @@ const ProfileEdit = ({
                 type="text"
                 value={changeBio}
                 placeholder="Enter Your New Bio"
-                className="rounded-xl resize-none w-full p-4 h-36 max-sm:h-28 bg-base-100"
+                className="rounded-xl resize-none w-full p-4 h-36 bg-base-100"
                 onChange={(e) => setChangeBio(e.target.value)}
               />
             </div>
-            <div className="flex flex-row justify-between w-full gap-4 max-sm:flex-col max-sm:gap-2">
-              <CustomListBox
-                options={countryOptions}
-                value={changeSelectedCountry}
-                onChange={setSelectedCountry}
-                placeholder="Select Country"
-                labelText="Country"
-              />
-
-              <CustomListBox
-                options={stateOptions}
-                value={changeSelectedState}
-                onChange={setSelectedState}
-                placeholder="Select State"
-                labelText="State"
-              />
-
-              <CustomListBox
-                options={cityOptions}
-                value={changeSelectedCity}
-                onChange={setSelectedCity}
-                placeholder="Select City"
-                labelText="City"
+            <div
+              className="flex flex-row items-center gap-2 rounded-xl p-4 bg-base-100 relative h-18 mt-8 justify-between w-full"
+              onClick={() => setWantNewAddress(!wantNewAddress)}
+            >
+              <p className="text-sm text-primary absolute -top-6 left-0">
+                {"Change Address"}
+              </p>
+              <p className="text-start">{"Want to Change Address as well?"}</p>
+              <input
+                type="checkbox"
+                checked={wantNewAddress}
+                onChange={(e) => setWantNewAddress(e.target.checked)}
+                className="toggle toggle-primary ml-2"
               />
             </div>
-            <div className="flex flex-row w-full gap-4">
-              <div className="relative h-18 mt-8 w-full">
-                <p className="text-sm text-primary absolute -top-6 left-0">
-                  {"Address"}
-                </p>
-                <input
-                  type="text"
-                  value={changeAddress}
-                  placeholder="Enter Your New address"
-                  className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </div>
-              <div className="relative h-18 mt-8 w-full">
-                <p className="text-sm text-primary absolute -top-6 left-0">
-                  {"Pincode"}
-                </p>
-                <input
-                  type="text"
-                  value={changePin}
-                  placeholder="Enter Your New Pin"
-                  className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
-                  onChange={(e) => setPin(e.target.value)}
-                />
-              </div>
-            </div>
+            {wantNewAddress && (
+              <>
+                <div className="flex flex-row justify-between w-full gap-4 max-sm:flex-col max-sm:gap-2">
+                  <CustomListBox
+                    options={countryOptions}
+                    value={changeSelectedCountry}
+                    onChange={setSelectedCountry}
+                    placeholder="Select Country"
+                    labelText="Country"
+                  />
+
+                  <CustomListBox
+                    options={stateOptions}
+                    value={changeSelectedState}
+                    onChange={setSelectedState}
+                    placeholder="Select State"
+                    labelText="State"
+                  />
+
+                  <CustomListBox
+                    options={cityOptions}
+                    value={changeSelectedCity}
+                    onChange={setSelectedCity}
+                    placeholder="Select City"
+                    labelText="City"
+                  />
+                </div>
+                <div className="flex flex-row w-full gap-4 max-sm:mb-20">
+                  <div className="relative h-18 mt-8 w-full">
+                    <p className="text-sm text-primary absolute -top-6 left-0">
+                      {"Address"}
+                    </p>
+                    <input
+                      type="text"
+                      value={changeAddress}
+                      placeholder="Enter Your New address"
+                      className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
+                      onChange={(e) => setAddress(e.target.value)}
+                    />
+                  </div>
+                  <div className="relative h-18 mt-8 w-full">
+                    <p className="text-sm text-primary absolute -top-6 left-0">
+                      {"Pincode"}
+                    </p>
+                    <input
+                      type="text"
+                      value={changePin}
+                      placeholder="Enter Your New Pin"
+                      className="h-14 rounded-xl outline-none px-4 w-full bg-base-100"
+                      onChange={(e) => setPin(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
             <button
-              className="self-center btn btn-primary max-sm:my-4"
+              className={`self-center btn btn-primary max-sm:shadow-Uni max-sm:shadow-black/50 ${wantNewAddress ? `max-sm:fixed max-sm:z-50 max-sm:bottom-4` : ``}`}
               disabled={!hasChanged}
               onClick={handleProfileUpdate}
             >

@@ -231,7 +231,7 @@ function Settings() {
               </div>
               <input
                 type="checkbox"
-                className="toggle toggle-primary rounded-full"
+                className="toggle toggle-primary rounded-full ml-2"
                 checked={autoMode}
                 onChange={toggleAutoMode}
               />

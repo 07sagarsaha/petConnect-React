@@ -15,7 +15,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import InteractiveTour from "../../components/InteractiveTour";
 
-const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
+export const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
 const PetModel = ({ isAnimating, showCanvas, register, login }) => {
   const modelRef = useRef();
   const { scene } = useGLTF(dog3d);
@@ -329,16 +329,23 @@ const Landing = () => {
         try {
           const userRef = doc(db, "users", user.id);
           const userDoc = await getDoc(userRef);
-          
+
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            
+
             // If the user has never seen the tour, show it
-            if (userData.hasSeenTour === undefined || userData.hasSeenTour === false) {
+            if (
+              userData.hasSeenTour === undefined ||
+              userData.hasSeenTour === false
+            ) {
               setShowFirstTimeTour(true);
-              
+
               // Update the user document to indicate they've seen the tour
-              await setDoc(userRef, { ...userData, hasSeenTour: true }, { merge: true });
+              await setDoc(
+                userRef,
+                { ...userData, hasSeenTour: true },
+                { merge: true }
+              );
             }
           }
         } catch (error) {
@@ -346,7 +353,7 @@ const Landing = () => {
         }
       }
     };
-    
+
     checkFirstTimeUser();
   }, [userLoggedIn, user]);
 
