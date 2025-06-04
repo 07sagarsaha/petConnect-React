@@ -419,7 +419,6 @@ function Home() {
                     ? format(post.createdAt.toDate(), "PPP")
                     : "No date"
                 }
-                isVetVerified={post.isVetVerified}
               />
             ))}
           </div>

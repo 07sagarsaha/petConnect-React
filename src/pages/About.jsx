@@ -28,9 +28,9 @@ const DeveloperInfo = () => {
   useEffect(() => {
     const fetchDeveloperInfo = async () => {
       try {
-        // Query users collection for documents where isAdmin is true
+        // Query users collection for documents where isDev is true
         const usersCollection = collection(db, "users");
-        const adminQuery = query(usersCollection, where("isAdmin", "==", true));
+        const adminQuery = query(usersCollection, where("isDev", "==", true));
 
         // Use onSnapshot for real-time updates instead of getDocs
         const unsubscribe = onSnapshot(

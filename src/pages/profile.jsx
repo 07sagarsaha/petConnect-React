@@ -377,6 +377,18 @@ function Profile() {
                     <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
                       {"@" + userData?.handle || "loading..."}
                     </h2>
+                    <div className="flex flex-row gap-2 mt-4">
+                      {userData?.isDev && (
+                        <h2 className="text-start p-2 bg-base-300 w-fit h-fit text-xl text-base-content rounded-lg">
+                          {"Dev"}
+                        </h2>
+                      )}
+                      {userData?.isAdmin && (
+                        <h2 className="text-start p-2 bg-base-300 w-fit h-fit text-xl text-base-content rounded-lg">
+                          {"Admin"}
+                        </h2>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex self-center gap-3">

@@ -133,6 +133,18 @@ function UserProfile() {
                 <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
                   {"@" + userData?.handle || "loading..."}
                 </h2>
+                <div className="flex flex-row gap-2 mt-4">
+                  {userData?.isDev && (
+                    <h2 className="text-start p-2 bg-base-300 w-fit h-fit text-xl text-base-content rounded-lg">
+                      {"Dev"}
+                    </h2>
+                  )}
+                  {userData?.isAdmin && (
+                    <h2 className="text-start p-2 bg-base-300 w-fit h-fit text-xl text-base-content rounded-lg">
+                      {"Admin"}
+                    </h2>
+                  )}
+                </div>
               </div>
             </div>
             {user.id === userId && navigate(`/in/profile`)}
@@ -161,8 +173,32 @@ function UserProfile() {
                     {"Basic info"}
                   </h2>
                   <p className="mb-2">
-                    <strong>{"Location:"}</strong>{" "}
+                    <strong>{"Address:"}</strong>{" "}
                     {userData?.address || "No Location Added"}
+                  </p>
+                  <p className="mb-2">
+                    <strong>{"Country:"}</strong>{" "}
+                    {typeof userData.selectedCountry === "string"
+                      ? userData.selectedCountry
+                      : userData.selectedCountry?.label ||
+                        userData.selectedCountry?.value ||
+                        ""}
+                  </p>
+                  <p className="mb-2">
+                    <strong>{"State:"}</strong>{" "}
+                    {typeof userData.selectedState === "string"
+                      ? userData.selectedState
+                      : userData.selectedState?.label ||
+                        userData.selectedState?.value ||
+                        ""}
+                  </p>
+                  <p className="mb-2">
+                    <strong>{"City:"}</strong>{" "}
+                    {typeof userData.selectedCity === "string"
+                      ? userData.selectedCity
+                      : userData.selectedCity?.label ||
+                        userData.selectedCity?.value ||
+                        ""}
                   </p>
                   <p className="mb-2 max-sm:text-sm">
                     <strong>{"Email:"}</strong> {userData?.email}
