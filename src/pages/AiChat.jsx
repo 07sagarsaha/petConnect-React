@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import axios from "axios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { BsClockHistory } from "react-icons/bs";
+import { BsClockHistory, BsExclamationCircle } from "react-icons/bs";
 import ReactMarkdown from "react-markdown";
 import { useUser } from "@clerk/clerk-react";
 import { db } from "../firebase/firebase";
@@ -20,6 +20,8 @@ import {
 } from "firebase/firestore";
 import { MdDelete } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { FaPaw } from "react-icons/fa6";
+import AOS from "aos";
 
 const AiChat = () => {
   const { user } = useUser();
@@ -31,7 +33,24 @@ const AiChat = () => {
   const [conversations, setConversations] = useState([]);
   const [showOverlay, setShowOverlay] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExclaimationOpen, setIsExclaimationOpen] = useState(false);
   const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+
+  // Initialize AOS
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+      startEvent: "DOMContentLoaded",
+      offset: 120,
+    });
+
+    // Cleanup function
+    return () => {
+      // Clean up any AOS-related resources
+      AOS.refresh();
+    };
+  }, []);
 
   // Load conversations list
   const fetchConversations = async () => {
@@ -232,7 +251,13 @@ const AiChat = () => {
 
       {/* Dark Overlay */}
       {showOverlay && (
-        <div className="fixed inset-0 bg-black/50 z-30 transition-opacity duration-300" />
+        <div
+          className="fixed inset-0 bg-black/50 z-30 backdrop-blur-sm transition-opacity duration-300"
+          onClick={() => {
+            setShowHistory(!showHistory);
+            setShowOverlay(!showOverlay);
+          }}
+        />
       )}
 
       {/* Conversation History Sidebar */}
@@ -277,15 +302,61 @@ const AiChat = () => {
       </div>
 
       {/* Main Chat Content */}
-      <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          showHistory ? "filter blur-sm" : ""
-        }`}
-      >
+      <div className={`flex-1 flex flex-col transition-all duration-300`}>
         {/* Chat Messages Container */}
         <div className="flex-1 relative">
           <div className="absolute inset-x-0 top-16 bottom-24 max-lg:top-12 max-lg:bottom-32 mx-4 rounded-xl bg-base-100 overflow-y-auto">
             <div className="p-4">
+              {/*Empty Chat */}
+              {chatLog.length === 0 && (
+                <div className="flex flex-col items-center gap-6 justify-center min-h-[80vh] max-sm:min-h-96">
+                  <FaPaw
+                    size={70}
+                    data-aos="fade-up"
+                    className="text-primary"
+                  />
+                  <h3
+                    className="font-bold text-3xl text-primary"
+                    data-aos="fade-up"
+                    data-aos-delay="200"
+                  >
+                    {"PetAI"}
+                  </h3>
+                  <div
+                    className="flex flex-row gap-2 items-center"
+                    data-aos="fade-up"
+                    data-aos-delay="400"
+                  >
+                    <p className="text-center">
+                      {"Question anything about pets!"}
+                    </p>
+                    <div className="relative group max-sm:hidden">
+                      <button>
+                        <BsExclamationCircle className="cursor-pointer" />
+                      </button>
+                      <div
+                        className={`absolute hidden group-hover:block bottom-full left-1/2 transform -translate-x-1/2 w-64 max-sm:w-48 p-2 bg-base-300 text-base-content rounded-lg shadow-lg mb-2 z-50`}
+                      >
+                        <p className="text-sm text-center max-sm:text-xs">
+                          {
+                            "Do note that this is an AI and it can make mistakes. Do not rely on it for sensitive matters."
+                          }
+                        </p>
+                        <div className="absolute bottom-[-6px] left-1/2 max-sm:left-1/3 transform -translate-x-1/2 w-3 h-3 bg-base-300 rotate-45"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <p
+                    className="text-sm text-center max-sm:text-xs p-4 rounded-xl bg-base-300 hidden max-sm:block"
+                    data-aos="fade-up"
+                    data-aos-delay="500"
+                  >
+                    {
+                      "Do note that this is an AI and it can make mistakes. Do not rely on it for sensitive matters."
+                    }
+                  </p>
+                </div>
+              )}
               {chatLog.map((message, index) => (
                 <div
                   key={index}
