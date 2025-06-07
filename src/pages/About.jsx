@@ -121,17 +121,17 @@ const DeveloperInfo = () => {
           <p className="text-sm text-base-content/50 mb-2">
             @{dev.handle || "unknown"}
           </p>
-          {dev.name === "Subham Chakraborty" && (
+          {dev.handle === "subham476" && (
             <p className="mt-4 p-4 bg-base-300 rounded-xl">
               {"Worked at both Frontend and Backend"}
             </p>
           )}
-          {dev.name === "Sagar Saha" && (
+          {dev.handle === "sagar.dev" && (
             <p className="mt-4 p-4 bg-base-300 rounded-xl">
               {"Lead Project Dev"}
             </p>
           )}
-          {dev.name === "Rajdeep Majumder" && (
+          {dev.handle === "Razor732103" && (
             <p className="mt-4 p-4 bg-base-300 rounded-xl">{"Frontend Dev"}</p>
           )}
         </div>

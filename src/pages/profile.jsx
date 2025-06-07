@@ -377,7 +377,7 @@ function Profile() {
                     <h2 className="text-start max-sm:text-center text-xl text-primary-focus">
                       {"@" + userData?.handle || "loading..."}
                     </h2>
-                    <div className="flex flex-row gap-2 mt-4">
+                    <div className="flex flex-row gap-2 mt-4 max-sm:justify-center">
                       {userData?.isDev && (
                         <h2 className="text-start p-2 bg-base-300 w-fit h-fit text-xl text-base-content rounded-lg">
                           {"Dev"}

@@ -374,7 +374,7 @@ const CommentDisplay = ({
                 <h3 className="text-lg font-bold mt-3 text-left max-sm:animate-postAnim1">
                   Comments: {commentCount}
                 </h3>
-                <div className="comments-section my-3 flex flex-col items-start pb-11 max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto max-sm:animate-postAnim1">
+                <div className="comments-section my-3 flex flex-col items-start pb-11 max-sm:max-w-[100vh] max-sm:overflow-x-hidden overflow-y-auto">
                   {comments.map((comment) => (
                     <div
                       key={comment.id}
@@ -404,17 +404,17 @@ const CommentDisplay = ({
                             className="fixed z-20 bg-black opacity-30 w-full h-full left-0 top-0"
                             onClick={confirmDeleteBox}
                           />
-                          <div className="fixed bg-base-200 flex justify-center items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-10 border-2 border-base-content/30">
+                          <div className="fixed bg-base-200 flex gap-4 justify-between items-center z-30 flex-col w-3/5 max-sm:w-4/5 h-fit left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-7 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-10 border-2 border-base-content/30">
                             <button
-                              className="text-lg p-2 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
+                              className="text-lg p-2 absolute top-5 rounded-full bg-error text-base-100 hover:bg-base-300 hover:text-error transition-colors duration-200 self-end mb-5"
                               onClick={confirmDeleteBox}
                             >
                               <IoMdClose />
                             </button>
-                            <h3 className="text-2xl font-semibold mb-2 -translate-y-10">
+                            <h3 className="text-2xl font-semibold mb-2">
                               {"Delete Comment?"}
                             </h3>
-                            <p className="mb-4">
+                            <p className="mb-4 text-center">
                               {"This action cannot be undone"}
                             </p>
                             <div className="flex flex-row gap-5">
