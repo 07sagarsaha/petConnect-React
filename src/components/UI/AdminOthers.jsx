@@ -5,12 +5,14 @@ import { useToast } from "../../context/ToastContext";
 import { BiCheck, BiCopy } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import pfp from "../../icons/pfp.png";
+import { useNotification } from "../../pages/Notification";
 
 const AdminOthers = () => {
   const [isOthersTableOpen, setIsOthersTableOpen] = useState(false);
   const { showToast } = useToast();
   const [othersCount, setOthersCount] = useState(0);
   const [others, setOthers] = useState([]);
+  const { NotificationModal, openNotificationModal } = useNotification();
 
   useEffect(() => {
     setOthersCount(others.length);
@@ -43,11 +45,20 @@ const AdminOthers = () => {
     setIsOthersTableOpen(othersCount > 0);
   }, [othersCount]);
 
-  const handleDeleteFeedback = async (id) => {
+  const handleCompleteOthers = async (id, userId) => {
     try {
-      await deleteDoc(doc(db, "feedback", id));
-      setOthers((prev) => prev.filter((fb) => fb.id !== id));
-      showToast("This has been dealt with!");
+      const success = await openNotificationModal(
+        true,
+        userId,
+        "Your request has been completed!",
+        "others"
+      );
+
+      if (success) {
+        await deleteDoc(doc(db, "feedback", id));
+        setOthers((prev) => prev.filter((fb) => fb.id !== id));
+        showToast("Request completed successfully!");
+      }
     } catch (error) {
       console.error("Error deleting this:", error);
       showToast("Failed to delete this");
@@ -137,7 +148,7 @@ const AdminOthers = () => {
                   <button
                     className="btn btn-success text-base-100"
                     onClick={() => {
-                      handleDeleteFeedback(user.id);
+                      handleCompleteOthers(user.id, user.userId);
                     }}
                   >
                     <BiCheck size={25} />
@@ -148,6 +159,7 @@ const AdminOthers = () => {
             </>
           ))}
       </div>
+      <NotificationModal />
     </div>
   );
 };
