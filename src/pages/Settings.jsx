@@ -183,7 +183,7 @@ function Settings() {
         <div className="flex flex-row max-sm:flex-col max-sm:gap-2 items-center mb-6 gap-2">
           <NavLink
             to="/in/about"
-            className="text-xl btn gap-2 w-[50%] max-sm:w-full text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center btn-primary md:hidden lg:hidden"
+            className="text-xl btn gap-2 w-fit max-sm:w-full text-semibold text-base-100 text-start rounded-2xl self-start my-4 max-sm:my-0 flex items-center justify-center btn-primary"
           >
             <AiOutlineInfoCircle className="text-2xl" />
             {"About us"}

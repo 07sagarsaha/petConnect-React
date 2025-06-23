@@ -11,6 +11,7 @@ import {
   IoSettingsOutline,
   IoLogOutOutline,
   IoChatbubbleOutline,
+  IoNotificationsOutline,
 } from "react-icons/io5";
 import Nav from "./nav/Nav";
 import { useClerk } from "@clerk/clerk-react";
@@ -45,7 +46,7 @@ function SideNav() {
         <Header />
       </div>
       <div
-        className={`fixed z-10 max-lg:bottom-0 left-0 max-lg:right-0 w-20 h-full max-lg:h-20 lg:w-[16.35%] md:w-[96%] max-md:w-[96%] max-sm:w-[95%] flex flex-col max-lg:flex-row justify-evenly items-center rounded-r-xl transition-transform duration-300 bg-gradient-to-br bg-primary lg:bg-base-200 bg-opacity-60 min-w-[200px] translate-x-0 backdrop-blur-md max-lg:rounded-xl max-lg:m-2 max-lg:ml-[0.7rem]`}
+        className={`fixed z-10 max-lg:bottom-0 left-0 max-lg:right-0 w-20 h-full max-lg:h-20 lg:w-[16.35%] md:w-[96%] max-md:w-[96%] max-sm:w-[95%] flex flex-col max-lg:flex-row justify-evenly items-center rounded-r-xl max-sm:rounded-2xl transition-transform duration-300 bg-gradient-to-br bg-primary lg:bg-base-200 bg-opacity-60 min-w-[200px] translate-x-0 backdrop-blur-md max-lg:rounded-xl max-lg:m-2 max-lg:ml-[0.7rem]`}
       >
         <div className="flex w-full lg:flex-col max-lg:flex-row max-sm:flex-row sm:flex-row md:flex-row max-md:flex-row max-lg:justify-evenly max-lg:items-center text-left gap-12 max-lg:gap-5 max-lg:px-2 transition-all ease duration-200">
           <Nav
@@ -68,14 +69,11 @@ function SideNav() {
             icon={<AiOutlineRobot className="w-8 h-8" />}
             to="/in/ai-chat"
           />
-          {/*It is not fitting in medium resolution*/}
-          <div className="max-sm:hidden w-full transition-all ease duration-200">
-            <Nav
-              title="About"
-              icon={<AiOutlineInfoCircle className="w-8 h-8" />}
-              to="/in/about"
-            />
-          </div>
+          <Nav
+            title={"Notification"}
+            icon={<IoNotificationsOutline className="w-8 h-8" />}
+            to="/in/notification"
+          />
           <div className="max-sm:hidden w-full">
             <Nav
               title="Settings"
