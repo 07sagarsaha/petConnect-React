@@ -44,13 +44,13 @@ const AdminFeedback = () => {
     fetchFeedback();
   }, []);
 
-  const handleCompleteFeedback = async (id, userId) => {
+  const handleCompleteFeedback = async (id, userId, feedback) => {
     try {
       // Open modal and wait for result
       const success = await openNotificationModal(
         true,
         userId,
-        "Your feedback has been implemented!",
+        `Your feedback, "${feedback}", has been implemented. Thank you for your feedback!`,
         "feedback"
       );
 
@@ -155,7 +155,11 @@ const AdminFeedback = () => {
                   <button
                     className="btn btn-success text-base-100"
                     onClick={() => {
-                      handleCompleteFeedback(user.id, user.userId);
+                      handleCompleteFeedback(
+                        user.id,
+                        user.userId,
+                        user.feedback
+                      );
                     }}
                   >
                     <BiCheck size={25} />

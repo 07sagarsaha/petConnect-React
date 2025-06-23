@@ -45,12 +45,12 @@ const AdminOthers = () => {
     setIsOthersTableOpen(othersCount > 0);
   }, [othersCount]);
 
-  const handleCompleteOthers = async (id, userId) => {
+  const handleCompleteOthers = async (id, userId, request) => {
     try {
       const success = await openNotificationModal(
         true,
         userId,
-        "Your request has been completed!",
+        `Your request, "${request}", has been completed!`,
         "others"
       );
 
@@ -148,7 +148,7 @@ const AdminOthers = () => {
                   <button
                     className="btn btn-success text-base-100"
                     onClick={() => {
-                      handleCompleteOthers(user.id, user.userId);
+                      handleCompleteOthers(user.id, user.userId, user.feedback);
                     }}
                   >
                     <BiCheck size={25} />

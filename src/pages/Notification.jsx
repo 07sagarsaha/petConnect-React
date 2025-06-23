@@ -62,15 +62,25 @@ export function useNotification() {
   };
 
   // Modal component for custom message
-  const NotificationModal = () => {
+  const NotificationModal = React.memo(function NotificationModal() {
     if (!isModalOpen) return null;
+
+    // Use local state for the textarea to prevent parent re-renders
+    const [localMessage, setLocalMessage] = useState(customMessage);
+
+    // Sync local state with parent state when modal opens
+    useEffect(() => {
+      if (isModalOpen) {
+        setLocalMessage(customMessage);
+      }
+    }, [isModalOpen, customMessage]);
 
     const handleSend = async () => {
       if (pendingNotification) {
         const result = await sendNotification(
           pendingNotification.isUserSpecific,
           pendingNotification.userId,
-          customMessage,
+          localMessage,
           pendingNotification.type
         );
         pendingNotification.resolve?.(result);
@@ -89,28 +99,36 @@ export function useNotification() {
           className="fixed z-40 left-0 top-0 w-full h-full bg-black/50"
           onClick={handleCancel}
         />
-        <div className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 max-sm:w-2/3 h-fit bg-base-100/20 backdrop-blur-lg border-2 border-base-content/20 p-6 rounded-2xl flex flex-col items-center gap-4">
+        <div className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 max-sm:w-2/3 h-fit bg-base-100/50 backdrop-blur-lg border-2 border-base-content/20 p-6 rounded-2xl flex flex-col items-center gap-4">
           <h1 className="font-bold text-center">
             {"Write a message for the notification"}
           </h1>
           <textarea
             className="mt-2 w-full h-52 resize-none rounded-2xl bg-base-300/70 p-4 outline-none"
             placeholder="Write here..."
-            value={customMessage}
-            onChange={(e) => setCustomMessage(e.target.value)}
+            value={localMessage}
+            onChange={(e) => setLocalMessage(e.target.value)}
+            autoFocus
           />
           <div className="flex gap-4">
             <button className="btn btn-error flex-1" onClick={handleCancel}>
               {"Cancel"}
             </button>
-            <button className="btn btn-primary flex-1" onClick={handleSend}>
+            <button
+              className="btn btn-primary flex-1"
+              onClick={() => {
+                // Update parent state only when sending
+                setCustomMessage(localMessage);
+                handleSend();
+              }}
+            >
               {"Send"}
             </button>
           </div>
         </div>
       </>
     );
-  };
+  });
 
   return {
     sendNotification,

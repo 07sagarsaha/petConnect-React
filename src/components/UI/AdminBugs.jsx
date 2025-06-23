@@ -42,12 +42,12 @@ const AdminBugs = () => {
     fetchFeedback();
   }, []);
 
-  const handleCompleteBug = async (id, userId) => {
+  const handleCompleteBug = async (id, userId, bug) => {
     try {
       const success = await openNotificationModal(
         true,
         userId,
-        "Your bug has been fixed!",
+        `Your bug, "${bug}" has been fixed!`,
         "bug"
       );
 
@@ -149,7 +149,7 @@ const AdminBugs = () => {
                   <button
                     className="btn btn-success text-base-100"
                     onClick={() => {
-                      handleCompleteBug(user.id, user.userId);
+                      handleCompleteBug(user.id, user.userId, user.feedback);
                     }}
                   >
                     <BiCheck size={25} />
