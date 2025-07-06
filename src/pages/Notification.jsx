@@ -13,7 +13,7 @@ import { useUser } from "@clerk/clerk-react";
 import { IoNotifications, IoTrashOutline } from "react-icons/io5";
 import { useToast } from "../context/ToastContext";
 import { MdFeedback } from "react-icons/md";
-import { BiBug } from "react-icons/bi";
+import { BiBroadcast, BiBug } from "react-icons/bi";
 
 // Custom hook for sending notifications
 export function useNotification() {
@@ -140,21 +140,24 @@ export function useNotification() {
 const Notification = () => {
   const { user } = useUser();
   const [notifications, setNotifications] = useState([]);
+  const [announcement, setAnnouncement] = useState([]);
+  const [showingNotification, setShowingNotification] = useState("normal");
   const { showToast } = useToast();
-  const { sendNotification, openNotificationModal, NotificationModal } =
-    useNotification();
+  const { NotificationModal } = useNotification();
 
   useEffect(() => {
-    const q = query(
-      collection(db, "notification"),
-      where("userId", "==", user.id)
-    );
+    const q = query(collection(db, "notification"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const notifications = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setNotifications(notifications);
+      setNotifications(
+        notifications.filter((noti) => noti.type !== "announcement")
+      );
+      setAnnouncement(
+        notifications.filter((noti) => noti.type === "announcement")
+      );
     });
     return () => unsubscribe();
   }, [user.id]);
@@ -177,34 +180,80 @@ const Notification = () => {
   return (
     <div className="min-h-screen p-6 flex flex-col gap-4 overflow-auto">
       <h1 className="text-2xl font-bold mb-4">{"Notification"}</h1>
-      {notifications.length === 0 && (
-        <p className="text-base font-medium italic flex py-8 justify-center items-center">
-          {"No new notifications"}
-        </p>
-      )}
-      {notifications.map((notification) => (
-        <div
-          key={notification.id}
-          className="bg-base-100 p-4 rounded-lg shadow-lg flex justify-between items-center"
+      <div className="flex flex-row gap-4">
+        <p
+          className={`px-4 py-2 border-2 rounded-full cursor-pointer transition-colors duration-300 ${showingNotification === "normal" ? "border-primary bg-primary text-base-100 hover:bg-primary/80" : "border-base-content hover:bg-base-content/30"}`}
+          onClick={() => setShowingNotification("normal")}
         >
-          <div className="w-5/6">
-            {notification.type === "feedback" ? (
-              <MdFeedback size={20} />
-            ) : notification.type === "bug" ? (
-              <BiBug size={20} />
-            ) : (
-              <IoNotifications size={20} />
-            )}
-            <p>{notification.notifications}</p>
-          </div>
-          <button
-            className="btn btn-error btn-sm"
-            onClick={() => handleNotiDelete(notification)}
-          >
-            <IoTrashOutline size={20} />
-          </button>
-        </div>
-      ))}
+          {"Normal"}
+        </p>
+        <p
+          className={`px-4 py-2 border-2 rounded-full cursor-pointer transition-colors duration-300 ${showingNotification === "announcement" ? "border-primary bg-primary text-base-100 hover:bg-primary/80" : "border-base-content hover:bg-base-content/30"}`}
+          onClick={() => setShowingNotification("announcement")}
+        >
+          {"Announcement"}
+        </p>
+      </div>
+      {showingNotification === "normal" &&
+        notifications.map((notification) => (
+          <>
+            <div
+              key={notification.id}
+              className="bg-base-100 p-4 rounded-lg shadow-lg flex justify-between items-center"
+            >
+              <div className="w-5/6">
+                {notification.type === "feedback" ? (
+                  <MdFeedback size={20} />
+                ) : notification.type === "bug" ? (
+                  <BiBug size={20} />
+                ) : (
+                  <IoNotifications size={20} />
+                )}
+                <p className="whitespace-pre-wrap mt-2 ml-1">
+                  {notification.notifications}
+                </p>
+              </div>
+              <button
+                className="btn btn-error btn-sm"
+                onClick={() => handleNotiDelete(notification)}
+              >
+                <IoTrashOutline size={20} />
+              </button>
+            </div>
+          </>
+        ))}
+      {showingNotification === "announcement" &&
+        announcement.map((announcements) => (
+          <>
+            <div
+              key={announcements.id}
+              className="bg-base-100 p-4 rounded-lg shadow-lg flex justify-between items-center"
+            >
+              <div className="w-5/6">
+                {announcements.type === "announcement" ? (
+                  <BiBroadcast size={20} />
+                ) : (
+                  <IoNotifications size={20} />
+                )}
+                <p className="whitespace-pre-wrap mt-2 ml-1">
+                  {announcements.notifications}
+                </p>
+              </div>
+            </div>
+          </>
+        ))}
+      {showingNotification === "announcement" && announcement.length === 0 ? (
+        <p className="text-base font-medium italic flex py-8 justify-center items-center">
+          {"No new announcement"}
+        </p>
+      ) : (
+        showingNotification === "normal" &&
+        notifications.length === 0 && (
+          <p className="text-base font-medium italic flex py-8 justify-center items-center">
+            {"No new notifications"}
+          </p>
+        )
+      )}
       <NotificationModal />
     </div>
   );
