@@ -21,6 +21,8 @@ import { useToast } from "../../context/ToastContext"; // Import useToast
 import { IoMdClose } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
 import { IoTrashBin } from "react-icons/io5";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { MdReport } from "react-icons/md";
 
 const Posts = ({
   id,
@@ -55,6 +57,22 @@ const Posts = ({
   const navigate = useNavigate();
   const { showToast } = useToast(); // Get showToast from context
   const [blurredImageUrl, setBlurredImageUrl] = useState(null);
+  const [options, openOptions] = useState(false);
+  const [reportModal, openReportModal] = useState(false);
+
+  // Close options when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (options && !event.target.closest(".options-container")) {
+        openOptions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [options]);
 
   const handleLike = async () => {
     if (!user) return;
@@ -208,15 +226,56 @@ const Posts = ({
               <p className="max-sm:text-sm text-[15px]">{date}</p>
             </div>
           </div>
-          {userId == user.id && (
-            <button
-              className="text-lg self-start"
-              onClick={() => confirmDeleteBox(id)}
+          <div className="relative options-container">
+            <div
+              className="text-lg self-start flex flex-row gap-2 items-center btn btn-ghost btn-sm"
+              onClick={() => {
+                openOptions(!options);
+              }}
             >
-              <IoTrashBin />
-            </button>
-          )}
+              <BsThreeDotsVertical />
+            </div>
+            {options && (
+              <div
+                className={`absolute top-1/2 right-0 transform w-64 max-sm:w-48 p-2 bg-base-300 text-base-content rounded-lg shadow-lg z-30`}
+              >
+                <button
+                  className="text-lg self-start flex flex-row gap-2 items-center justify-start btn btn-ghost w-full"
+                  onClick={() => {
+                    openReportModal(!reportModal);
+                  }}
+                >
+                  <MdReport />
+                  {"Report"}
+                </button>
+                {userId == user.id && (
+                  <button
+                    className="text-lg self-start flex flex-row gap-2 items-center justify-start btn btn-ghost w-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      confirmDeleteBox(id);
+                    }}
+                  >
+                    <IoTrashBin />
+                    {"Delete"}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+
+        {reportModal && (
+          <>
+            <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/5 h-fit p-4 bg-base-100 rounded-xl">
+              {"This will be implemented tomorrow."}
+            </div>
+            <div
+              className="fixed z-40 top-0 left-0 w-full h-full bg-black opacity-50"
+              onClick={() => openReportModal(!reportModal)}
+            />
+          </>
+        )}
 
         {confirmDelete && postToDelete === id && (
           <>
@@ -257,7 +316,7 @@ const Posts = ({
 
         {/* Title and Content */}
         <h1 className="text-[19px] sm:text-[21px] font-bold py-4">{title}</h1>
-        <h2 className="text-[16px] sm:text-[19px] font-semibold pb-4">
+        <h2 className="text-[16px] sm:text-[19px] font-semibold pb-4 whitespace-pre-wrap">
           {content}
         </h2>
 

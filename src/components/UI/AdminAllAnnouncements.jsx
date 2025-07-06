@@ -90,12 +90,17 @@ const AdminAllAnouncements = () => {
           <>
             <div
               key={announcement.id}
-              className="w-full min-w-[30%] h-fit p-4 shadow-Uni shadow-base-300 rounded-lg bg-base-100 flex flex-row items-center gap-3"
+              className="w-full min-w-[30%] h-fit p-4 shadow-Uni shadow-base-300 rounded-lg bg-base-100 flex flex-row items-center justify-between gap-3"
             >
-              <BiBroadcast size={20} />
-              <span className="py-4 px-2 rounded-lg bg-base-100 flex flex-row gap-3 items-center w-full">
-                {announcement.notifications}
-              </span>
+              <div className="flex flex-col">
+                <div className="flex flex-row gap-2">
+                  <BiBroadcast size={20} />
+                  <p>{new Date(announcement.createdAt).toLocaleDateString()}</p>
+                </div>
+                <span className="py-4 px-2 rounded-lg bg-base-100 flex flex-row gap-3 items-center whitespace-pre-wrap">
+                  {announcement.notifications}
+                </span>
+              </div>
               <button
                 className="btn btn-error btn-sm"
                 onClick={() => handleDeleteAnnouncement(announcement)}

@@ -53,6 +53,7 @@ export function useNotification() {
         userId: userId,
         notifications: notificationText,
         type: type,
+        createdAt: new Date().toISOString(),
       });
       return true;
     } catch (error) {
@@ -182,13 +183,13 @@ const Notification = () => {
       <h1 className="text-2xl font-bold mb-4">{"Notification"}</h1>
       <div className="flex flex-row gap-4">
         <p
-          className={`px-4 py-2 border-2 rounded-full cursor-pointer transition-colors duration-300 ${showingNotification === "normal" ? "border-primary bg-primary text-base-100 hover:bg-primary/80" : "border-base-content hover:bg-base-content/30"}`}
+          className={`px-4 py-2 border-2 rounded-full cursor-pointer transition-colors duration-300 ${showingNotification === "normal" ? "border-primary bg-primary text-base-100 hover:bg-primary/80 hover:border-primary/20" : "border-base-content hover:bg-base-content/30"}`}
           onClick={() => setShowingNotification("normal")}
         >
           {"Normal"}
         </p>
         <p
-          className={`px-4 py-2 border-2 rounded-full cursor-pointer transition-colors duration-300 ${showingNotification === "announcement" ? "border-primary bg-primary text-base-100 hover:bg-primary/80" : "border-base-content hover:bg-base-content/30"}`}
+          className={`px-4 py-2 border-2 rounded-full cursor-pointer transition-colors duration-300 ${showingNotification === "announcement" ? "border-primary bg-primary text-base-100 hover:bg-primary/80 hover:border-primary/20" : "border-base-content hover:bg-base-content/30"}`}
           onClick={() => setShowingNotification("announcement")}
         >
           {"Announcement"}
@@ -202,13 +203,16 @@ const Notification = () => {
               className="bg-base-100 p-4 rounded-lg shadow-lg flex justify-between items-center"
             >
               <div className="w-5/6">
-                {notification.type === "feedback" ? (
-                  <MdFeedback size={20} />
-                ) : notification.type === "bug" ? (
-                  <BiBug size={20} />
-                ) : (
-                  <IoNotifications size={20} />
-                )}
+                <div className="flex flex-row gap-2 items-center">
+                  {notification.type === "feedback" ? (
+                    <MdFeedback size={20} />
+                  ) : notification.type === "bug" ? (
+                    <BiBug size={20} />
+                  ) : (
+                    <IoNotifications size={20} />
+                  )}
+                  <p>{new Date(notification.createdAt).toLocaleDateString()}</p>
+                </div>
                 <p className="whitespace-pre-wrap mt-2 ml-1">
                   {notification.notifications}
                 </p>
@@ -230,11 +234,16 @@ const Notification = () => {
               className="bg-base-100 p-4 rounded-lg shadow-lg flex justify-between items-center"
             >
               <div className="w-5/6">
-                {announcements.type === "announcement" ? (
-                  <BiBroadcast size={20} />
-                ) : (
-                  <IoNotifications size={20} />
-                )}
+                <div className="flex flex-row gap-2 items-center">
+                  {announcements.type === "announcement" ? (
+                    <BiBroadcast size={20} />
+                  ) : (
+                    <IoNotifications size={20} />
+                  )}
+                  <p>
+                    {new Date(announcements.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
                 <p className="whitespace-pre-wrap mt-2 ml-1">
                   {announcements.notifications}
                 </p>
