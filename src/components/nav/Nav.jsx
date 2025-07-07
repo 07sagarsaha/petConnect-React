@@ -9,7 +9,7 @@ function Nav({ title, icon, to }) {
         className={({ isActive }) =>
           isActive
             ? "text-base-100 w-[100%] flex flex-row justify-center py-2 max-lg:px-2 max-lg:py-1 lg:bg-base-200 lg:border-b-2 lg:border-r-2 lg:border-t-2 lg:border-primary outline-none lg:text-primary bg-primary md:rounded-lg max-md:rounded-lg max-sm:rounded-lg lg:rounded-r-2xl lg:rounded-l-none shadow-xl"
-            : "text-base-content max-sm:text-base-100 w-[100%] flex flex-row justify-center max-lg:px-2 py-2 border-base-200 border-2 hover:border-base-content/50 md:rounded-lg max-md:rounded-lg max-sm:rounded-lg lg:rounded-r-2xl lg:rounded-l-none transition-colors max-sm:border-none"
+            : "text-base-content max-sm:text-base-100 w-[100%] flex flex-row justify-center max-lg:px-2 py-2 border-base-200 border-none lg:border-b-2 lg:border-r-2 lg:border-t-2 lg:hover:border-base-content/50 md:rounded-lg max-md:rounded-lg max-sm:rounded-lg lg:rounded-r-2xl lg:rounded-l-none transition-colors lg:border-solid"
         }
       >
         <div className="flex flex-row justify-around w-[60%] gap-2 lg:gap-3  items-center">

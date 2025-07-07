@@ -12,6 +12,7 @@ import AdminBugs from "../components/UI/AdminBugs";
 import AdminOthers from "../components/UI/AdminOthers";
 import AdminAnnouncements from "../components/UI/AdminAnnouncements";
 import AdminAllAnnouncements from "../components/UI/AdminAllAnnouncements";
+import AdminReports from "../components/UI/AdminReports";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -72,6 +73,7 @@ const Admin = () => {
             </div>
             <AdminVetVerification users={users} />
             <SetAdmin users={users} />
+            <AdminReports />
             <AdminFeedback />
             <AdminBugs />
             <AdminOthers />

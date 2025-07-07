@@ -26,7 +26,7 @@ const AdminAnnouncements = () => {
   return (
     <>
       <div
-        className={`fixed transition-all duration-500 ease-out p-4 ${isClicked ? `top-1/2 right-1/2 z-50 translate-x-1/2 -translate-y-1/2 flex flex-col gap-3 h-96 justify-between items-center bg-base-100 rounded-xl max-sm:w-4/5 w-2/5` : `lg:top-5 sm:bottom-5 max-sm:bottom-5 right-5 z-20 h-12 w-fit bg-primary rounded-xl text-base-200 cursor-pointer hover:bg-primary/80 transition-colors flex flex-row gap-2 items-center`}`}
+        className={`fixed transition-all duration-500 ease-out p-4 ${isClicked ? `top-1/2 right-1/2 z-50 translate-x-1/2 -translate-y-1/2 flex flex-col gap-3 h-96 justify-between items-center bg-base-100/60 backdrop-blur-lg rounded-xl max-sm:w-4/5 w-2/5` : `lg:top-5 sm:bottom-5 max-sm:bottom-5 right-5 z-20 h-12 w-fit bg-primary rounded-xl text-base-200 cursor-pointer hover:bg-primary/80 transition-colors flex flex-row gap-2 items-center`}`}
         onClick={() => {
           setIsClicked(true);
         }}
@@ -38,7 +38,7 @@ const AdminAnnouncements = () => {
         {isClicked && (
           <>
             <textarea
-              className="w-full h-48 resize-none rounded-xl bg-base-300 p-4 outline-none"
+              className="w-full h-48 resize-none rounded-xl bg-base-300/50 p-4 outline-none"
               placeholder="Give a message to all the users..."
               onChange={(e) => setAnnouncement(e.target.value)}
               value={accouncement}

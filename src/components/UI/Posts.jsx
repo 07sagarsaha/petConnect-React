@@ -8,8 +8,10 @@ import {
 } from "react-icons/fa6";
 import { db } from "../../firebase/firebase";
 import {
+  addDoc,
   arrayRemove,
   arrayUnion,
+  collection,
   deleteDoc,
   doc,
   updateDoc,
@@ -23,6 +25,8 @@ import { useUser } from "@clerk/clerk-react";
 import { IoTrashBin } from "react-icons/io5";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdReport } from "react-icons/md";
+import { IoIosArrowDown } from "react-icons/io";
+import { useNotification } from "../../pages/Notification";
 
 const Posts = ({
   id,
@@ -59,6 +63,10 @@ const Posts = ({
   const [blurredImageUrl, setBlurredImageUrl] = useState(null);
   const [options, openOptions] = useState(false);
   const [reportModal, openReportModal] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("Spam");
+  const [reportOptions, openReportOptions] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const { sendNotification } = useNotification();
 
   // Close options when clicking outside
   useEffect(() => {
@@ -190,6 +198,30 @@ const Posts = ({
     });
   };
 
+  const handleReportSubmit = async () => {
+    const reportRef = collection(db, "reports");
+    try {
+      await addDoc(reportRef, {
+        postId: id,
+        userId: user.id,
+        reason: selectedOption,
+        description: reportReason,
+        profilePic,
+      });
+      showToast("Report submitted successfully!");
+      await sendNotification(
+        true,
+        userId,
+        `The post has been reported for ${selectedOption}. Thank you for your help!`,
+        "report"
+      );
+      openReportModal(false);
+    } catch (error) {
+      console.error("Error submitting report:", error);
+      showToast("An error occurred while submitting the report.");
+    }
+  };
+
   return (
     <div className="flex justify-center items-center w-full text-base-content bg-base-200">
       {/* Post Content */}
@@ -267,8 +299,83 @@ const Posts = ({
 
         {reportModal && (
           <>
-            <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/5 h-fit p-4 bg-base-100 rounded-xl">
-              {"This will be implemented tomorrow."}
+            <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-fit p-4 bg-base-100/60 backdrop-blur-lg rounded-xl w-2/5 max-sm:w-4/5">
+              <div className="flex flex-col justify-between gap-3 items-center">
+                <h1 className="font-bold text-xl">{"Report this post"}</h1>
+                <p className="text-base font-medium">
+                  {"Choose one of the reasons below:"}
+                </p>
+                <div className="relative options-container w-full">
+                  <div
+                    className="flex flex-row gap-2 items-center justify-between p-2 rounded-xl cursor-pointer w-full text-base bg-base-300/50"
+                    onClick={() => {
+                      openReportOptions(!reportOptions);
+                    }}
+                  >
+                    <div className="flex flex-row gap-3 items-center">
+                      <p>{"Currently selected: "}</p>
+                      <p className="p-2 bg-base-300 rounded-md">
+                        {selectedOption}
+                      </p>
+                    </div>
+                    <IoIosArrowDown
+                      className={`transition-all ${reportOptions ? "rotate-180" : "rotate-0"}`}
+                    />
+                  </div>
+                  {reportOptions && (
+                    <div className="absolute top-full right-0 transform w-full p-2 bg-base-300/20 backdrop-blur-lg text-base-content rounded-lg shadow-lg z-30">
+                      <button
+                        className="btn btn-ghost"
+                        onClick={() => {
+                          setSelectedOption("Spam");
+                          openReportOptions(false);
+                        }}
+                      >
+                        {"Spam"}
+                      </button>
+                      <button
+                        className="btn btn-ghost"
+                        onClick={() => {
+                          setSelectedOption("Harrasment");
+                          openReportOptions(false);
+                        }}
+                      >
+                        {"Harrasment"}
+                      </button>
+                      <button
+                        className="btn btn-ghost"
+                        onClick={() => {
+                          setSelectedOption("Inappropriate");
+                          openReportOptions(false);
+                        }}
+                      >
+                        {"Inappropriate"}
+                      </button>
+                      <button
+                        className="btn btn-ghost"
+                        onClick={() => {
+                          setSelectedOption("Other");
+                          openReportOptions(false);
+                        }}
+                      >
+                        {"Other"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <textarea
+                  className="mt-2 w-full h-52 resize-none rounded-2xl bg-base-300/50 p-4 outline-none text-base"
+                  placeholder="Describe the reason..."
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                />
+                <button
+                  className="btn btn-primary"
+                  onClick={handleReportSubmit}
+                >
+                  {"Submit report"}
+                </button>
+              </div>
             </div>
             <div
               className="fixed z-40 top-0 left-0 w-full h-full bg-black opacity-50"

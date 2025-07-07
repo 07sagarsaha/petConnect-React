@@ -12,7 +12,7 @@ import {
 import { useUser } from "@clerk/clerk-react";
 import { IoNotifications, IoTrashOutline } from "react-icons/io5";
 import { useToast } from "../context/ToastContext";
-import { MdFeedback } from "react-icons/md";
+import { MdFeedback, MdReport } from "react-icons/md";
 import { BiBroadcast, BiBug } from "react-icons/bi";
 
 // Custom hook for sending notifications
@@ -208,10 +208,17 @@ const Notification = () => {
                     <MdFeedback size={20} />
                   ) : notification.type === "bug" ? (
                     <BiBug size={20} />
+                  ) : notification.type === "reports" ? (
+                    <MdReport size={20} />
                   ) : (
                     <IoNotifications size={20} />
                   )}
-                  <p>{new Date(notification.createdAt).toLocaleDateString()}</p>
+                  <p>
+                    {new Date(notification.createdAt).toLocaleDateString(
+                      undefined,
+                      { day: "2-digit", month: "2-digit", year: "numeric" }
+                    )}
+                  </p>
                 </div>
                 <p className="whitespace-pre-wrap mt-2 ml-1">
                   {notification.notifications}
@@ -241,7 +248,10 @@ const Notification = () => {
                     <IoNotifications size={20} />
                   )}
                   <p>
-                    {new Date(announcements.createdAt).toLocaleDateString()}
+                    {new Date(announcements.createdAt).toLocaleDateString(
+                      undefined,
+                      { day: "2-digit", month: "2-digit", year: "numeric" }
+                    )}
                   </p>
                 </div>
                 <p className="whitespace-pre-wrap mt-2 ml-1">
