@@ -7,6 +7,7 @@ import { collection, db } from "../firebase/firebase";
 import { addDoc, doc, getDoc } from "firebase/firestore";
 import { redirect } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useNotification } from "../pages/Notification";
 
 const Feedback = () => {
   const [feedbackForm, setFeedbackForm] = useState(false);
@@ -18,6 +19,7 @@ const Feedback = () => {
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
   const { user } = useUser();
+  const { sendNotification } = useNotification();
 
   const handleSubmit = async () => {
     if (feedback === "") {
@@ -48,6 +50,12 @@ const Feedback = () => {
       profilePic: userData.profilePic,
     })
       .then(() => {
+        sendNotification(
+          true,
+          user.id,
+          `We just received your ${feedbackType.toLowerCase()}. Working on it right away. Thank you for your feedback!`,
+          ""
+        );
         showToast("Feedback successfully submitted!");
         openImpMenu(false);
         openTypeMenu(false);

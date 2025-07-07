@@ -20,6 +20,7 @@ import Landing from "./pages/landing/landing.jsx";
 import Login from "./pages/auth/login.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Admin from "./pages/Admin.jsx";
+import Notification from "./pages/Notification.jsx";
 import { AuthProvider } from "./context/authContext/authContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ClerkProvider } from "@clerk/clerk-react";
@@ -47,6 +48,7 @@ const router = createBrowserRouter(
         <Route path="/in/about" element={<About />} />
         <Route path="/in/settings" element={<Settings />} />
         <Route path="/in/profile/:userId" element={<UserProfile />} />
+        <Route path="/in/notification" element={<Notification />} />
       </Route>
       <Route path="/signup" element={<Register />} />
       <Route path="/login" element={<Login />} />

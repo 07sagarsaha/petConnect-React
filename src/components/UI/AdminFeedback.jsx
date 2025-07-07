@@ -5,12 +5,16 @@ import { BiCheck, BiCopy } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import pfp from "../../icons/pfp.png";
 import { useToast } from "../../context/ToastContext";
+import { useNotification } from "../../pages/Notification";
+import { useNavigate } from "react-router-dom";
 
 const AdminFeedback = () => {
   const [isFeedbackTableOpen, setIsFeedbackTableOpen] = useState(false);
   const { showToast } = useToast();
   const [feedbackCount, setFeedbackCount] = useState(0);
   const [feedbacks, setFeedback] = useState([]);
+  const { openNotificationModal, NotificationModal } = useNotification();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setFeedbackCount(feedbacks.length);
@@ -40,11 +44,21 @@ const AdminFeedback = () => {
     fetchFeedback();
   }, []);
 
-  const handleDeleteFeedback = async (id) => {
+  const handleCompleteFeedback = async (id, userId, feedback) => {
     try {
-      await deleteDoc(doc(db, "feedback", id));
-      setFeedback((prev) => prev.filter((fb) => fb.id !== id));
-      showToast("Feedback deleted successfully!");
+      // Open modal and wait for result
+      const success = await openNotificationModal(
+        true,
+        userId,
+        `Your feedback, "${feedback}", has been implemented. Thank you for your feedback!`,
+        "feedback"
+      );
+
+      if (success) {
+        await deleteDoc(doc(db, "feedback", id));
+        setFeedback((prev) => prev.filter((fb) => fb.id !== id));
+        showToast("Feedback deleted successfully!");
+      }
     } catch (error) {
       console.error("Error deleting feedback:", error);
       showToast("Failed to delete feedback");
@@ -103,10 +117,13 @@ const AdminFeedback = () => {
                     <img
                       src={user.profilePic || pfp}
                       className="size-14 object-cover rounded-full"
+                      onClick={() => {
+                        navigate(`/in/profile/${user.userId}`);
+                      }}
                     />
                     <div className="flex flex-col">
                       <span className="font-bold">{user.name}</span>
-                      <span className="font-normal">{user.id}</span>
+                      <span className="font-normal">{user.userId}</span>
                     </div>
                   </div>
                   <span className="p-2 bg-base-300 rounded-md h-fit w-fit">
@@ -138,7 +155,11 @@ const AdminFeedback = () => {
                   <button
                     className="btn btn-success text-base-100"
                     onClick={() => {
-                      handleDeleteFeedback(user.id);
+                      handleCompleteFeedback(
+                        user.id,
+                        user.userId,
+                        user.feedback
+                      );
                     }}
                   >
                     <BiCheck size={25} />
@@ -149,6 +170,7 @@ const AdminFeedback = () => {
             </>
           ))}
       </div>
+      <NotificationModal />
     </div>
   );
 };

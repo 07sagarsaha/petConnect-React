@@ -5,12 +5,14 @@ import { BiCheck, BiCopy } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import pfp from "../../icons/pfp.png";
 import { useToast } from "../../context/ToastContext";
+import { useNotification } from "../../pages/Notification";
 
 const AdminBugs = () => {
   const [isBugTableOpen, setIsBugTableOpen] = useState(false);
   const { showToast } = useToast();
   const [bugCount, setBugCount] = useState(0);
   const [bugs, setBugs] = useState([]);
+  const { NotificationModal, openNotificationModal } = useNotification();
 
   useEffect(() => {
     setBugCount(bugs.length);
@@ -40,11 +42,20 @@ const AdminBugs = () => {
     fetchFeedback();
   }, []);
 
-  const handleDeleteFeedback = async (id) => {
+  const handleCompleteBug = async (id, userId, bug) => {
     try {
-      await deleteDoc(doc(db, "feedback", id));
-      setBugs((prev) => prev.filter((fb) => fb.id !== id));
-      showToast("This bug has been squashed!");
+      const success = await openNotificationModal(
+        true,
+        userId,
+        `Your bug, "${bug}" has been fixed!`,
+        "bug"
+      );
+
+      if (success) {
+        await deleteDoc(doc(db, "feedback", id));
+        setBugs((prev) => prev.filter((fb) => fb.id !== id));
+        showToast("Bug squashed successfully!");
+      }
     } catch (error) {
       console.error("Error deleting bug:", error);
       showToast("Failed to delete bug");
@@ -138,7 +149,7 @@ const AdminBugs = () => {
                   <button
                     className="btn btn-success text-base-100"
                     onClick={() => {
-                      handleDeleteFeedback(user.id);
+                      handleCompleteBug(user.id, user.userId, user.feedback);
                     }}
                   >
                     <BiCheck size={25} />
@@ -149,6 +160,7 @@ const AdminBugs = () => {
             </>
           ))}
       </div>
+      <NotificationModal />
     </div>
   );
 };
